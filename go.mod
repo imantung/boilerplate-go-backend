@@ -3,7 +3,9 @@ module github.com/imantung/boilerplate-go-backend
 go 1.22.3
 
 require (
+	github.com/fatih/structs v1.1.0
 	github.com/getkin/kin-openapi v0.124.0
+	github.com/iancoleman/strcase v0.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/labstack/echo/v4 v4.12.0
 	go.uber.org/dig v1.17.1

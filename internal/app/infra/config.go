@@ -9,8 +9,15 @@ import (
 
 type (
 	Config struct {
-		ServerAddress string `envconfig:"SERVER_ADDRESS" default:":1323"`
-		DatabaseURL   string `envconfig:"DATABASE_URL" default:"postgres://postgres:postgres@localhost:5432/database?sslmode=disable"`
+		Address  string   `envconfig:"ADDRESS" required:"true" default:":1323"`
+		Postgres DBConfig `envconfig:"PG"`
+	}
+	DBConfig struct {
+		DBName string `envconfig:"DBNAME" required:"true" default:"postgres"`
+		DBUser string `envconfig:"DBUSER" required:"true" default:"postgres"`
+		DBPass string `envconfig:"DBPASS" required:"true" default:"postgres"`
+		Host   string `envconfig:"HOST" required:"true" default:"localhost"`
+		Port   string `envconfig:"PORT" required:"true" default:"5432"`
 
 		MaxOpenConns    int           `envconfig:"MAX_OPEN_CONNS" default:"30" required:"true"`
 		MaxIdleConns    int           `envconfig:"MAX_IDLE_CONNS" default:"6" required:"true"`
@@ -18,11 +25,13 @@ type (
 	}
 )
 
+const ConfigPrefix = "APP"
+
 var _ = di.Provide(NewConfig)
 
 func NewConfig() (*Config, error) {
 	var cfg Config
-	err := envconfig.Process("", &cfg)
+	err := envconfig.Process(ConfigPrefix, &cfg)
 	if err != nil {
 		return nil, err
 	}

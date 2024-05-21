@@ -2,6 +2,7 @@ package infra
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 )
@@ -9,15 +10,24 @@ import (
 var _ = di.Provide(NewPostgres)
 
 func NewPostgres(cfg *Config) (*sql.DB, error) {
-	db, err := sql.Open("postgres", cfg.DatabaseURL)
+	pg := cfg.Postgres
+	conn := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		pg.DBUser, pg.DBPass, pg.Host, pg.Port, pg.DBName,
+	)
+	db, err := sql.Open("postgres", conn)
 	if err != nil {
 		return nil, err
 	}
 
-	// NOTE: set connection pool to prevent bottleneck in database side
-	db.SetConnMaxLifetime(cfg.ConnMaxLifetime)
-	db.SetMaxIdleConns(cfg.MaxIdleConns)
-	db.SetMaxOpenConns(cfg.MaxOpenConns)
+	// NOTE: Set connection pool to prevent bottleneck in database side
+	// Read more:
+	// - https://go.dev/doc/database/manage-connections
+	// - https://www.alexedwards.net/blog/configuring-sqldb
+
+	db.SetConnMaxLifetime(pg.ConnMaxLifetime)
+	db.SetMaxIdleConns(pg.MaxIdleConns)
+	db.SetMaxOpenConns(pg.MaxOpenConns)
 
 	return db, nil
 }

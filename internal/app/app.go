@@ -11,7 +11,7 @@ import (
 )
 
 func Start(e *echo.Echo, cfg *infra.Config) error {
-	return e.Start(cfg.ServerAddress)
+	return e.Start(cfg.Address)
 }
 
 func Stop(e *echo.Echo, db *sql.DB) error {

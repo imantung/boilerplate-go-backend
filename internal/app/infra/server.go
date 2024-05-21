@@ -13,8 +13,8 @@ import (
 type (
 	Server struct {
 		dig.In
-		// add new controller here..
 		controller.TestCntrl
+		// add new controller here..
 	}
 )
 
@@ -27,7 +27,7 @@ var _ = di.Provide(NewEcho)
 func NewEcho(server Server) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.Logger())
-	e.Use(middleware.CORS()) // required for swagger ui
+	e.Use(middleware.CORS())
 	openapi.RegisterHandlers(e, server)
 	return e
 }
