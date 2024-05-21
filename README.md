@@ -1,6 +1,6 @@
 # Boilerplate Go Backend
 
-Boilderplate project for golang backend
+Boilerplate project for golang backend
 
 - Application
     - [X] [Go-Standards](https://github.com/golang-standards/project-layout) Project Layout
