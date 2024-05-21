@@ -1,9 +1,9 @@
 package infra
 
 import (
-	"github.com/imantung/empl-clocking-backend-go/internal/app/controller"
-	"github.com/imantung/empl-clocking-backend-go/internal/app/infra/di"
-	"github.com/imantung/empl-clocking-backend-go/internal/generated/openapi"
+	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 

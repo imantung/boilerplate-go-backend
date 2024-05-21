@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/imantung/empl-clocking-backend-go/internal/app"
-	"github.com/imantung/empl-clocking-backend-go/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/app"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"go.uber.org/multierr"
 )
 

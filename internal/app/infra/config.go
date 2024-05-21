@@ -3,7 +3,7 @@ package infra
 import (
 	"time"
 
-	"github.com/imantung/empl-clocking-backend-go/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/kelseyhightower/envconfig"
 )
 

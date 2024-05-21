@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 
-	"github.com/imantung/empl-clocking-backend-go/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/labstack/echo/v4"
 )
 

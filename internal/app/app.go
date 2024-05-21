@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/imantung/empl-clocking-backend-go/internal/app/infra"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/multierr"
 )
