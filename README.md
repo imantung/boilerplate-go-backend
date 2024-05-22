@@ -22,11 +22,12 @@ Boilerplate project for golang backend
     - [ ] Table Driven Test
     - [ ] Test Automation
 - Database
-    - [ ] Database migration script (gomigrate)
-    - [ ] ORMHate
-    - [x] Connection pool
-    - [ ] Database Transaction in Service Layer
+    - [x] PostgresSQL
+    - [x] Connection pool -- Check the code at [internal/app/infra/postgres.go](internal/app/infra/postgres.go)
+    - [ ] ORMHate Philosophy
     - [ ] Query Builder (using Squirrel)
+    - [ ] Database Transaction in Service Layer
+    - [ ] Database migration script (gomigrate)
 - Docker
     - [ ] Dockerfile 
     - [ ] Dockercompose to run system component (database, redis)

@@ -15,6 +15,10 @@ func NewPostgres(cfg *Config) (*sql.DB, error) {
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		pg.DBUser, pg.DBPass, pg.Host, pg.Port, pg.DBName,
 	)
+
+	// NOTE: Alternatively we can use github.com/jackc/pgx which is faster compared
+	// with database/sql package. However the library didn't have same interface with
+	// database/sql which cumbersome when use other library that require sql.DB
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
 		return nil, err
@@ -24,7 +28,6 @@ func NewPostgres(cfg *Config) (*sql.DB, error) {
 	// Read more:
 	// - https://go.dev/doc/database/manage-connections
 	// - https://www.alexedwards.net/blog/configuring-sqldb
-
 	db.SetConnMaxLifetime(pg.ConnMaxLifetime)
 	db.SetMaxIdleConns(pg.MaxIdleConns)
 	db.SetMaxOpenConns(pg.MaxOpenConns)
