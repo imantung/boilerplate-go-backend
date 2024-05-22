@@ -20,6 +20,6 @@ func NewTestCntrl() TestCntrl {
 	return &TestCntrlImpl{}
 }
 
-func (s *TestCntrlImpl) GetTest(ctx echo.Context) error {
-	return ctx.String(http.StatusNotImplemented, "test")
+func (s *TestCntrlImpl) GetTest(c echo.Context) error {
+	return c.String(http.StatusNotImplemented, "test")
 }

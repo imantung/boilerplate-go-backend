@@ -14,9 +14,9 @@ Boilerplate project for golang backend
     - [x] [Echo Framework](https://echo.labstack.com/)
     - [ ] HealthCheck API
     - [ ] Custom error handler
-    - [ ] Custom logger 
-    - [ ] Access Control List (ACL)
-    - [ ] OAuth2 Auth
+    - [ ] Custom logger handler
+    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check code at [internal/app/infra/oauth.go](internal/app/infra/oauth.go)
+    - [ ] Access Control List (ACL) with [Casbin](https://github.com/casbin/casbin)
     - [ ] Server-Side Cache (Redis)
 - Testing
     - [ ] Table Driven Test
@@ -42,11 +42,9 @@ Boilerplate project for golang backend
 
 The project use employee clocking system as use case
 - For Mobile App 
-    - Login/Logout
     - Clock-in
     - Clock-out
 - For Backoffice Dashboard
-    - Login/logout
     - Employee Clock History
     - Manage User
 
