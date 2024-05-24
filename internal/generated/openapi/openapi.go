@@ -16,6 +16,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	OAuth2Scopes = "OAuth2.Scopes"
+)
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
@@ -31,6 +35,8 @@ type ServerInterfaceWrapper struct {
 // GetTest converts echo context to params.
 func (w *ServerInterfaceWrapper) GetTest(ctx echo.Context) error {
 	var err error
+
+	ctx.Set(OAuth2Scopes, []string{"read"})
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetTest(ctx)
@@ -72,9 +78,12 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/ySOsWrGMAwGX6V8s0mcZNPWqYQO7ZCtdDCJ2hiMZSy1S/C7/zi/ljsQh3Qh5h8BXbBo",
-	"iUF4/Vxfttsd/rlqlAzCNHg0BymcQ4kgLIMfZjiUYKf2fjRW6/LLN6RwDRYlrwcIb2xb3ztU1iJZ+Y5m",
-	"7zsO1r3GYs9bH+9ofRyUa38B9HXhryYQTrNC45hkD+kUNZqWeUH7bo8AAAD//0HH3hnJAAAA",
+	"H4sIAAAAAAAC/3xRwU7DMAz9lcrnau26W24TBzRxGBLjNO0QpR6N6OIocZnGlH9Hdhk7IDjFee/Jfs++",
+	"gqNTpICBM5grZHRT8nx5cQOeUKHteuKhk+o40lkhO/FAyX9a9hQeqMdf4GsawcDAHE3TjOTsOFBms1x1",
+	"q+YmRKghO4rzGNuffAADj8kGzpV1DnOumColKoqYtHOGGhLa/i6V37ceajgnz3gn9XtjSw1M7/ivOxVA",
+	"EeklSiOymr8I5MORxCx7HoVbP2+qndY1fGDKniTCctHKKIoYbPRgYLVoFx3UEC0PGrZhzCzFG+rzk26j",
+	"uZB3wkvQHCnkeUNd28rTY3bJR55nbZ/U6+1uYPb3i+3nRR3KocyaJB5VMv29ASiH8hUAAP//1TBcFBcC",
+	"AAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

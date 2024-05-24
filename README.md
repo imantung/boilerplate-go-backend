@@ -14,7 +14,7 @@ Boilerplate project for golang backend
     - [ ] HealthCheck API
     - [ ] Custom error handler
     - [ ] Custom logger handler
-    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the implementation at [internal/app/infra/oauth.go](internal/app/infra/oauth.go)
+    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the implementation at [internal/app/infra/oauth/handler.go](internal/app/infra/handler.go)
     - [ ] Access Control List (ACL) with [Casbin](https://github.com/casbin/casbin)
     - [ ] Server-Side Cache (Redis)
     - [ ] Audit Trail
@@ -47,21 +47,26 @@ The project use employee clocking system as use case
     - Clock-in
     - Clock-out
 - For Backoffice Dashboard
+    - Manage Employee
     - Employee Clock History
-    - Manage User
 
 ## Notes 
 
 - The project is OPINIONATED based on author knowledge and experience
 - The project is PRAGMATIC, it use the other popular/proven go library as much as possible without reinvented the wheel
-- The project is MONOLITH BACKEND, you may need to customize it for microservices 
-- This is CONTINUOUS PROJECT, the author use the project as his actual project reference and keep improve it
+- The project is MONOLITH BACKEND, you may need to customize code for microservices needs
+- This is CONTINUOUS PROJECT, the author use this as his actual project reference and keep improve it
 - The project is OPEN-FOR-DISCUSSION, feel free to ping the author for any feedback/question and/or open issue ticket
 
 ## FAQ
 
-1. Echo VS Fiber? [Fiber](https://github.com/gofiber/fiber) is faster and more popular web framework compared than Echo (although not signification). The caveat is Fiber based on fasthttp and not compatible with net/http which cucumbersome when use other project. In this project case, we are using [go-oauth2](https://github.com/go-oauth2/oauth2). Check the benchmark at [here](https://medium.com/deno-the-complete-reference/go-gin-vs-fiber-vs-echo-how-much-performance-difference-is-really-there-for-a-real-world-use-1ed29d6a3e4d).
-2. Pgx for postgres? [Pgx](https://github.com/jackc/pgx) is faster and more compatible postgres driver compare with [pq](https://github.com/lib/pq). There are 2 way to use pgx: through database/sql and direct implementation (which offer more capability). The problem with 2nd approach (direct implementation) is the interface is not compatible with database/sql which is issue when want to use other library (in our case, it is query builder).
+1. Echo VS Fiber? 
+
+    [Fiber](https://github.com/gofiber/fiber) is a popular and (slightly) faster web framework compared than [Echo](https://echo.labstack.com/). The caveat is Fiber based on fasthttp and not compatible with net/http which cumbersome if we use other net/http based project. In this project case, we are using [go-oauth2](https://github.com/go-oauth2/oauth2) to generate server interface. Check the [benchmark between Fiber and Echo](https://medium.com/deno-the-complete-reference/go-gin-vs-fiber-vs-echo-how-much-performance-difference-is-really-there-for-a-real-world-use-1ed29d6a3e4d).
+
+2. Pgx for postgres? 
+
+    [Pgx](https://github.com/jackc/pgx) is faster and more compatible postgres driver compare with [pq](https://github.com/lib/pq). There are 2 way to use pgx: through database/sql and direct implementation (which offer more capability). The problem with 2nd approach (direct implementation) is the interface is not compatible with database/sql which is issue when want to use other library (in our case, it is query builder).
 
 ## Author
 

@@ -1,11 +1,9 @@
 package infra
 
 import (
-	"net/http"
-
-	"github.com/go-oauth2/oauth2/v4/server"
 	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/oauth"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -27,19 +25,16 @@ type (
 var _ openapi.ServerInterface = (*Server)(nil)
 var _ = di.Provide(NewEcho)
 
-func NewEcho(server Server, oauthSrv *server.Server) *echo.Echo {
+func NewEcho(server Server, oauthHandler *oauth.Handler) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
-	openapi.RegisterHandlers(e, server)
 
-	e.Any("authorize", wrapHandler(oauthSrv.HandleAuthorizeRequest))
-	e.Any("token", wrapHandler(oauthSrv.HandleTokenRequest))
+	group := e.Group("", oauthHandler.Middleware())
+	openapi.RegisterHandlers(group, server)
+
+	e.Any("/oauth/authorize", oauthHandler.HandleAuthorizeRequest)
+	e.Any("/oauth/token", oauthHandler.HandleTokenRequest)
+
 	return e
-}
-
-func wrapHandler(fn func(http.ResponseWriter, *http.Request) error) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return fn(c.Response().Writer, c.Request())
-	}
 }

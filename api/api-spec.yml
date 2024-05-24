@@ -10,4 +10,21 @@ paths:
       responses:
         '200':
           description: OK
+      security:
+        - OAuth2: [read]
+      
+components:
+  # learn more: https://swagger.io/docs/specification/authentication/oauth2/
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode: # <---- OAuth flow(authorizationCode, implicit, password or clientCredentials)
+          authorizationUrl: /oauth/authorize
+          tokenUrl: /oauth/token
+          scopes:
+            read: Grants read access
+            write: Grants write access
+            admin: Grants access to admin operations
 
+          
