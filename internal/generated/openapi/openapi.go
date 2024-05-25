@@ -23,8 +23,8 @@ const (
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
-	// (GET /test)
-	GetTest(ctx echo.Context) error
+	// (GET /hello)
+	GetHello(ctx echo.Context) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -32,14 +32,14 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
-// GetTest converts echo context to params.
-func (w *ServerInterfaceWrapper) GetTest(ctx echo.Context) error {
+// GetHello converts echo context to params.
+func (w *ServerInterfaceWrapper) GetHello(ctx echo.Context) error {
 	var err error
 
 	ctx.Set(OAuth2Scopes, []string{"read"})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetTest(ctx)
+	err = w.Handler.GetHello(ctx)
 	return err
 }
 
@@ -71,19 +71,19 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/test", wrapper.GetTest)
+	router.GET(baseURL+"/hello", wrapper.GetHello)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/3xRwU7DMAz9lcrnau26W24TBzRxGBLjNO0QpR6N6OIocZnGlH9Hdhk7IDjFee/Jfs++",
-	"gqNTpICBM5grZHRT8nx5cQOeUKHteuKhk+o40lkhO/FAyX9a9hQeqMdf4GsawcDAHE3TjOTsOFBms1x1",
-	"q+YmRKghO4rzGNuffAADj8kGzpV1DnOumColKoqYtHOGGhLa/i6V37ceajgnz3gn9XtjSw1M7/ivOxVA",
-	"EeklSiOymr8I5MORxCx7HoVbP2+qndY1fGDKniTCctHKKIoYbPRgYLVoFx3UEC0PGrZhzCzFG+rzk26j",
-	"uZB3wkvQHCnkeUNd28rTY3bJR55nbZ/U6+1uYPb3i+3nRR3KocyaJB5VMv29ASiH8hUAAP//1TBcFBcC",
-	"AAA=",
+	"H4sIAAAAAAAC/2RRsW7jMAz9FYOzETvO5i244S64IQdcOwUZBJmphCqiINEN0kD/XpBuGhSdJL33/Pwe",
+	"eQNL50QRIxcYb1DQztnz9b91eEaF9tuZ3SC3U6CLQmZmR9m/G/YUf9GEP8DnHGCEjgTs7gxCC8VSWnzN",
+	"dPYRRvidTeTSGGuxlIapUaKhhFmtCrSQ0UwPqbw+9dDCJXvGB6nPO1tbYHrF73EUgSrcNcmXCg9QBfLx",
+	"RJKOPQfhtv92zZPeW3jDXDxJ5vWqF29KGE3yMMJm1a8GaCEZdtqucxiCOr0gy/HVZ6dNkP+oQLqVRLEs",
+	"Qxn6Xo4Ji80+8fK3/V9Ne98NjIfHVg7LbI71WBdNlpQqmbW0Y05j1wWyJjgqPK43w6aT1PVYPwIAAP//",
+	"lN/lHv8BAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

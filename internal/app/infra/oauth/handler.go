@@ -29,6 +29,11 @@ func NewHandler() *Handler {
 	manager := manage.NewDefaultManager()
 	manager.MustTokenStorage(store.NewMemoryTokenStore()) // token memory store
 
+	// // NOTE: by passed validate URI due to different uri between swagger-ui address and server address
+	// manager.SetValidateURIHandler(func(baseURI, redirectURI string) error {
+	// 	return nil
+	// })
+
 	clientStore := store.NewClientStore()
 	clientStore.Set("000000", &models.Client{ // TODO: create API set client
 		ID:     "000000",

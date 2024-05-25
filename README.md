@@ -10,11 +10,12 @@ Boilerplate project for golang backend
     - [x] Graceful Shutdown -- Check the implementation at [cmd/boilerplate-go-backend/main.go](cmd/boilerplate-go-backend/main.go)
 - API
     - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- check the specification at [api/api-spec.yml](api/api-spec.yml)
+      - [x] Embedded swagger-ui -- check in the browser: http://localhost:1323/swagger/ui
     - [x] [Echo Framework](https://echo.labstack.com/)
+      - [ ] Custom error handler
+      - [ ] Custom logger handler
     - [ ] HealthCheck API
-    - [ ] Custom error handler
-    - [ ] Custom logger handler
-    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the implementation at [internal/app/infra/oauth/handler.go](internal/app/infra/handler.go)
+    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the implementation at [internal/app/infra/oauth/handler.go](internal/app/infra/oauth/handler.go)
     - [ ] Access Control List (ACL) with [Casbin](https://github.com/casbin/casbin)
     - [ ] Server-Side Cache (Redis)
     - [ ] Audit Trail

@@ -1,18 +1,18 @@
-openapi: '3.0.2'
+openapi: "3.0.2"
 info:
   title: API Title
-  version: '1.0'
+  version: "1.0"
 servers:
-  - url: http://localhost:1323
+  - url: http://localhost:1323/api
 paths:
-  /test:
+  /hello:
     get:
       responses:
-        '200':
+        "200":
           description: OK
       security:
         - OAuth2: [read]
-      
+
 components:
   # learn more: https://swagger.io/docs/specification/authentication/oauth2/
   securitySchemes:
@@ -26,5 +26,3 @@ components:
             read: Grants read access
             write: Grants write access
             admin: Grants access to admin operations
-
-          
