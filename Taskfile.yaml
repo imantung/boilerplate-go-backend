@@ -1,0 +1,18 @@
+version: '3'
+
+env:
+  IMAGE_NAME: boilerplate-go-backend
+
+dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
+
+tasks:
+  run:
+    cmds:
+      - go run ./cmd/boilerplate-go-backendtask
+  build-docker-image:
+      - docker build -t $IMAGE_NAME .
+  run-with-docker:
+      - docker run -it --rm --name my-running-app -p 1323:1323 $IMAGE_NAME
+silent: true
+
+# Learn more at https://taskfile.dev/usage/
