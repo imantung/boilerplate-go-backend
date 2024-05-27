@@ -57,7 +57,7 @@ func NewHandler() *Handler {
 	return handler
 }
 
-func (o *Handler) Middleware() echo.MiddlewareFunc {
+func (o *Handler) ValidateTokenMW() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			req := c.Request()

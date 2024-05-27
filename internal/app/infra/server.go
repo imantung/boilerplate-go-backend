@@ -30,7 +30,7 @@ func NewEcho(server Server, oauthHandler *oauth.Handler) *echo.Echo {
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 
-	group := e.Group("api", oauthHandler.Middleware())
+	group := e.Group("api", oauthHandler.ValidateTokenMW())
 	openapi.RegisterHandlers(group, server)
 
 	e.Any("/oauth/authorize", oauthHandler.HandleAuthorizeRequest)

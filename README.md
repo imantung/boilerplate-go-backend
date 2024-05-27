@@ -16,7 +16,10 @@ Boilerplate project for golang backend.
       - [ ] Custom logger handler
     - [ ] HealthCheck API
     - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the implementation at [internal/app/infra/oauth/handler.go](internal/app/infra/oauth/handler.go)
-    - [ ] Access Control List (ACL) with [Casbin](https://github.com/casbin/casbin)
+      - [x] Handle authorize request
+      - [x] Handle token request
+      - [x] Validate bearer token
+      - [ ] Validate scope access
     - [ ] Server-Side Cache (Redis)
     - [ ] Audit Trail
 - Testing
@@ -38,7 +41,7 @@ Boilerplate project for golang backend.
 - Others
     - [x] Build tool with [TaskFile](https://taskfile.dev/) (a better alternative from [GNU Make](https://www.gnu.org/software/make/))
     - [x] Dockerfile 
-    - [ ] Docker-compose to run system component (database, redis)
+    - [ ] Docker-compose
     - [ ] Database migration with [go-migrate](https://github.com/golang-migrate/migrate)
 
 ## Use Case
