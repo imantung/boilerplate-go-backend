@@ -1,4 +1,4 @@
-package oauth
+package auth
 
 import (
 	"log"
@@ -13,19 +13,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var _ = di.Provide(NewHandler)
-
 const (
 	OAuth2Token = "OAuth2.Token"
 )
 
 type (
-	Handler struct {
+	OAuthHandler struct {
 		Server *server.Server
 	}
 )
 
-func NewHandler() *Handler {
+var _ = di.Provide(NewHandler)
+
+func NewHandler() *OAuthHandler {
 	manager := manage.NewDefaultManager()
 	manager.MustTokenStorage(store.NewMemoryTokenStore()) // token memory store
 
@@ -46,7 +46,7 @@ func NewHandler() *Handler {
 	srv.SetAllowGetAccessRequest(true)
 	srv.SetClientInfoHandler(server.ClientFormHandler)
 
-	handler := &Handler{
+	handler := &OAuthHandler{
 		Server: srv,
 	}
 
@@ -57,7 +57,7 @@ func NewHandler() *Handler {
 	return handler
 }
 
-func (o *Handler) ValidateTokenMW() echo.MiddlewareFunc {
+func (o *OAuthHandler) ValidateTokenMW() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			req := c.Request()
@@ -71,26 +71,26 @@ func (o *Handler) ValidateTokenMW() echo.MiddlewareFunc {
 	}
 }
 
-func (o *Handler) InternalErrorHandler(err error) (re *errors.Response) {
+func (o *OAuthHandler) InternalErrorHandler(err error) (re *errors.Response) {
 	log.Println("Internal Error:", err.Error()) // TODO: change the logger
 	return
 }
 
-func (o *Handler) ResponseErrorHandler(re *errors.Response) {
+func (o *OAuthHandler) ResponseErrorHandler(re *errors.Response) {
 	log.Println("Response Error:", re.Error.Error()) // TODO: change the logger
 }
 
-func (o *Handler) UserAuthorizationHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
+func (o *OAuthHandler) UserAuthorizationHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
 	return "000000", nil
 }
 
-func (o *Handler) HandleAuthorizeRequest(c echo.Context) error {
+func (o *OAuthHandler) HandleAuthorizeRequest(c echo.Context) error {
 	req := c.Request()
 	w := c.Response().Writer
 	return o.Server.HandleAuthorizeRequest(w, req)
 }
 
-func (o *Handler) HandleTokenRequest(c echo.Context) error {
+func (o *OAuthHandler) HandleTokenRequest(c echo.Context) error {
 	req := c.Request()
 	w := c.Response().Writer
 	return o.Server.HandleTokenRequest(w, req)

@@ -14,7 +14,7 @@ Boilerplate project for golang backend.
     - [x] [Echo Framework](https://echo.labstack.com/)
       - [ ] Custom error handler
       - [ ] Custom logger handler
-    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/oauth/handler.go](internal/app/infra/oauth/handler.go)
+    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
       - [x] Handle authorize request
       - [x] Handle token request
       - [x] Validate bearer token

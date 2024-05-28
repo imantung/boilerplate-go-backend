@@ -6,9 +6,9 @@ import (
 	"log"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/auth"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: trigger DI provide for database connection
-	"github.com/imantung/boilerplate-go-backend/internal/app/infra/oauth"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -37,7 +37,7 @@ var (
 func Start(
 	server Server,
 	cfg *config.Config,
-	oauth *oauth.Handler,
+	oauth *auth.OAuthHandler,
 	health HealthChecker,
 ) error {
 	e.Use(middleware.Logger())
