@@ -7,6 +7,7 @@ import (
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
+	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: trigger DI provide for database connection
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/oauth"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
 	"github.com/labstack/echo/v4"
@@ -22,9 +23,6 @@ type (
 	Server struct {
 		dig.In
 
-		Config *config.Config
-		Oauth  *oauth.Handler
-
 		// NOTE: add new controller below without variable name
 		controller.HelloCntrl
 	}
@@ -36,20 +34,27 @@ var (
 	e = echo.New()
 )
 
-func Start(server Server) error {
+func Start(
+	server Server,
+	cfg *config.Config,
+	oauth *oauth.Handler,
+	health HealthChecker,
+) error {
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 
-	group := e.Group("api", server.Oauth.ValidateTokenMW())
+	group := e.Group("api", oauth.ValidateTokenMW())
 	openapi.RegisterHandlers(group, server)
 
-	e.Any("/oauth/authorize", server.Oauth.HandleAuthorizeRequest)
-	e.Any("/oauth/token", server.Oauth.HandleTokenRequest)
+	e.Any("/oauth/authorize", oauth.HandleAuthorizeRequest)
+	e.Any("/oauth/token", oauth.HandleTokenRequest)
 
 	e.File("/swagger/api-spec.yaml", "api/api-spec.yaml")
 	e.Static("/swagger/ui", "api/swagger-ui")
 
-	return e.Start(server.Config.Address)
+	e.Any("/health", health.Handle)
+
+	return e.Start(cfg.Address)
 }
 
 func Stop(db *sql.DB) error {

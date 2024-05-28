@@ -1,0 +1,25 @@
+services:
+  pg:
+    platform: linux/x86_64
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    volumes:
+      - pg:/var/lib/postgresql/data
+      # Load database schema from file ./database.sql 
+      # - ./database.sql:/docker-entrypoint-initdb.d/database.sql 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+volumes:
+  pg:
+    driver: local
