@@ -1,4 +1,4 @@
-package infra
+package config
 
 import (
 	"time"
@@ -25,13 +25,13 @@ type (
 	}
 )
 
-const ConfigPrefix = "APP"
+const Prefix = "APP"
 
 var _ = di.Provide(NewConfig)
 
 func NewConfig() (*Config, error) {
 	var cfg Config
-	err := envconfig.Process(ConfigPrefix, &cfg)
+	err := envconfig.Process(Prefix, &cfg)
 	if err != nil {
 		return nil, err
 	}

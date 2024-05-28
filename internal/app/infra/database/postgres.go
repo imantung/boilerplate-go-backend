@@ -1,9 +1,10 @@
-package infra
+package database
 
 import (
 	"database/sql"
 	"fmt"
 
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -11,7 +12,7 @@ import (
 
 var _ = di.Provide(NewPostgres)
 
-func NewPostgres(cfg *Config) (*sql.DB, error) {
+func NewPostgres(cfg *config.Config) (*sql.DB, error) {
 	pg := cfg.Postgres
 	conn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",

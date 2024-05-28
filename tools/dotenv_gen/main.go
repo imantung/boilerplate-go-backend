@@ -8,12 +8,12 @@ import (
 
 	"github.com/fatih/structs"
 	"github.com/iancoleman/strcase"
-	"github.com/imantung/boilerplate-go-backend/internal/app/infra"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 )
 
 func main() {
-	cfg := &infra.Config{}
-	prefix := infra.ConfigPrefix
+	cfg := &config.Config{}
+	prefix := config.Prefix
 	writeDotenv(os.Stdout, prefix, cfg)
 }
 

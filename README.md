@@ -6,34 +6,36 @@ Boilerplate project for golang backend.
     - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)
     - [x] [SOLID Principle](https://en.wikipedia.org/wiki/SOLID)
     - [x] [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) with [Uber Dig](https://github.com/uber-go/dig) -- Check the implementation at [internal/app/infra/di/di.go](internal/app/infra/di/di.go)
-    - [x] Centralized config (env variable) -- Check the implementation at [internal/app/infra/config.go](internal/app/infra/config.go)
+    - [x] Centralized config (env variable) -- Check the implementation at [internal/app/infra/config/config.go](internal/app/infra/config/config.go)
     - [x] Graceful Shutdown -- Check the implementation at [cmd/boilerplate-go-backend/main.go](cmd/boilerplate-go-backend/main.go)
-- API
+- API Server
     - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
       - [x] Embedded swagger-ui -- Check in the browser: http://localhost:1323/swagger/ui
     - [x] [Echo Framework](https://echo.labstack.com/)
       - [ ] Custom error handler
       - [ ] Custom logger handler
-    - [ ] HealthCheck API
     - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the implementation at [internal/app/infra/oauth/handler.go](internal/app/infra/oauth/handler.go)
       - [x] Handle authorize request
       - [x] Handle token request
       - [x] Validate bearer token
       - [ ] Validate scope access
+    - [ ] HealthCheck API
     - [ ] Server-Side Cache (Redis)
-    - [ ] Audit Trail
 - Testing
     - [ ] Table Driven Test
     - [ ] Test Automation
 - Database
     - [x] PostgresSQL Database
-    - [x] Connection pool -- Check the implementation at [internal/app/infra/postgres.go#27](internal/app/infra/postgres.go#27)
+    - [x] Connection pool -- Check the implementation at [internal/app/infra/database/postgres.go#27](internal/app/infra/database/postgres.go#27)
     - [ ] Data Access Layer (DAL) / Repository Pattern
     - [ ] ORMHate Philosophy
     - [ ] Query Builder (using Squirrel)
-    - [ ] Transaction in Service Layer
+    - [ ] Database Transaction (`BEGIN`) in Business Logic Layer
+    - [ ] Soft Delete
+    - [ ] Audit Columns (`created_at`, `modified_at`, etc)
+    - [ ] User Audit Trail / Transaction Logs
 - Code Generator
-    - [x] Open API Stub Server using [oapi-codegen](github.com/deepmap/oapi-codegen) -- Check the go-generate at [internal/app/infra/server.go](internal/app/infra/server.go) 
+    - [x] Open API Stub Server using [oapi-codegen](github.com/deepmap/oapi-codegen) -- Check the go-generate at [internal/app/app.go](internal/app/app.go) 
     - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
     - [x] Generate Dotenv file -- Check the tool at [tools/dotenv_gen](tools/dotenv_gen/README.md)
     - [ ] Generate Controler (+Service) template
