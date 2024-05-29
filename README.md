@@ -3,48 +3,54 @@
 Boilerplate project for golang backend. 
 
 - Application
-    - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)
-    - [x] [SOLID Principle](https://en.wikipedia.org/wiki/SOLID)
-    - [x] [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) with [Uber Dig](https://github.com/uber-go/dig) -- Check the code at [internal/app/infra/di/di.go](internal/app/infra/di/di.go)
-    - [x] Centralized config (env variable) -- Check the code at [internal/app/infra/config/config.go](internal/app/infra/config/config.go)
-    - [x] Graceful Shutdown -- Check the code at [cmd/boilerplate-go-backend/main.go](cmd/boilerplate-go-backend/main.go)
+  - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)
+  - [x] [SOLID Principle](https://en.wikipedia.org/wiki/SOLID)
+  - [x] [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) with [Uber Dig](https://github.com/uber-go/dig) -- Check the code at [internal/app/infra/di/di.go](internal/app/infra/di/di.go)
+  - [x] Centralized config (env variable) -- Check the code at [internal/app/infra/config/config.go](internal/app/infra/config/config.go)
+  - [x] Graceful Shutdown -- Check the code at [cmd/boilerplate-go-backend/main.go](cmd/boilerplate-go-backend/main.go)
 - API Server
-    - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
-      - [x] Embedded swagger-ui -- Check in the browser: http://localhost:1323/swagger/ui
-    - [x] [Echo Framework](https://echo.labstack.com/)
-      - [ ] Custom error handler
-      - [ ] Custom logger handler
-    - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
-      - [x] Handle authorize request
-      - [x] Handle token request
-      - [x] Validate bearer token
-      - [ ] Validate scope access
-    - [x] Health check API -- Check the code at [internal/app/health.go](internal/app/health.go)
-    - [ ] Server-Side Cache (Redis)
-- Testing
-    - [ ] Table Driven Test
-    - [ ] Test Automation
+  - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
+  - [x] Embedded swagger-ui -- Check in the browser: http://localhost:1323/swagger/ui
+  - [x] [Echo Framework](https://echo.labstack.com/)
+    - [ ] Custom error handler
+    - [ ] Custom logger handler
+  - [ ] Server-Side Cache (Redis)
+  - [ ] User Audit Trail / Transaction Logs
+- Authentication
+  - [ ] Basic Auth 
+  - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
+    - [x] Handle authorize request
+    - [x] Handle token request
+    - [x] Validate bearer token
+    - [ ] Validate scope access
 - Database
-    - [x] PostgresSQL Database
+  - [x] PostgresSQL Database
     - [x] Connection pool -- Check the code at [internal/app/infra/database/postgres.go#27](internal/app/infra/database/postgres.go#27)
-    - [ ] Data Access Layer (DAL) / Repository Pattern
-    - [ ] ORMHate Philosophy
-    - [ ] Query Builder (using Squirrel)
-    - [ ] Database Transaction (`BEGIN`) in Business Logic Layer
-    - [ ] Soft Delete
-    - [ ] Audit Columns (`created_at`, `modified_at`, etc)
-    - [ ] User Audit Trail / Transaction Logs
+  - [ ] Data Access Layer (DAL) / Repository Pattern
+  - [ ] ORMHate Philosophy
+  - [ ] Query Builder (using Squirrel)
+  - [ ] Database Transaction (`BEGIN`) in Business Logic Layer
+  - [ ] Soft Delete
+  - [ ] Audit Columns (`created_at`, `modified_at`, etc)
 - Code Generator
-    - [x] Open API Stub Server using [oapi-codegen](github.com/deepmap/oapi-codegen) -- Check the go-generate at [internal/app/app.go](internal/app/app.go) 
-    - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
-    - [x] Generate Dotenv file -- Check the tool at [tools/dotenv_gen](tools/dotenv_gen/README.md)
-    - [ ] Generate Controler (+Service) template
-    - [ ] GenerateRepository template
+  - [x] Open API Stub Server using [oapi-codegen](github.com/deepmap/oapi-codegen) -- Check the go-generate at [internal/app/app.go](internal/app/app.go) 
+  - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
+  - [x] Generate Dotenv file -- Check the tool at [tools/dotenv_gen](tools/dotenv_gen/README.md)
+  - [ ] Generate Controler (+ Service) 
+  - [ ] Generate Repository (+ SQL) 
+  - [ ] Generate Entity Model from Database schema
+- Observability
+  - [x] Health check API -- Check the code at [internal/app/health.go](internal/app/health.go)
+  - [ ] Structured Logger
+  - [ ] Tracing
+- Testing
+  - [ ] Table Driven Test
+  - [ ] Test Automation
 - Others
-    - [x] Build tool with [TaskFile](https://taskfile.dev/) (a better alternative from [GNU Make](https://www.gnu.org/software/make/))
-    - [x] Dockerfile 
-    - [ ] Docker-compose
-    - [ ] Database migration with [go-migrate](https://github.com/golang-migrate/migrate)
+  - [x] Build tool with [TaskFile](https://taskfile.dev/) (a better alternative from [GNU Make](https://www.gnu.org/software/make/))
+  - [x] Dockerfile 
+  - [x] Docker-compose
+  - [ ] Database migration with [go-migrate](https://github.com/golang-migrate/migrate)
 
 ## Use Case
 

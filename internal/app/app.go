@@ -34,12 +34,14 @@ var (
 	e = echo.New()
 )
 
+// Start the application
 func Start(
 	server Server,
 	cfg *config.Config,
 	oauth *auth.OAuthHandler,
 	health HealthChecker,
 ) error {
+
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 
@@ -57,8 +59,9 @@ func Start(
 	return e.Start(cfg.Address)
 }
 
+// Stop the application
 func Stop(db *sql.DB) error {
-	log.Printf("Gracefully shutdown the service")
+	log.Printf("Gracefully stop the service")
 	ctx := context.Background()
 
 	var err error
