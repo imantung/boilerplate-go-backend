@@ -20,46 +20,42 @@ import (
 //go:generate go run github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@v2.1.0 --package openapi -generate types,server,spec --o ../generated/openapi/openapi.go ../../api/api-spec.yaml
 
 type (
-	Server struct {
+	App struct {
 		dig.In
 
-		// NOTE: add new controller below without variable name
+		Config *config.Config
+		Oauth  *auth.OAuthHandler
+		Health *HealthChecker
+
+		// NOTE: add controller without variable name belows
 		controller.HelloCntrl
 	}
 )
 
-var _ openapi.ServerInterface = (*Server)(nil) // NOTE: server must be implemented `openapi.server`. The functions are defined in the controllers
+var _ openapi.ServerInterface = (*App)(nil) // NOTE: server must be implemented `openapi.server`. The functions are defined in the controllers
 
 var (
 	e = echo.New()
 )
 
-// Start the application
-func Start(
-	server Server,
-	cfg *config.Config,
-	oauth *auth.OAuthHandler,
-	health HealthChecker,
-) error {
-
+func Start(app App) error {
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 
-	group := e.Group("api", oauth.ValidateTokenMW())
-	openapi.RegisterHandlers(group, server)
+	group := e.Group("api", app.Oauth.ValidateTokenMW())
+	openapi.RegisterHandlers(group, app)
 
-	e.Any("/oauth/authorize", oauth.HandleAuthorizeRequest)
-	e.Any("/oauth/token", oauth.HandleTokenRequest)
+	e.Any("/oauth/authorize", app.Oauth.HandleAuthorizeRequest)
+	e.Any("/oauth/token", app.Oauth.HandleTokenRequest)
 
 	e.File("/swagger/api-spec.yaml", "api/api-spec.yaml")
 	e.Static("/swagger/ui", "api/swagger-ui")
 
-	e.Any("/health", health.Handle)
+	e.Any("/health", app.Health.Handle)
 
-	return e.Start(cfg.Address)
+	return e.Start(app.Config.Address)
 }
 
-// Stop the application
 func Stop(db *sql.DB) error {
 	log.Printf("Gracefully stop the service")
 	ctx := context.Background()

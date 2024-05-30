@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/labstack/echo/v4"
-	"go.uber.org/dig"
 )
 
 // NOTE: Learn more about health check api at
@@ -15,10 +15,17 @@ import (
 
 type (
 	HealthChecker struct {
-		dig.In
 		PG *sql.DB
 	}
 )
+
+var _ = di.Provide(NewHealthChecker)
+
+func NewHealthChecker(pg *sql.DB) *HealthChecker {
+	return &HealthChecker{
+		PG: pg,
+	}
+}
 
 func (h *HealthChecker) healthMap() map[string]error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

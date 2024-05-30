@@ -11,7 +11,8 @@ type (
 	HelloCntrl interface {
 		GetHello(ctx echo.Context) error
 	}
-	HelloCntrlImpl struct{}
+	HelloCntrlImpl struct {
+	}
 )
 
 var _ = di.Provide(NewHelloCntrl)
