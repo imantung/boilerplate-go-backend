@@ -4,11 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/auth"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: trigger DI provide for database connection
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -25,7 +27,7 @@ type (
 
 		Config *config.Config
 		Oauth  *auth.OAuthHandler
-		Health *HealthChecker
+		Health HealthMap
 
 		// NOTE: add controller without variable name belows
 		controller.HelloCntrl
@@ -33,6 +35,7 @@ type (
 )
 
 var _ openapi.ServerInterface = (*App)(nil) // NOTE: server must be implemented `openapi.server`. The functions are defined in the controllers
+var _ = di.Provide(Health)
 
 var (
 	e = echo.New()
@@ -65,4 +68,15 @@ func Stop(db *sql.DB) error {
 	err = multierr.Append(err, db.Close())
 
 	return err
+}
+
+func Health(db *sql.DB) HealthMap {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	return HealthMap{
+		"postgres": db.PingContext(ctx),
+	}
+
+	// NOTE: Learn more about health check api at https://testfully.io/blog/api-health-check-monitoring/
 }

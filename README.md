@@ -40,7 +40,7 @@ Boilerplate project for golang backend.
   - [ ] Generate Repository (+ SQL) 
   - [ ] Generate Entity Model from Database schema
 - Observability
-  - [x] Health check API -- Check the code at [internal/app/health.go](internal/app/health.go)
+  - [x] Health check -- Check the code at [internal/app/app.go#73](internal/app/app.go#73)
   - [ ] Structured Logger
   - [ ] Tracing
 - Testing
