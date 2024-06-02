@@ -10,7 +10,7 @@ Boilerplate project for golang backend.
 - API Server
   - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
   - [x] Enable [swagger-ui](https://github.com/swagger-api/swagger-ui) (`/swagger/ui`)
-  - [x] [Echo Framework](https://echo.labstack.com/)
+  - [x] [Echo Framework](https://echo.labstack.com/)  -- Check the code at [internal/app/app.go](internal/app/app.go)
     - [ ] Custom error handler
   - [ ] Server-Side Cache (Redis)
 - Security and Observability
@@ -32,8 +32,8 @@ Boilerplate project for golang backend.
     - [x] Escalate log level for slow request
   - [ ] Tracing
 - Database
-  - [x] PostgresSQL Database
-    - [x] Connection pool -- Check the code at [internal/app/infra/database/postgres.go#27](internal/app/infra/database/postgres.go#27)
+  - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
+    - [x] Set connection pool 
   - [ ] Data Access Layer (DAL) / Repository Pattern
   - [ ] ORMHate Philosophy
   - [ ] Query Builder (using Squirrel)

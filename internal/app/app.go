@@ -63,7 +63,7 @@ func Start(app App) error {
 	e.Use(middleware.CORS())
 
 	group := e.Group("api", app.Oauth.ValidateToken)
-	openapi.RegisterHandlers(group, app)
+	openapi.RegisterHandlers(group, app) // NOTE: register open-api endpoints
 
 	e.Any("/oauth/authorize", app.Oauth.HandleAuthorizeRequest)
 	e.Any("/oauth/token", app.Oauth.HandleTokenRequest)
