@@ -3,21 +3,23 @@ package app
 import (
 	"context"
 	"database/sql"
-	"log"
-	"time"
-
 	"net/http"
+	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/auth"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
-	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: trigger DI provide for database connection
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/logger"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/rs/zerolog/log"
+	"github.com/ziflex/lecho/v3"
 	"go.uber.org/dig"
 	"go.uber.org/multierr"
+
+	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
 
 	_ "expvar"         // enable `/debug/vars` endpoint
 	_ "net/http/pprof" // enable `/debug/pprof` endpoint
@@ -32,6 +34,7 @@ type (
 
 		Config *config.Config
 		Health HealthMap
+		Logger *logger.Handler
 
 		Oauth *auth.OAuthHandler
 		Basic *auth.BasicAuthHandler
@@ -49,7 +52,14 @@ var (
 )
 
 func Start(app App) error {
-	e.Use(middleware.Logger())
+	e.HideBanner = true
+	e.Debug = app.Config.Debug
+
+	log.Logger = app.Logger.ZeroLogger
+	e.Logger = app.Logger.LechoLogger
+
+	e.Use(middleware.RequestID()) // NOTE: should be prior lecho middleware to append log field `request_id`
+	e.Use(lecho.Middleware(app.Logger.LechoConfig))
 	e.Use(middleware.CORS())
 
 	group := e.Group("api", app.Oauth.ValidateToken)
@@ -69,7 +79,7 @@ func Start(app App) error {
 }
 
 func Stop(db *sql.DB) error {
-	log.Printf("Gracefully stop the service")
+	log.Info().Msg("Gracefully stop the service")
 	ctx := context.Background()
 
 	var err error

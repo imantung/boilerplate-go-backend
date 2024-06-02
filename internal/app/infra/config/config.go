@@ -15,6 +15,8 @@ type Config struct {
 		Username string `envconfig:"USERNAME" default:"joe" required:"true"`
 		Secret   string `envconfig:"SECRET" default:"secret" required:"true"`
 	} `envconfig:"BASIC_AUTH"`
+
+	Debug bool `envconfig:"DEBUG" default:"true"`
 }
 type Database struct {
 	DBName string `envconfig:"DBNAME" required:"true" default:"postgres"`

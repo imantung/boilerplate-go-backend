@@ -10,6 +10,8 @@ require (
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/rs/zerolog v1.33.0
+	github.com/ziflex/lecho/v3 v3.6.0
 	go.uber.org/dig v1.17.1
 	go.uber.org/multierr v1.11.0
 )

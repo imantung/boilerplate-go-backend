@@ -24,7 +24,12 @@ Boilerplate project for golang backend.
   - [x] Health check -- Check the code at [internal/app/app.go#73](internal/app/app.go#73)
   - [x] Enable [expvar](https://pkg.go.dev/expvar) endpoint (`/debug/vars`) 
   - [x] Enable [pprof](https://pkg.go.dev/net/http/pprof) endpoint (`/debug/pprof`)
-  - [ ] Structured Log
+  - [x] Structured Log with [ZeroLog](https://github.com/rs/zerolog) -- Check the code at [/internal/app/infra/logger/logger.go](/internal/app/infra/logger/logger.go)
+    - [x] Pretty format (not json) when debug enabled
+    - [x] Append log field `pid` 
+    - [x] Append log field `go_version`
+    - [x] Append log field `request_id`
+    - [x] Escalate log level for slow request
   - [ ] Tracing
 - Database
   - [x] PostgresSQL Database
