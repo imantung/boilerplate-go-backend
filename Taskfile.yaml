@@ -7,12 +7,25 @@ dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
 
 tasks:
   run:
-    cmds:
+    deps: [precond]
+    cmds:    
       - go run ./cmd/boilerplate-go-backend
-  build-docker-image:
-      - docker build -t $IMAGE_NAME .
   run-with-docker:
+    deps: [build-image, precond]
+    cmds:
       - docker run -it --rm --name my-running-app -p 1323:1323 $IMAGE_NAME
+  precond:
+    cmds:
+      - docker-compose up -d
+  clean:
+    cmds:
+      - docker-compose down --remove-orphans
+  build-image:
+    cmds:
+      - docker build -t $IMAGE_NAME .
+  gen-dotenv:
+    cmds:
+      - go run ./tools/dotenv_gen/main.go > .env
 silent: true
 
 # Learn more at https://taskfile.dev/usage/

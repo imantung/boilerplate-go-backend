@@ -2,27 +2,30 @@
 
 Boilerplate project for golang backend. 
 
-- Application
+- General
   - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)
-  - [x] [SOLID Principle](https://en.wikipedia.org/wiki/SOLID)
   - [x] [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) with [Uber Dig](https://github.com/uber-go/dig) -- Check the code at [internal/app/infra/di/di.go](internal/app/infra/di/di.go)
   - [x] Centralized config (env variable) -- Check the code at [internal/app/infra/config/config.go](internal/app/infra/config/config.go)
   - [x] Graceful Shutdown -- Check the code at [cmd/boilerplate-go-backend/main.go](cmd/boilerplate-go-backend/main.go)
 - API Server
   - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
-  - [x] Embedded swagger-ui -- Check in the browser: http://localhost:1323/swagger/ui
+  - [x] Enable [swagger-ui](https://github.com/swagger-api/swagger-ui) (`/swagger/ui`)
   - [x] [Echo Framework](https://echo.labstack.com/)
     - [ ] Custom error handler
     - [ ] Custom logger handler
   - [ ] Server-Side Cache (Redis)
-  - [ ] User Audit Trail / Transaction Logs
-- Authentication
+- Security and Observability
   - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
   - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
     - [x] Handle authorize request
     - [x] Handle token request
     - [x] Validate bearer token
     - [ ] Validate scope access
+  - [x] Health check -- Check the code at [internal/app/app.go#73](internal/app/app.go#73)
+  - [x] Enable [expvar](https://pkg.go.dev/expvar) endpoint (`/debug/vars`) 
+  - [x] Enable [pprof](https://pkg.go.dev/net/http/pprof) endpoint (`/debug/pprof`)
+  - [ ] Structured Log
+  - [ ] Tracing
 - Database
   - [x] PostgresSQL Database
     - [x] Connection pool -- Check the code at [internal/app/infra/database/postgres.go#27](internal/app/infra/database/postgres.go#27)
@@ -32,6 +35,7 @@ Boilerplate project for golang backend.
   - [ ] Database Transaction (`BEGIN`) in Business Logic Layer
   - [ ] Soft Delete
   - [ ] Audit Columns (`created_at`, `modified_at`, etc)
+- - [ ] User Audit Trail / Transaction Logs
 - Code Generator
   - [x] Open API Stub Server using [oapi-codegen](github.com/deepmap/oapi-codegen) -- Check the go-generate at [internal/app/app.go](internal/app/app.go) 
   - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
@@ -39,12 +43,6 @@ Boilerplate project for golang backend.
   - [ ] Generate Controler (+ Service) 
   - [ ] Generate Repository (+ SQL) 
   - [ ] Generate Entity Model from Database schema
-- Observability
-  - [x] Health check -- Check the code at [internal/app/app.go#73](internal/app/app.go#73)
-  - [x] Enable `/debug/vars` endpoint -- Learn more at <https://pkg.go.dev/expvar>
-  - [x] Enable `/debug/pprof` endpoint -- Lear more at <https://pkg.go.dev/net/http/pprof>
-  - [ ] Structured Log
-  - [ ] Tracing
 - Testing
   - [ ] Table Driven Test
   - [ ] Test Automation
