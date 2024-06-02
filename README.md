@@ -12,7 +12,6 @@ Boilerplate project for golang backend.
   - [x] Enable [swagger-ui](https://github.com/swagger-api/swagger-ui) (`/swagger/ui`)
   - [x] [Echo Framework](https://echo.labstack.com/)
     - [ ] Custom error handler
-    - [ ] Custom logger handler
   - [ ] Server-Side Cache (Redis)
 - Security and Observability
   - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
@@ -25,6 +24,7 @@ Boilerplate project for golang backend.
   - [x] Enable [expvar](https://pkg.go.dev/expvar) endpoint (`/debug/vars`) 
   - [x] Enable [pprof](https://pkg.go.dev/net/http/pprof) endpoint (`/debug/pprof`)
   - [x] Structured Log with [ZeroLog](https://github.com/rs/zerolog) -- Check the code at [/internal/app/infra/logger/logger.go](/internal/app/infra/logger/logger.go)
+    - [x] Implemented to Echo with [Lecho](https://github.com/ziflex/lecho) 
     - [x] Pretty format (not json) when debug enabled
     - [x] Append log field `pid` 
     - [x] Append log field `go_version`
