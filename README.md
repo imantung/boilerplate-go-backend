@@ -41,6 +41,8 @@ Boilerplate project for golang backend.
   - [ ] Generate Entity Model from Database schema
 - Observability
   - [x] Health check -- Check the code at [internal/app/app.go#73](internal/app/app.go#73)
+  - [x] Enable `/debug/vars` endpoint -- Learn more at <https://pkg.go.dev/expvar>
+  - [x] Enable `/debug/pprof` endpoint -- Lear more at <https://pkg.go.dev/net/http/pprof>
   - [ ] Structured Log
   - [ ] Tracing
 - Testing

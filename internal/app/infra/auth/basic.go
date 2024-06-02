@@ -20,7 +20,7 @@ var _ = di.Provide(NewBasicAuthHandler)
 func NewBasicAuthHandler(cfg *config.Config) *BasicAuthHandler {
 	return &BasicAuthHandler{
 		Username: cfg.BasicAuth.Username,
-		Secret:   cfg.BasicAuth.Username,
+		Secret:   cfg.BasicAuth.Secret,
 	}
 }
 

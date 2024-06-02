@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"net/http"
+
 	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/auth"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
@@ -16,6 +18,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/dig"
 	"go.uber.org/multierr"
+
+	_ "expvar"         // enable `/debug/vars` endpoint
+	_ "net/http/pprof" // enable `/debug/pprof` endpoint
 )
 
 //go:generate mkdir -p ../../generated/openapi
@@ -58,6 +63,7 @@ func Start(app App) error {
 
 	basicAuth := middleware.BasicAuth(app.Basic.Validate)
 	e.Any("/health", app.Health.Handle, basicAuth)
+	e.GET("/debug/*/*", echo.WrapHandler(http.DefaultServeMux), basicAuth)
 
 	return e.Start(app.Config.Address)
 }
