@@ -7,23 +7,26 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type (
-	Config struct {
-		Address  string   `envconfig:"ADDRESS" required:"true" default:":1323"`
-		Postgres DBConfig `envconfig:"PG"`
-	}
-	DBConfig struct {
-		DBName string `envconfig:"DBNAME" required:"true" default:"postgres"`
-		DBUser string `envconfig:"DBUSER" required:"true" default:"postgres"`
-		DBPass string `envconfig:"DBPASS" required:"true" default:"postgres"`
-		Host   string `envconfig:"HOST" required:"true" default:"localhost"`
-		Port   string `envconfig:"PORT" required:"true" default:"5432"`
+type Config struct {
+	Address  string   `envconfig:"ADDRESS" required:"true" default:":1323"`
+	Postgres Database `envconfig:"PG"`
 
-		MaxOpenConns    int           `envconfig:"MAX_OPEN_CONNS" default:"30" required:"true"`
-		MaxIdleConns    int           `envconfig:"MAX_IDLE_CONNS" default:"6" required:"true"`
-		ConnMaxLifetime time.Duration `envconfig:"CONN_MAX_LIFETIME" default:"30m" required:"true"`
-	}
-)
+	BasicAuth struct {
+		Username string `envconfig:"USERNAME" default:"joe" required:"true"`
+		Secret   string `envconfig:"SECRET" default:"secret" required:"true"`
+	} `envconfig:"BASIC_AUTH"`
+}
+type Database struct {
+	DBName string `envconfig:"DBNAME" required:"true" default:"postgres"`
+	DBUser string `envconfig:"DBUSER" required:"true" default:"postgres"`
+	DBPass string `envconfig:"DBPASS" required:"true" default:"postgres"`
+	Host   string `envconfig:"HOST" required:"true" default:"localhost"`
+	Port   string `envconfig:"PORT" required:"true" default:"5432"`
+
+	MaxOpenConns    int           `envconfig:"MAX_OPEN_CONNS" default:"30" required:"true"`
+	MaxIdleConns    int           `envconfig:"MAX_IDLE_CONNS" default:"6" required:"true"`
+	ConnMaxLifetime time.Duration `envconfig:"CONN_MAX_LIFETIME" default:"30m" required:"true"`
+}
 
 const Prefix = "APP"
 

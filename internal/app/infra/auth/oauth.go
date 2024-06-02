@@ -57,17 +57,15 @@ func NewHandler() *OAuthHandler {
 	return handler
 }
 
-func (o *OAuthHandler) ValidateTokenMW() echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			req := c.Request()
-			token, err := o.Server.ValidationBearerToken(req)
-			if err != nil {
-				return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
-			}
-			c.Set(OAuth2Token, token)
-			return next(c)
+func (o *OAuthHandler) ValidateToken(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		req := c.Request()
+		token, err := o.Server.ValidationBearerToken(req)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
+		c.Set(OAuth2Token, token)
+		return next(c)
 	}
 }
 

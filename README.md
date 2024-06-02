@@ -17,7 +17,7 @@ Boilerplate project for golang backend.
   - [ ] Server-Side Cache (Redis)
   - [ ] User Audit Trail / Transaction Logs
 - Authentication
-  - [ ] Basic Auth 
+  - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
   - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
     - [x] Handle authorize request
     - [x] Handle token request
@@ -41,7 +41,7 @@ Boilerplate project for golang backend.
   - [ ] Generate Entity Model from Database schema
 - Observability
   - [x] Health check -- Check the code at [internal/app/app.go#73](internal/app/app.go#73)
-  - [ ] Structured Logger
+  - [ ] Structured Log
   - [ ] Tracing
 - Testing
   - [ ] Table Driven Test

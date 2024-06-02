@@ -26,8 +26,10 @@ type (
 		dig.In
 
 		Config *config.Config
-		Oauth  *auth.OAuthHandler
 		Health HealthMap
+
+		Oauth *auth.OAuthHandler
+		Basic *auth.BasicAuthHandler
 
 		// NOTE: add controller without variable name belows
 		controller.HelloCntrl
@@ -45,7 +47,7 @@ func Start(app App) error {
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 
-	group := e.Group("api", app.Oauth.ValidateTokenMW())
+	group := e.Group("api", app.Oauth.ValidateToken)
 	openapi.RegisterHandlers(group, app)
 
 	e.Any("/oauth/authorize", app.Oauth.HandleAuthorizeRequest)
@@ -54,7 +56,8 @@ func Start(app App) error {
 	e.File("/swagger/api-spec.yaml", "api/api-spec.yaml")
 	e.Static("/swagger/ui", "api/swagger-ui")
 
-	e.Any("/health", app.Health.Handle)
+	basicAuth := middleware.BasicAuth(app.Basic.Validate)
+	e.Any("/health", app.Health.Handle, basicAuth)
 
 	return e.Start(app.Config.Address)
 }
