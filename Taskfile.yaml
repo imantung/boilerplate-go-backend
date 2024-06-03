@@ -26,6 +26,7 @@ tasks:
   gen-dotenv:
     cmds:
       - go run ./tools/dotenv_gen/main.go > .env
+      - go run ./tools/dotenv_gen/main.go > .env_sample
 silent: true
 
 # Learn more at https://taskfile.dev/usage/
