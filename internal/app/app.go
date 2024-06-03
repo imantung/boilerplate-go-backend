@@ -58,9 +58,13 @@ func Start(app App) error {
 	log.Logger = app.Logger.ZeroLogger
 	e.Logger = app.Logger.LechoLogger
 
-	e.Use(middleware.RequestID()) // NOTE: should be prior lecho middleware to append log field `request_id`
-	e.Use(lecho.Middleware(app.Logger.LechoConfig))
-	e.Use(middleware.CORS())
+	e.Use(
+		middleware.RequestID(), // NOTE: should be prior lecho middleware to append log field `request_id`
+		lecho.Middleware(app.Logger.LechoConfig),
+		middleware.CORS(),
+		middleware.Recover(),
+		middleware.Secure(),
+	)
 
 	group := e.Group("api", app.Oauth.ValidateToken)
 	openapi.RegisterHandlers(group, app) // NOTE: register open-api endpoints

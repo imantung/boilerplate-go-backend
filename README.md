@@ -9,10 +9,21 @@ Boilerplate project for golang backend.
   - [x] Graceful Shutdown -- Check the code at [cmd/boilerplate-go-backend/main.go](cmd/boilerplate-go-backend/main.go)
 - API Server
   - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
-  - [x] Enable [swagger-ui](https://github.com/swagger-api/swagger-ui) (`/swagger/ui`)
+    - [x] Enable [swagger-ui](https://github.com/swagger-api/swagger-ui) (`/swagger/ui`)
   - [x] [Echo Framework](https://echo.labstack.com/)  -- Check the code at [internal/app/app.go](internal/app/app.go)
+    - [x] [Recovery from panic](https://echo.labstack.com/docs/middleware/recover)
+    - [x] [Generate Request ID](https://echo.labstack.com/docs/middleware/request-id)
+    - [x] [Protection against XSS attack and other common security threats](https://echo.labstack.com/docs/middleware/secure)
     - [ ] Custom error handler
-  - [ ] Server-Side Cache (Redis)
+    - [ ] Server-Side Cache (Redis)
+    - [ ] Rate Limiter (Redis)
+  - [ ] Resful API
+    - [ ] Create operation
+    - [ ] Read operation
+    - [ ] Update operation
+    - [ ] Delete operation
+      - [ ] Soft-Delete
+      - [ ] Idempotent
 - Security and Observability
   - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
   - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
@@ -29,16 +40,16 @@ Boilerplate project for golang backend.
     - [x] Append log field `pid` 
     - [x] Append log field `go_version`
     - [x] Append log field `request_id`
+    - [ ] Append log field `user_id`
     - [x] Escalate log level for slow request
   - [ ] Tracing
 - Database
   - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
-    - [x] Set connection pool 
+    - [x] connection pool 
   - [ ] Data Access Layer (DAL) / Repository Pattern
-  - [ ] ORMHate Philosophy
-  - [ ] Query Builder (using Squirrel)
-  - [ ] Database Transaction (`BEGIN`) in Business Logic Layer
-  - [ ] Soft Delete
+    - [ ] ORMHate Philosophy
+    - [ ] Query Builder (using Squirrel)
+    - [ ] Database Transaction (`BEGIN`) from Business Logic Layer
   - [ ] Audit Columns (`created_at`, `modified_at`, etc)
 - - [ ] User Audit Trail / Transaction Logs
 - Code Generator
@@ -57,15 +68,15 @@ Boilerplate project for golang backend.
   - [x] Docker-compose
   - [ ] Database migration with [go-migrate](https://github.com/golang-migrate/migrate)
 
-## Use Case
+## Study Case: Employee Clocking System
 
-The project use employee clocking system as use case
-- For Mobile App 
-    - Clock-in
-    - Clock-out
+The project use employee clocking system as the study case
+- For Client App 
+  - [ ] Clock-in
+  - [ ] Clock-out
 - For Backoffice Dashboard
-    - Manage Employee
-    - Employee Clock History
+  - [ ] Manage Employee
+  - [ ] Employee Clock History
 
 ## Notes 
 

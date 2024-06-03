@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/go-oauth2/oauth2/v4/errors"
@@ -11,6 +10,7 @@ import (
 	"github.com/go-oauth2/oauth2/v4/store"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -46,10 +46,7 @@ func NewHandler() *OAuthHandler {
 	srv.SetAllowGetAccessRequest(true)
 	srv.SetClientInfoHandler(server.ClientFormHandler)
 
-	handler := &OAuthHandler{
-		Server: srv,
-	}
-
+	handler := &OAuthHandler{Server: srv}
 	srv.UserAuthorizationHandler = handler.UserAuthorizationHandler
 	srv.SetInternalErrorHandler(handler.InternalErrorHandler)
 	srv.SetResponseErrorHandler(handler.ResponseErrorHandler)
@@ -70,12 +67,12 @@ func (o *OAuthHandler) ValidateToken(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func (o *OAuthHandler) InternalErrorHandler(err error) (re *errors.Response) {
-	log.Println("Internal Error:", err.Error()) // TODO: change the logger
+	log.Err(err).Msg("Oauth Internal Error")
 	return
 }
 
 func (o *OAuthHandler) ResponseErrorHandler(re *errors.Response) {
-	log.Println("Response Error:", re.Error.Error()) // TODO: change the logger
+	log.Err(re.Error).Msg("Oauth Response Error")
 }
 
 func (o *OAuthHandler) UserAuthorizationHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
