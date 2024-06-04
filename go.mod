@@ -10,6 +10,7 @@ require (
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/oapi-codegen/runtime v1.1.1
 	github.com/rs/zerolog v1.33.0
 	github.com/ziflex/lecho/v3 v3.6.0
 	go.uber.org/dig v1.17.1
@@ -17,6 +18,7 @@ require (
 )
 
 require (
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.8 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect

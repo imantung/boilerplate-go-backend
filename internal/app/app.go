@@ -40,7 +40,7 @@ type (
 		Basic *auth.BasicAuthHandler
 
 		// NOTE: add controller without variable name belows
-		controller.HelloCntrl
+		controller.EmployeeCntrl
 	}
 )
 

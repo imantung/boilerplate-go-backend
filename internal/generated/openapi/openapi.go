@@ -8,12 +8,14 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"fmt"
+	"net/http"
 	"net/url"
 	"path"
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime"
 )
 
 const (
@@ -22,9 +24,33 @@ const (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-
-	// (GET /hello)
-	GetHello(ctx echo.Context) error
+	// Returns a list of employee.
+	// (GET /employees)
+	GetEmployees(ctx echo.Context) error
+	// Create new employee
+	// (POST /employees)
+	PostEmployees(ctx echo.Context) error
+	// Delete employee by ID
+	// (DELETE /employees/{id})
+	DeleteEmployeesId(ctx echo.Context, id int64) error
+	// Get employee by ID
+	// (GET /employees/{id})
+	GetEmployeesId(ctx echo.Context, id int64) error
+	// Partially update employee by ID
+	// (PATCH /employees/{id})
+	PatchEmployeesId(ctx echo.Context, id int64) error
+	// Update employee by ID
+	// (PUT /employees/{id})
+	PutEmployeesId(ctx echo.Context, id int64) error
+	// Employee start to work
+	// (POST /employees/{id}/clock-in)
+	PostEmployeesIdClockIn(ctx echo.Context, id int64) error
+	// Employee stop to work
+	// (POST /employees/{id}/clock-out)
+	PostEmployeesIdClockOut(ctx echo.Context, id int64) error
+	// Get employee clock history
+	// (GET /employees/{id}/clocks)
+	GetEmployeesIdClocks(ctx echo.Context, id int64) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -32,14 +58,151 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
-// GetHello converts echo context to params.
-func (w *ServerInterfaceWrapper) GetHello(ctx echo.Context) error {
+// GetEmployees converts echo context to params.
+func (w *ServerInterfaceWrapper) GetEmployees(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(OAuth2Scopes, []string{"read"})
+	ctx.Set(OAuth2Scopes, []string{"backoffice"})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetHello(ctx)
+	err = w.Handler.GetEmployees(ctx)
+	return err
+}
+
+// PostEmployees converts echo context to params.
+func (w *ServerInterfaceWrapper) PostEmployees(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(OAuth2Scopes, []string{"backoffice"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PostEmployees(ctx)
+	return err
+}
+
+// DeleteEmployeesId converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteEmployeesId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(OAuth2Scopes, []string{"backoffice"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteEmployeesId(ctx, id)
+	return err
+}
+
+// GetEmployeesId converts echo context to params.
+func (w *ServerInterfaceWrapper) GetEmployeesId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(OAuth2Scopes, []string{"backoffice"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetEmployeesId(ctx, id)
+	return err
+}
+
+// PatchEmployeesId converts echo context to params.
+func (w *ServerInterfaceWrapper) PatchEmployeesId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(OAuth2Scopes, []string{"backoffice"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PatchEmployeesId(ctx, id)
+	return err
+}
+
+// PutEmployeesId converts echo context to params.
+func (w *ServerInterfaceWrapper) PutEmployeesId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(OAuth2Scopes, []string{"backoffice"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PutEmployeesId(ctx, id)
+	return err
+}
+
+// PostEmployeesIdClockIn converts echo context to params.
+func (w *ServerInterfaceWrapper) PostEmployeesIdClockIn(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(OAuth2Scopes, []string{"client"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PostEmployeesIdClockIn(ctx, id)
+	return err
+}
+
+// PostEmployeesIdClockOut converts echo context to params.
+func (w *ServerInterfaceWrapper) PostEmployeesIdClockOut(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(OAuth2Scopes, []string{"client"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PostEmployeesIdClockOut(ctx, id)
+	return err
+}
+
+// GetEmployeesIdClocks converts echo context to params.
+func (w *ServerInterfaceWrapper) GetEmployeesIdClocks(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(OAuth2Scopes, []string{"backoffice", "client"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetEmployeesIdClocks(ctx, id)
 	return err
 }
 
@@ -71,19 +234,33 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/hello", wrapper.GetHello)
+	router.GET(baseURL+"/employees", wrapper.GetEmployees)
+	router.POST(baseURL+"/employees", wrapper.PostEmployees)
+	router.DELETE(baseURL+"/employees/:id", wrapper.DeleteEmployeesId)
+	router.GET(baseURL+"/employees/:id", wrapper.GetEmployeesId)
+	router.PATCH(baseURL+"/employees/:id", wrapper.PatchEmployeesId)
+	router.PUT(baseURL+"/employees/:id", wrapper.PutEmployeesId)
+	router.POST(baseURL+"/employees/:id/clock-in", wrapper.PostEmployeesIdClockIn)
+	router.POST(baseURL+"/employees/:id/clock-out", wrapper.PostEmployeesIdClockOut)
+	router.GET(baseURL+"/employees/:id/clocks", wrapper.GetEmployeesIdClocks)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/2RRsW7jMAz9FYOzETvO5i244S64IQdcOwUZBJmphCqiINEN0kD/XpBuGhSdJL33/Pwe",
-	"eQNL50QRIxcYb1DQztnz9b91eEaF9tuZ3SC3U6CLQmZmR9m/G/YUf9GEP8DnHGCEjgTs7gxCC8VSWnzN",
-	"dPYRRvidTeTSGGuxlIapUaKhhFmtCrSQ0UwPqbw+9dDCJXvGB6nPO1tbYHrF73EUgSrcNcmXCg9QBfLx",
-	"RJKOPQfhtv92zZPeW3jDXDxJ5vWqF29KGE3yMMJm1a8GaCEZdtqucxiCOr0gy/HVZ6dNkP+oQLqVRLEs",
-	"Qxn6Xo4Ji80+8fK3/V9Ne98NjIfHVg7LbI71WBdNlpQqmbW0Y05j1wWyJjgqPK43w6aT1PVYPwIAAP//",
-	"lN/lHv8BAAA=",
+	"H4sIAAAAAAAC/+SXQW/qOBDHv4o15yyhtNpDbl2oKrSHVlv1VHFwnYFYJB6vPaHKonz3lR0ItMBSsU9P",
+	"T+0pZJzY//nNP/awBkWVJYOGPWRr8Khqp7l5UgVWGEMPtzUXo/BrXtJbDMmaC3L6H8mazJhyPAg+uxIy",
+	"SCkE0+0IQgJeke3mfZVqSfO5VggZ3Dtp2ItdTEil0HtIQJUaDe+e6e63420CTEt8v2CMQBvGGhumj+ER",
+	"tCGkzZzC+qy5DGN3lS2pQRTjktRSm4V4ajxjBQms0HlNBjIYDq7CUmTRSKshg+vBcDCCBKzkIqaT4mae",
+	"eLdADhey6CKPaR4SQL7rH0rAobdkfPfCaDgMlxy9ctpyt+rDnzGJbVEge9mV42Uf4KydJeDrqpKugQz+",
+	"Qq6d8UKKUnsWNBdbcQNIgOXCh/f/2MGeSF+8knQ5zNoELPkj6h/J/yT5Y4eSURh863Wfl90meyVI1zpv",
+	"O0ElMh4mM4nxPp1pHkvpZIWMzkel73N59ujEdALBP5DFskMCRlbBQjqPPP6utcMcMnY1BqcXWMn43ZCr",
+	"ZHCwNvz7DfSu1IZxgQ7akP4HnDeHOH29sfwlTLuEe57itemyOWuGs07+9dgNfzC7e+QLwFnJqjjyGYXw",
+	"N4L3KB1rWZaNqG0uL7KgrY9tR/V3suDzZewON8VUhVPut0Bh/ZmNfprHY3FqvgbhTTPxgW7fAniWjgWT",
+	"eCO33MM77nqOW2tLrSKp/4JLnV8/T/eh5m+Cl+z/pfu59moD1n+5fSE5wfjdGRVBiUJ7Jtec2yWSE/yj",
+	"HLc6zm2CK1GSkqVAs9KOTBU0JVDHNrxgtlmaxgcK8pxdXY+u09A4B9EbNR+nvH2cijm5vr/fqRG6siWG",
+	"FTpxfYGOCG+TU/Pu/bfIt8mfnPkoqXbW/hsAAP//LuPLKjANAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

@@ -1,18 +1,159 @@
 openapi: "3.0.2"
 info:
-  title: Employee CLocking System
-  version: "1.0"
+  title: Employee Clocking System
+  version: "0.1"
 servers:
   - url: http://localhost:1323/api
+    description: Dev Local Environment
+tags:
+  - name: Client Application
+    description: API for client application implementation
+  - name: Backoffice Dashboard
+    description: API for backoffice dashboard implementation
 paths:
-  /hello:
+  /employees:
     get:
+      summary: Returns a list of employee.
+      tags:
+        - "Backoffice Dashboard"
+      responses:
+          "200":
+            description: OK
+      security:
+        - OAuth2: [backoffice]
+    post:
+      summary: Create new employee
+      tags:
+        - "Backoffice Dashboard"
+      responses:
+          "200":
+            description: OK
+      security:
+        - OAuth2: [backoffice]
+  /employees/{id}:
+    get:
+      summary: Get employee by ID
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - "Backoffice Dashboard"
+      responses:
+          "200":
+            description: success
+      security:
+        - OAuth2: [backoffice]
+    put:
+      summary: Update employee by ID
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - "Backoffice Dashboard"
+      responses:
+          "200":
+            description: success
+      security:
+        - OAuth2: [backoffice]
+    patch:
+      summary: Partially update employee by ID
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - "Backoffice Dashboard"
+      responses:
+          "200":
+            description: success
+      security:
+        - OAuth2: [backoffice]
+    delete:
+      summary: Delete employee by ID
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - "Backoffice Dashboard"
+      responses:
+          "204":
+            description: success
+      security:
+        - OAuth2: [backoffice]
+  /employees/{id}/clocks:
+    get:
+      summary: Get employee clock history
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - "Backoffice Dashboard"
+        - "Client Application"
+      responses:
+          "200":
+            description: success
+      security:
+        - OAuth2: [backoffice, client]
+  /employees/{id}/clock-in:
+    post:
+      summary: Employee start to work
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - "Client Application"
       responses:
         "200":
-          description: OK
+          description: success
       security:
-        - OAuth2: [read]
-
+        - OAuth2: [client]
+  /employees/{id}/clock-out:
+    post:
+      summary: Employee stop to work
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      tags:
+        - "Client Application"
+      responses:
+        "200":
+          description: success
+      security:
+        - OAuth2: [client]
 components:
   # learn more: https://swagger.io/docs/specification/authentication/oauth2/
   securitySchemes:
@@ -23,6 +164,5 @@ components:
           authorizationUrl: /oauth/authorize
           tokenUrl: /oauth/token
           scopes:
-            read: Grants read access
-            write: Grants write access
-            admin: Grants access to admin operations
+            client: Grants client access
+            backoffice: Grants backoffice access

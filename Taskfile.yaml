@@ -7,26 +7,39 @@ dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
 
 tasks:
   run:
+    desc: "run the project in dev local environment"
     deps: [precond]
     cmds:    
       - go run ./cmd/boilerplate-go-backend
   run-with-docker:
+    desc: "run the project in dev local environment with docker"
     deps: [build-image, precond]
     cmds:
       - docker run -it --rm --name my-running-app -p 1323:1323 $IMAGE_NAME
   precond:
+    desc: "start precondition to run the project"
     cmds:
       - docker-compose up -d
   clean:
+    desc: "clean the dev local environment"
     cmds:
       - docker-compose down --remove-orphans
   build-image:
+    desc: "build docker image"
     cmds:
       - docker build -t $IMAGE_NAME .
   gen-dotenv:
+    desc: "generate .env file"
     cmds:
       - go run ./tools/dotenv_gen/main.go > .env
       - go run ./tools/dotenv_gen/main.go > .env_sample
+  gen-code:
+    desc: "generate code"
+    cmds:
+      - rm -rf internal/generated
+      - mkdir -p internal/generated/openapi
+      - go generate ./...
+      - go mod tidy
 silent: true
 
 # Learn more at https://taskfile.dev/usage/

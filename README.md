@@ -17,13 +17,26 @@ Boilerplate project for golang backend.
     - [ ] Custom error handler
     - [ ] Server-Side Cache (Redis)
     - [ ] Rate Limiter (Redis)
-  - [ ] Resful API
-    - [ ] Create operation
-    - [ ] Read operation
-    - [ ] Update operation
-    - [ ] Delete operation
-      - [ ] Soft-Delete
-      - [ ] Idempotent
+- [RESTful API](https://en.wikipedia.org/wiki/REST)
+  - [ ] `POST` Create operation 
+  - [ ] `GET` Read operation 
+    - [ ] Single entity
+    - [ ] Entity List
+    - [ ] Pagination
+    - [ ] Search / Filtering
+    - [ ] Sorting
+  - [ ] `UPDATE` Update operation
+  - [ ] `PATCH` Partially update operation
+  - [ ] `DELETE` Delete operation
+    - [ ] Soft-Delete
+    - [ ] Idempotent
+- [Layered Architecture](https://herbertograca.com/2017/08/03/layered-architecture/)
+   -  [ ] Controller Layer 
+   -  [ ] Business Logic Layer (Services)
+      - [ ] Trigger Database Transaction (`BEGIN`) 
+   -  [ ] Data Access Layer (Repos)
+      - [ ] ORMHate Philosophy
+      - [ ] Query Builder (using Squirrel)
 - Security and Observability
   - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
   - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
@@ -46,12 +59,9 @@ Boilerplate project for golang backend.
 - Database
   - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
     - [x] connection pool 
-  - [ ] Data Access Layer (DAL) / Repository Pattern
-    - [ ] ORMHate Philosophy
-    - [ ] Query Builder (using Squirrel)
-    - [ ] Database Transaction (`BEGIN`) from Business Logic Layer
   - [ ] Audit Columns (`created_at`, `modified_at`, etc)
-- - [ ] User Audit Trail / Transaction Logs
+  - [ ] User Audit Trail / Transaction Logs
+  - [ ] migration tool with [go-migrate](https://github.com/golang-migrate/migrate)
 - Code Generator
   - [x] Open API Stub Server using [oapi-codegen](github.com/deepmap/oapi-codegen) -- Check the go-generate at [internal/app/app.go](internal/app/app.go) 
   - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
@@ -66,7 +76,6 @@ Boilerplate project for golang backend.
   - [x] Build tool with [TaskFile](https://taskfile.dev/) (a better alternative from [GNU Make](https://www.gnu.org/software/make/))
   - [x] Dockerfile 
   - [x] Docker-compose
-  - [ ] Database migration with [go-migrate](https://github.com/golang-migrate/migrate)
 
 ## Study Case: Employee Clocking System
 
