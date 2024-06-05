@@ -3,12 +3,12 @@ package app
 import (
 	"context"
 	"database/sql"
-	"net/http"
 	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/auth"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
+	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/logger"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
@@ -19,14 +19,10 @@ import (
 	"go.uber.org/dig"
 	"go.uber.org/multierr"
 
-	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
-
-	_ "expvar"         // enable `/debug/vars` endpoint
+	_ "expvar" // enable `/debug/vars` endpoint
+	"net/http"
 	_ "net/http/pprof" // enable `/debug/pprof` endpoint
 )
-
-//go:generate mkdir -p ../../generated/openapi
-//go:generate go run github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@v2.1.0 --package openapi -generate types,server,spec --o ../generated/openapi/openapi.go ../../api/api-spec.yaml
 
 type (
 	App struct {

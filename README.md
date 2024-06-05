@@ -37,6 +37,12 @@ Boilerplate project for golang backend.
    -  [ ] Data Access Layer (Repos)
       - [ ] ORMHate Philosophy
       - [ ] Query Builder (using Squirrel)
+- Database
+  - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
+    - [x] Connection pool 
+  - [ ] Audit Columns (`created_at`, `modified_at`, etc)
+  - [ ] User AuditTrail (Transaction Logs)
+  - [ ] Migration tool with [go-migrate](https://github.com/golang-migrate/migrate)
 - Security and Observability
   - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
   - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
@@ -56,18 +62,10 @@ Boilerplate project for golang backend.
     - [ ] Append log field `user_id`
     - [x] Escalate log level for slow request
   - [ ] Tracing
-- Database
-  - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
-    - [x] connection pool 
-  - [ ] Audit Columns (`created_at`, `modified_at`, etc)
-  - [ ] User Audit Trail / Transaction Logs
-  - [ ] migration tool with [go-migrate](https://github.com/golang-migrate/migrate)
 - Code Generator
-  - [x] Open API Stub Server using [oapi-codegen](github.com/deepmap/oapi-codegen) -- Check the go-generate at [internal/app/app.go](internal/app/app.go) 
+  - [x] Open API Stub Server with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 
   - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
-  - [x] Generate Dotenv file -- Check the tool at [tools/dotenv_gen](tools/dotenv_gen/README.md)
-  - [ ] Generate Controler (+ Service) 
-  - [ ] Generate Repository (+ SQL) 
+  - [x] Generate Dotenv file -- Check the tool at [tools/dotenv-gen](tools/dotenv-gen)
   - [ ] Generate Entity Model from Database schema
 - Testing
   - [ ] Table Driven Test
@@ -99,7 +97,7 @@ The project use employee clocking system as the study case
 
 1. Echo VS Fiber? 
 
-    [Fiber](https://github.com/gofiber/fiber) is a popular and (slightly) faster web framework compared to [Echo](https://echo.labstack.com/). The caveat is that fiber is based on [fasthttp](https://github.com/valyala/fasthttp) and not compatible with [net/http](https://pkg.go.dev/net/http) which is cumbersome if we use other net/http based project. In our case, we are using [go-oauth2](https://github.com/go-oauth2/oauth2) to generate net/http server interface. Check the [benchmark between Fiber and Echo](https://medium.com/deno-the-complete-reference/go-gin-vs-fiber-vs-echo-how-much-performance-difference-is-really-there-for-a-real-world-use-1ed29d6a3e4d).
+    [Fiber](https://github.com/gofiber/fiber) is a popular and [faster](https://medium.com/deno-the-complete-reference/go-gin-vs-fiber-vs-echo-how-much-performance-difference-is-really-there-for-a-real-world-use-1ed29d6a3e4d) web framework compared to [Echo](https://echo.labstack.com/). The caveat is that fiber is based on [fasthttp](https://github.com/valyala/fasthttp) and not compatible with [net/http](https://pkg.go.dev/net/http) which is cumbersome if we use other net/http based project (in our case, [go-oauth2]).
 
 2. Pgx for postgres? 
 

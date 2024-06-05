@@ -4,18 +4,13 @@
 package openapi
 
 import (
-	"bytes"
-	"compress/gzip"
-	"encoding/base64"
+	"context"
 	"fmt"
 	"net/http"
-	"net/url"
-	"path"
-	"strings"
 
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
+	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
 )
 
 const (
@@ -246,91 +241,408 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 
 }
 
-// Base64 encoded, gzipped, json marshaled Swagger object
-var swaggerSpec = []string{
-
-	"H4sIAAAAAAAC/+SXQW/qOBDHv4o15yyhtNpDbl2oKrSHVlv1VHFwnYFYJB6vPaHKonz3lR0ItMBSsU9P",
-	"T+0pZJzY//nNP/awBkWVJYOGPWRr8Khqp7l5UgVWGEMPtzUXo/BrXtJbDMmaC3L6H8mazJhyPAg+uxIy",
-	"SCkE0+0IQgJeke3mfZVqSfO5VggZ3Dtp2ItdTEil0HtIQJUaDe+e6e63420CTEt8v2CMQBvGGhumj+ER",
-	"tCGkzZzC+qy5DGN3lS2pQRTjktRSm4V4ajxjBQms0HlNBjIYDq7CUmTRSKshg+vBcDCCBKzkIqaT4mae",
-	"eLdADhey6CKPaR4SQL7rH0rAobdkfPfCaDgMlxy9ctpyt+rDnzGJbVEge9mV42Uf4KydJeDrqpKugQz+",
-	"Qq6d8UKKUnsWNBdbcQNIgOXCh/f/2MGeSF+8knQ5zNoELPkj6h/J/yT5Y4eSURh863Wfl90meyVI1zpv",
-	"O0ElMh4mM4nxPp1pHkvpZIWMzkel73N59ujEdALBP5DFskMCRlbBQjqPPP6utcMcMnY1BqcXWMn43ZCr",
-	"ZHCwNvz7DfSu1IZxgQ7akP4HnDeHOH29sfwlTLuEe57itemyOWuGs07+9dgNfzC7e+QLwFnJqjjyGYXw",
-	"N4L3KB1rWZaNqG0uL7KgrY9tR/V3suDzZewON8VUhVPut0Bh/ZmNfprHY3FqvgbhTTPxgW7fAniWjgWT",
-	"eCO33MM77nqOW2tLrSKp/4JLnV8/T/eh5m+Cl+z/pfu59moD1n+5fSE5wfjdGRVBiUJ7Jtec2yWSE/yj",
-	"HLc6zm2CK1GSkqVAs9KOTBU0JVDHNrxgtlmaxgcK8pxdXY+u09A4B9EbNR+nvH2cijm5vr/fqRG6siWG",
-	"FTpxfYGOCG+TU/Pu/bfIt8mfnPkoqXbW/hsAAP//LuPLKjANAAA=",
+type GetEmployeesRequestObject struct {
 }
 
-// GetSwagger returns the content of the embedded swagger specification file
-// or error if failed to decode
-func decodeSpec() ([]byte, error) {
-	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
-	if err != nil {
-		return nil, fmt.Errorf("error base64 decoding spec: %w", err)
-	}
-	zr, err := gzip.NewReader(bytes.NewReader(zipped))
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %w", err)
-	}
-	var buf bytes.Buffer
-	_, err = buf.ReadFrom(zr)
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %w", err)
-	}
-
-	return buf.Bytes(), nil
+type GetEmployeesResponseObject interface {
+	VisitGetEmployeesResponse(w http.ResponseWriter) error
 }
 
-var rawSpec = decodeSpecCached()
-
-// a naive cached of a decoded swagger spec
-func decodeSpecCached() func() ([]byte, error) {
-	data, err := decodeSpec()
-	return func() ([]byte, error) {
-		return data, err
-	}
+type GetEmployees200Response struct {
 }
 
-// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
-func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
-	res := make(map[string]func() ([]byte, error))
-	if len(pathToFile) > 0 {
-		res[pathToFile] = rawSpec
-	}
-
-	return res
+func (response GetEmployees200Response) VisitGetEmployeesResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
 }
 
-// GetSwagger returns the Swagger specification corresponding to the generated code
-// in this file. The external references of Swagger specification are resolved.
-// The logic of resolving external references is tightly connected to "import-mapping" feature.
-// Externally referenced files must be embedded in the corresponding golang packages.
-// Urls can be supported but this task was out of the scope.
-func GetSwagger() (swagger *openapi3.T, err error) {
-	resolvePath := PathToRawSpec("")
+type PostEmployeesRequestObject struct {
+}
 
-	loader := openapi3.NewLoader()
-	loader.IsExternalRefsAllowed = true
-	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
-		pathToFile := url.String()
-		pathToFile = path.Clean(pathToFile)
-		getSpec, ok := resolvePath[pathToFile]
-		if !ok {
-			err1 := fmt.Errorf("path not found: %s", pathToFile)
-			return nil, err1
-		}
-		return getSpec()
+type PostEmployeesResponseObject interface {
+	VisitPostEmployeesResponse(w http.ResponseWriter) error
+}
+
+type PostEmployees200Response struct {
+}
+
+func (response PostEmployees200Response) VisitPostEmployeesResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type DeleteEmployeesIdRequestObject struct {
+	Id int64 `json:"id"`
+}
+
+type DeleteEmployeesIdResponseObject interface {
+	VisitDeleteEmployeesIdResponse(w http.ResponseWriter) error
+}
+
+type DeleteEmployeesId204Response struct {
+}
+
+func (response DeleteEmployeesId204Response) VisitDeleteEmployeesIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type GetEmployeesIdRequestObject struct {
+	Id int64 `json:"id"`
+}
+
+type GetEmployeesIdResponseObject interface {
+	VisitGetEmployeesIdResponse(w http.ResponseWriter) error
+}
+
+type GetEmployeesId200Response struct {
+}
+
+func (response GetEmployeesId200Response) VisitGetEmployeesIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PatchEmployeesIdRequestObject struct {
+	Id int64 `json:"id"`
+}
+
+type PatchEmployeesIdResponseObject interface {
+	VisitPatchEmployeesIdResponse(w http.ResponseWriter) error
+}
+
+type PatchEmployeesId200Response struct {
+}
+
+func (response PatchEmployeesId200Response) VisitPatchEmployeesIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PutEmployeesIdRequestObject struct {
+	Id int64 `json:"id"`
+}
+
+type PutEmployeesIdResponseObject interface {
+	VisitPutEmployeesIdResponse(w http.ResponseWriter) error
+}
+
+type PutEmployeesId200Response struct {
+}
+
+func (response PutEmployeesId200Response) VisitPutEmployeesIdResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostEmployeesIdClockInRequestObject struct {
+	Id int64 `json:"id"`
+}
+
+type PostEmployeesIdClockInResponseObject interface {
+	VisitPostEmployeesIdClockInResponse(w http.ResponseWriter) error
+}
+
+type PostEmployeesIdClockIn200Response struct {
+}
+
+func (response PostEmployeesIdClockIn200Response) VisitPostEmployeesIdClockInResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostEmployeesIdClockOutRequestObject struct {
+	Id int64 `json:"id"`
+}
+
+type PostEmployeesIdClockOutResponseObject interface {
+	VisitPostEmployeesIdClockOutResponse(w http.ResponseWriter) error
+}
+
+type PostEmployeesIdClockOut200Response struct {
+}
+
+func (response PostEmployeesIdClockOut200Response) VisitPostEmployeesIdClockOutResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type GetEmployeesIdClocksRequestObject struct {
+	Id int64 `json:"id"`
+}
+
+type GetEmployeesIdClocksResponseObject interface {
+	VisitGetEmployeesIdClocksResponse(w http.ResponseWriter) error
+}
+
+type GetEmployeesIdClocks200Response struct {
+}
+
+func (response GetEmployeesIdClocks200Response) VisitGetEmployeesIdClocksResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+// StrictServerInterface represents all server handlers.
+type StrictServerInterface interface {
+	// Returns a list of employee.
+	// (GET /employees)
+	GetEmployees(ctx context.Context, request GetEmployeesRequestObject) (GetEmployeesResponseObject, error)
+	// Create new employee
+	// (POST /employees)
+	PostEmployees(ctx context.Context, request PostEmployeesRequestObject) (PostEmployeesResponseObject, error)
+	// Delete employee by ID
+	// (DELETE /employees/{id})
+	DeleteEmployeesId(ctx context.Context, request DeleteEmployeesIdRequestObject) (DeleteEmployeesIdResponseObject, error)
+	// Get employee by ID
+	// (GET /employees/{id})
+	GetEmployeesId(ctx context.Context, request GetEmployeesIdRequestObject) (GetEmployeesIdResponseObject, error)
+	// Partially update employee by ID
+	// (PATCH /employees/{id})
+	PatchEmployeesId(ctx context.Context, request PatchEmployeesIdRequestObject) (PatchEmployeesIdResponseObject, error)
+	// Update employee by ID
+	// (PUT /employees/{id})
+	PutEmployeesId(ctx context.Context, request PutEmployeesIdRequestObject) (PutEmployeesIdResponseObject, error)
+	// Employee start to work
+	// (POST /employees/{id}/clock-in)
+	PostEmployeesIdClockIn(ctx context.Context, request PostEmployeesIdClockInRequestObject) (PostEmployeesIdClockInResponseObject, error)
+	// Employee stop to work
+	// (POST /employees/{id}/clock-out)
+	PostEmployeesIdClockOut(ctx context.Context, request PostEmployeesIdClockOutRequestObject) (PostEmployeesIdClockOutResponseObject, error)
+	// Get employee clock history
+	// (GET /employees/{id}/clocks)
+	GetEmployeesIdClocks(ctx context.Context, request GetEmployeesIdClocksRequestObject) (GetEmployeesIdClocksResponseObject, error)
+}
+
+type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
+type StrictMiddlewareFunc = strictecho.StrictEchoMiddlewareFunc
+
+func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareFunc) ServerInterface {
+	return &strictHandler{ssi: ssi, middlewares: middlewares}
+}
+
+type strictHandler struct {
+	ssi         StrictServerInterface
+	middlewares []StrictMiddlewareFunc
+}
+
+// GetEmployees operation middleware
+func (sh *strictHandler) GetEmployees(ctx echo.Context) error {
+	var request GetEmployeesRequestObject
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetEmployees(ctx.Request().Context(), request.(GetEmployeesRequestObject))
 	}
-	var specData []byte
-	specData, err = rawSpec()
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetEmployees")
+	}
+
+	response, err := handler(ctx, request)
+
 	if err != nil {
-		return
+		return err
+	} else if validResponse, ok := response.(GetEmployeesResponseObject); ok {
+		return validResponse.VisitGetEmployeesResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
 	}
-	swagger, err = loader.LoadFromData(specData)
+	return nil
+}
+
+// PostEmployees operation middleware
+func (sh *strictHandler) PostEmployees(ctx echo.Context) error {
+	var request PostEmployeesRequestObject
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PostEmployees(ctx.Request().Context(), request.(PostEmployeesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostEmployees")
+	}
+
+	response, err := handler(ctx, request)
+
 	if err != nil {
-		return
+		return err
+	} else if validResponse, ok := response.(PostEmployeesResponseObject); ok {
+		return validResponse.VisitPostEmployeesResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
 	}
-	return
+	return nil
+}
+
+// DeleteEmployeesId operation middleware
+func (sh *strictHandler) DeleteEmployeesId(ctx echo.Context, id int64) error {
+	var request DeleteEmployeesIdRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteEmployeesId(ctx.Request().Context(), request.(DeleteEmployeesIdRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteEmployeesId")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(DeleteEmployeesIdResponseObject); ok {
+		return validResponse.VisitDeleteEmployeesIdResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetEmployeesId operation middleware
+func (sh *strictHandler) GetEmployeesId(ctx echo.Context, id int64) error {
+	var request GetEmployeesIdRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetEmployeesId(ctx.Request().Context(), request.(GetEmployeesIdRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetEmployeesId")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetEmployeesIdResponseObject); ok {
+		return validResponse.VisitGetEmployeesIdResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PatchEmployeesId operation middleware
+func (sh *strictHandler) PatchEmployeesId(ctx echo.Context, id int64) error {
+	var request PatchEmployeesIdRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PatchEmployeesId(ctx.Request().Context(), request.(PatchEmployeesIdRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PatchEmployeesId")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PatchEmployeesIdResponseObject); ok {
+		return validResponse.VisitPatchEmployeesIdResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PutEmployeesId operation middleware
+func (sh *strictHandler) PutEmployeesId(ctx echo.Context, id int64) error {
+	var request PutEmployeesIdRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PutEmployeesId(ctx.Request().Context(), request.(PutEmployeesIdRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PutEmployeesId")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PutEmployeesIdResponseObject); ok {
+		return validResponse.VisitPutEmployeesIdResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PostEmployeesIdClockIn operation middleware
+func (sh *strictHandler) PostEmployeesIdClockIn(ctx echo.Context, id int64) error {
+	var request PostEmployeesIdClockInRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PostEmployeesIdClockIn(ctx.Request().Context(), request.(PostEmployeesIdClockInRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostEmployeesIdClockIn")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PostEmployeesIdClockInResponseObject); ok {
+		return validResponse.VisitPostEmployeesIdClockInResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PostEmployeesIdClockOut operation middleware
+func (sh *strictHandler) PostEmployeesIdClockOut(ctx echo.Context, id int64) error {
+	var request PostEmployeesIdClockOutRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PostEmployeesIdClockOut(ctx.Request().Context(), request.(PostEmployeesIdClockOutRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostEmployeesIdClockOut")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PostEmployeesIdClockOutResponseObject); ok {
+		return validResponse.VisitPostEmployeesIdClockOutResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetEmployeesIdClocks operation middleware
+func (sh *strictHandler) GetEmployeesIdClocks(ctx echo.Context, id int64) error {
+	var request GetEmployeesIdClocksRequestObject
+
+	request.Id = id
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetEmployeesIdClocks(ctx.Request().Context(), request.(GetEmployeesIdClocksRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetEmployeesIdClocks")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(GetEmployeesIdClocksResponseObject); ok {
+		return validResponse.VisitGetEmployeesIdClocksResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }
