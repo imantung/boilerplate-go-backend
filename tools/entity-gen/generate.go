@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 	"text/template"
 
 	"github.com/iancoleman/strcase"
+	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 )
 
 type (
@@ -40,6 +43,12 @@ var (
 		"schema_migrations": nil,
 	}
 )
+
+func main() {
+	if err := di.Invoke(generate); err != nil {
+		log.Fatal(err)
+	}
+}
 
 func generate(db *sql.DB) error {
 	def, err := getDefinition(db)

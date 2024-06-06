@@ -87,7 +87,7 @@ task create-migration NAME=create_some_table   # Create new migration file
     - [x] Escalate log level for slow request
   - [ ] Tracing
 - Code Generator
-  - [x] Open API Stub Server with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 
+  - [x] Generate Server Interface with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 
   - [x] Generate Dotenv file -- Check the tool at [tools/dotenv-gen](tools/dotenv-gen)
   - [x] Generate Entity Model from Database schema -- Check the tool at [tools/entity-gen](tools/entity-gen)
   - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
