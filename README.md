@@ -2,6 +2,27 @@
 
 Boilerplate project for golang backend. 
 
+## Getting Started
+
+Prerequisite for this project:
+- Programming Language: [Go](https://go.dev/) 
+- Task Manager / Build-Tool: [GoTask](https://taskfile.dev/)
+- DB Migration tool: [GolangMigrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
+- Infrastructure: [Docker](https://www.docker.com/)
+
+
+```bash
+# First setup for mac (for other OS, please refer to respective documentation)
+brew install go
+brew install go-task
+brew install golang-migrate
+
+task          # show available tasks for this pr
+task run      # run the project
+```
+
+## Checklist
+
 - General
   - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)
   - [x] [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) with [Uber Dig](https://github.com/uber-go/dig) -- Check the code at [internal/app/infra/di/di.go](internal/app/infra/di/di.go)
@@ -75,6 +96,7 @@ Boilerplate project for golang backend.
   - [x] Dockerfile 
   - [x] Docker-compose
 
+
 ## Study Case: Employee Clocking System
 
 The project use employee clocking system as the study case
@@ -84,25 +106,6 @@ The project use employee clocking system as the study case
 - For Backoffice Dashboard
   - [ ] Manage Employee
   - [ ] Employee Clock History
-
-# Get Started
-
-Prerequisite for this project:
-- Programming Language: [Go](https://go.dev/) 
-- Task Manager / Build-Tool: [GoTask](https://taskfile.dev/)
-- DB Migration tool: [GolangMigrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
-- Infrastructure: [Docker](https://www.docker.com/)
-
-
-```bash
-# First setup for mac (for other OS, please refer to respective documentation)
-brew install go
-brew install go-task
-brew install golang-migrate
-
-task          # show available tasks for this pr
-task run      # run the project
-```
 
 ## Notes 
 
