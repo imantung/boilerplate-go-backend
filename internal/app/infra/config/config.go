@@ -19,12 +19,7 @@ type Config struct {
 	Debug bool `envconfig:"DEBUG" default:"true"`
 }
 type Database struct {
-	DBName string `envconfig:"DBNAME" required:"true" default:"postgres"`
-	DBUser string `envconfig:"DBUSER" required:"true" default:"postgres"`
-	DBPass string `envconfig:"DBPASS" required:"true" default:"postgres"`
-	Host   string `envconfig:"HOST" required:"true" default:"localhost"`
-	Port   string `envconfig:"PORT" required:"true" default:"5432"`
-
+	Source          string        `envconfig:"SOURCE" required:"true" default:"postgres://postgres:postgress@localhost:5432/postgres?sslmode=disable"`
 	MaxOpenConns    int           `envconfig:"MAX_OPEN_CONNS" default:"30" required:"true"`
 	MaxIdleConns    int           `envconfig:"MAX_IDLE_CONNS" default:"6" required:"true"`
 	ConnMaxLifetime time.Duration `envconfig:"CONN_MAX_LIFETIME" default:"30m" required:"true"`
