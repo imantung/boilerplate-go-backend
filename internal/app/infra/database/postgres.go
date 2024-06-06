@@ -6,7 +6,7 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib" // NOTE: load postgres driver
 )
 
 var _ = di.Provide(NewPostgres)
@@ -19,9 +19,7 @@ func NewPostgres(cfg *config.Config) (*sql.DB, error) {
 		return nil, err
 	}
 
-	// NOTE: Set connection pool to prevent bottleneck in database side
-	// - https://go.dev/doc/database/manage-connections
-	// - https://www.alexedwards.net/blog/configuring-sqldb
+	// NOTE: Set connection pool to prevent bottleneck in database side. Learn more: https://www.alexedwards.net/blog/configuring-sqldb
 	db.SetConnMaxLifetime(pg.ConnMaxLifetime)
 	db.SetMaxIdleConns(pg.MaxIdleConns)
 	db.SetMaxOpenConns(pg.MaxOpenConns)

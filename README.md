@@ -7,7 +7,7 @@ Boilerplate project for golang backend.
 Prerequisite for this project:
 - Programming Language: [Go](https://go.dev/) 
 - Task Manager / Build-Tool: [GoTask](https://taskfile.dev/)
-- DB Migration tool: [GolangMigrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
+- DB Migration tool: [Golang-Migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
 - Infrastructure: [Docker](https://www.docker.com/)
 
 
@@ -17,11 +17,11 @@ brew install go
 brew install go-task
 brew install golang-migrate
 
-task --list-all   # show available tasks
-task run          # run the project
-task clean        # clean the dev local environment
+task --list-all   # Show available tasks
+task run          # Run the project
+task clean        # Clean the dev local environment
 
-task create-migration NAME=create_some_table   # create new migration file
+task create-migration NAME=create_some_table   # Create new migration file
 ```
 
 ## Checklist
@@ -66,7 +66,7 @@ task create-migration NAME=create_some_table   # create new migration file
     - [x] Connection pool 
   - [ ] Audit Columns (`created_at`, `modified_at`, etc)
   - [ ] User AuditTrail (Transaction Logs)
-  - [ ] Migration tool with [go-migrate](https://github.com/golang-migrate/migrate)
+  - [x] Migration tool with [golang-migrate](https://github.com/golang-migrate/migrate)
 - Security and Observability
   - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
   - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
@@ -88,9 +88,9 @@ task create-migration NAME=create_some_table   # create new migration file
   - [ ] Tracing
 - Code Generator
   - [x] Open API Stub Server with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 
-  - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
   - [x] Generate Dotenv file -- Check the tool at [tools/dotenv-gen](tools/dotenv-gen)
-  - [ ] Generate Entity Model from Database schema
+  - [x] Generate Entity Model from Database schema -- Check the tool at [tools/entity-gen](tools/entity-gen)
+  - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
 - Testing
   - [ ] Table Driven Test
   - [ ] Test Automation
@@ -122,7 +122,7 @@ The project use employee clocking system as the study case
 
 1. Echo VS Fiber? 
 
-    [Fiber](https://github.com/gofiber/fiber) is a popular and [faster](https://medium.com/deno-the-complete-reference/go-gin-vs-fiber-vs-echo-how-much-performance-difference-is-really-there-for-a-real-world-use-1ed29d6a3e4d) web framework compared to [Echo](https://echo.labstack.com/). The caveat is that fiber is based on [fasthttp](https://github.com/valyala/fasthttp) and not compatible with [net/http](https://pkg.go.dev/net/http) which is cumbersome if we use other net/http based project (in our case, [go-oauth2]).
+    [Fiber](https://github.com/gofiber/fiber) is a popular and [faster](https://medium.com/deno-the-complete-reference/go-gin-vs-fiber-vs-echo-how-much-performance-difference-is-really-there-for-a-real-world-use-1ed29d6a3e4d) web framework compared to [Echo](https://echo.labstack.com/). The caveat is that fiber is based on [fasthttp](https://github.com/valyala/fasthttp) and not compatible with [net/http](https://pkg.go.dev/net/http) which is cumbersome if we use other net/http based project (in our case, [go-oauth2](https://go-oauth2.github.io/)).
 
 2. Pgx for postgres? 
 

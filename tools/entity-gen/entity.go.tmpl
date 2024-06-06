@@ -1,0 +1,14 @@
+package {{.PackageName}}
+{{ range $table := .Tables }}
+var {{$table.StructName}}TableName = "{{$table.TableName}}"
+
+var {{$table.StructName}}Columns = struct { {{ range $col := $table.Columns }}
+	{{$col.FieldName}} string{{ end }}
+}{ {{ range $col := $table.Columns }}
+	{{$col.FieldName}}: "{{$col.ColumnName}}",{{ end }}
+}
+
+type {{$table.StructName}} struct { {{ range $col := $table.Columns }}
+	{{$col.FieldName}} int `column:"{{$col.ColumnName}}"`{{ end }}
+}
+{{ end }}
