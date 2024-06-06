@@ -17,8 +17,11 @@ brew install go
 brew install go-task
 brew install golang-migrate
 
-task          # show available tasks for this pr
-task run      # run the project
+task --list-all   # show available tasks
+task run          # run the project
+task clean        # clean the dev local environment
+
+task create-migration NAME=create_some_table   # create new migration file
 ```
 
 ## Checklist

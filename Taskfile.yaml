@@ -8,22 +8,22 @@ dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
 tasks:
   run:
     desc: "run the project in dev local environment"
-    deps: [precond]
+    deps: [compose, migrate-db]
     cmds:
       - go run ./cmd/boilerplate-go-backend
   run-with-docker:
     desc: "run the project in dev local environment with docker"
-    deps: [build-image, precond]
+    deps: [build-image, compose, migrate-db]
     cmds:
       - docker run -it --rm --name my-running-app -p 1323:1323 $IMAGE_NAME
-  precond:
-    desc: "start precondition to run the project"
+  compose:
+    desc: "compose system component for local environemnt"
     cmds:
       - docker-compose up -d
   clean:
     desc: "clean the dev local environment"
     cmds:
-      - docker-compose down --remove-orphans
+      - docker-compose down -v --remove-orphans
   build-image:
     desc: "build docker image"
     cmds:
@@ -40,6 +40,21 @@ tasks:
       - mkdir -p internal/generated/openapi
       - go run github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@v2.1.0 --config tools/openapi-gen/config.yaml api/api-spec.yaml   
       - go mod tidy
+  create-migration:
+    desc: "create new migration file at db/migration folder"
+    cmds:
+      - migrate create -ext sql -dir db/migrations -seq {{.NAME}}
+    requires:
+      vars: [NAME]
+  migrate-db:
+    desc: "run database migration"
+    cmds:
+      - migrate -source file://db/migrations -database {{.APP_PG_SOURCE}} up
+  psql:
+    desc: "postgres client"
+    cmds:
+      - docker-compose exec -u postgres pg psql
 silent: false
+
 
 # Learn more at https://taskfile.dev/usage/
