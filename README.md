@@ -87,10 +87,11 @@ The project use employee clocking system as the study case
 
 # Get Started
 
-Prerequisite for this project
-- Programming Language: [Go](https://go.dev/) (tested at version 1.22.3)
-- Task Manager / Build Tool: [GoTask](https://taskfile.dev/)
+Prerequisite for this project:
+- Programming Language: [Go](https://go.dev/) 
+- Task Manager / Build-Tool: [GoTask](https://taskfile.dev/)
 - DB Migration tool: [GolangMigrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
+- Infrastructure: [Docker](https://www.docker.com/)
 
 
 ```bash
