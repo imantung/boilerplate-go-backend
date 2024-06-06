@@ -85,6 +85,24 @@ The project use employee clocking system as the study case
   - [ ] Manage Employee
   - [ ] Employee Clock History
 
+# Get Started
+
+Prerequisite for this project
+- Programming Language: [Go](https://go.dev/) (tested at version 1.22.3)
+- Task Manager / Build Tool: [GoTask](https://taskfile.dev/)
+- DB Migration tool: [GolangMigrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
+
+
+```bash
+# First setup for mac (for other OS, please refer to respective documentation)
+brew install go
+brew install go-task
+brew install golang-migrate
+
+task          # show available tasks for this pr
+task run      # run the project
+```
+
 ## Notes 
 
 - The project is OPINIONATED based on author knowledge and experience
