@@ -9,15 +9,15 @@ import (
 
 type (
 	EmployeeCntrl interface {
-		GetEmployees(ec echo.Context) error
-		PostEmployees(ec echo.Context) error
-		DeleteEmployeesId(ec echo.Context, id int64) error
-		GetEmployeesId(ec echo.Context, id int64) error
-		PatchEmployeesId(ec echo.Context, id int64) error
-		PutEmployeesId(ec echo.Context, id int64) error
-		PostEmployeesIdClockIn(ec echo.Context, id int64) error
-		PostEmployeesIdClockOut(ec echo.Context, id int64) error
-		GetEmployeesIdClocks(ec echo.Context, id int64) error
+		ListEmployee(ctx echo.Context) error
+		CreateEmployee(ctx echo.Context) error
+		DeleteEmployee(ctx echo.Context, id int64) error
+		GetEmployee(ctx echo.Context, id int64) error
+		PatchEmployee(ctx echo.Context, id int64) error
+		UpdateEmployee(ctx echo.Context, id int64) error
+		ClockIn(ctx echo.Context, id int64) error
+		ClockOut(ctx echo.Context, id int64) error
+		ListEmployeeClockHistory(ctx echo.Context, id int64) error
 	}
 	EmployeeCntrlImpl struct {
 	}
@@ -29,30 +29,30 @@ func NewEmployeeCntrl() EmployeeCntrl {
 	return &EmployeeCntrlImpl{}
 }
 
-func (s *EmployeeCntrlImpl) GetEmployees(ec echo.Context) error {
+func (s *EmployeeCntrlImpl) ListEmployee(ec echo.Context) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) PostEmployees(ec echo.Context) error {
+func (s *EmployeeCntrlImpl) CreateEmployee(ec echo.Context) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) DeleteEmployeesId(ec echo.Context, id int64) error {
+func (s *EmployeeCntrlImpl) DeleteEmployee(ec echo.Context, id int64) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) GetEmployeesId(ec echo.Context, id int64) error {
+func (s *EmployeeCntrlImpl) GetEmployee(ec echo.Context, id int64) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) PatchEmployeesId(ec echo.Context, id int64) error {
+func (s *EmployeeCntrlImpl) PatchEmployee(ec echo.Context, id int64) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) PutEmployeesId(ec echo.Context, id int64) error {
+func (s *EmployeeCntrlImpl) UpdateEmployee(ec echo.Context, id int64) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) PostEmployeesIdClockIn(ec echo.Context, id int64) error {
+func (s *EmployeeCntrlImpl) ClockIn(ec echo.Context, id int64) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) PostEmployeesIdClockOut(ec echo.Context, id int64) error {
+func (s *EmployeeCntrlImpl) ClockOut(ec echo.Context, id int64) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }
-func (s *EmployeeCntrlImpl) GetEmployeesIdClocks(ec echo.Context, id int64) error {
+func (s *EmployeeCntrlImpl) ListEmployeeClockHistory(ec echo.Context, id int64) error {
 	return ec.JSON(http.StatusNotImplemented, "not implemented")
 }

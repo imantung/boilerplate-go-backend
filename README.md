@@ -62,6 +62,7 @@ task create-migration NAME=create_some_table   # Create new migration file
    -  [ ] Controller Layer 
    -  [ ] Business Logic Layer (Services)
       - [ ] Trigger Database Transaction (`BEGIN`) 
+      - [ ] Validation Logics
    -  [ ] Data Access Layer (Repos)
       - [ ] ORMHate Philosophy
       - [ ] Query Builder (using Squirrel)

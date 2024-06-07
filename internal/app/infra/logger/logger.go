@@ -37,7 +37,7 @@ func NewHandler(cfg *config.Config) *Handler {
 	}
 
 	zeroLogger := zerolog.New(w).With().
-		// Caller(). // NOTE: uncomment to put caller to the log
+		// Caller(). // NOTE: uncomment to append caller to the log
 		Timestamp().
 		Int("pid", os.Getpid()).
 		Str("go_version", buildInfo.GoVersion).
