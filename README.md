@@ -21,6 +21,10 @@ task --list-all   # Show available tasks
 task run          # Run the project
 task clean        # Clean the dev local environment
 
+task gen-openapi  # Generate Server Interface
+task gen-dotenv   # Generate .env file
+task gen-entity   # Generate Entity Model
+
 task create-migration NAME=create_some_table   # Create new migration file
 ```
 
@@ -88,9 +92,9 @@ task create-migration NAME=create_some_table   # Create new migration file
   - [ ] Tracing
 - Code Generator
   - [x] Generate Server Interface with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 
-  - [x] Generate Dotenv file -- Check the tool at [tools/dotenv-gen](tools/dotenv-gen)
+  - [x] Generate Dotenv file from Config struct -- Check the tool at [tools/dotenv-gen](tools/dotenv-gen)
   - [x] Generate Entity Model from Database schema -- Check the tool at [tools/entity-gen](tools/entity-gen)
-  - [ ] Object Mocking using [gomock](https://github.com/uber-go/mock)
+  - [ ] Object Mocking with [gomock](https://github.com/uber-go/mock)
 - Testing
   - [ ] Table Driven Test
   - [ ] Test Automation
