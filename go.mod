@@ -4,6 +4,7 @@ go 1.22.3
 
 require (
 	github.com/fatih/structs v1.1.0
+	github.com/gertd/go-pluralize v0.2.1
 	github.com/go-oauth2/oauth2/v4 v4.5.2
 	github.com/iancoleman/strcase v0.3.0
 	github.com/jackc/pgx/v5 v5.5.5

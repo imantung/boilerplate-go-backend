@@ -5,23 +5,20 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"text/template"
 
+	pluralize "github.com/gertd/go-pluralize"
 	"github.com/iancoleman/strcase"
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 )
 
 type (
-	Definition struct {
-		PackageName string
-		Tables      []Table
-	}
 	Table struct {
-		TableName string
-		Columns   []Column
+		PackageName string
+		TableName   string
+		Columns     []Column
 
 		StructName string
 	}
@@ -38,11 +35,13 @@ type (
 var (
 	PackageName  = "entity"
 	TemplatePath = "tools/entity-gen/entity.go.tmpl"
-	TargetPath   = "internal/generated/entity/entity.go"
+	TargetDir    = "internal/generated/entity"
 	SkipTables   = map[string]any{
 		"schema_migrations": nil,
 	}
 )
+
+var pluralizer = pluralize.NewClient()
 
 func main() {
 	if err := di.Invoke(generate); err != nil {
@@ -51,34 +50,39 @@ func main() {
 }
 
 func generate(db *sql.DB) error {
-	def, err := getDefinition(db)
+	tables, err := getTables(db)
 	if err != nil {
 		return err
 	}
+
+	os.MkdirAll(TargetDir, os.ModePerm)
 
 	tmpl, err := template.ParseFiles(TemplatePath)
 	if err != nil {
 		return err
 	}
 
-	os.MkdirAll(filepath.Dir(TargetPath), os.ModePerm)
-	file, err := os.Create(TargetPath)
-	if err != nil {
-		return err
+	for _, table := range tables {
+		targetPath := TargetDir + "/" + table.TableName + ".go"
+		file, err := os.Create(targetPath)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		if err := tmpl.Execute(file, table); err != nil {
+			return err
+		}
 	}
 
-	if err := tmpl.Execute(file, def); err != nil {
-		return err
-	}
+	cmd := exec.Command("go", "run", "golang.org/x/tools/cmd/goimports@latest", "-w", TargetDir)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
-	file.Close()
-
-	return exec.
-		Command("go", "run", "golang.org/x/tools/cmd/goimports@latest", "-w", TargetPath).
-		Run()
+	return cmd.Run()
 }
 
-func getDefinition(db *sql.DB) (*Definition, error) {
+func getTables(db *sql.DB) ([]Table, error) {
 	tableNames, err := getTableNames(db)
 	if err != nil {
 		return nil, err
@@ -93,17 +97,16 @@ func getDefinition(db *sql.DB) (*Definition, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		tables = append(tables, Table{
-			TableName:  tableName,
-			StructName: strcase.ToCamel(tableName),
-			Columns:    columns,
+			PackageName: PackageName,
+			TableName:   tableName,
+			StructName:  convertToStructName(tableName),
+			Columns:     columns,
 		})
 	}
 
-	return &Definition{
-		PackageName: PackageName,
-		Tables:      tables,
-	}, nil
+	return tables, nil
 }
 
 func getTableNames(db *sql.DB) ([]string, error) {
@@ -142,6 +145,10 @@ func getColumns(db *sql.DB, table string) ([]Column, error) {
 		columns = append(columns, column)
 	}
 	return columns, nil
+}
+
+func convertToStructName(tableName string) string {
+	return strcase.ToCamel(pluralizer.Singular(tableName))
 }
 
 func convertToFieldName(colName string) string {
