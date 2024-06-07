@@ -11,7 +11,7 @@ import (
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/logger"
-	"github.com/imantung/boilerplate-go-backend/internal/generated/openapi"
+	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
@@ -40,7 +40,7 @@ type (
 	}
 )
 
-var _ openapi.ServerInterface = (*App)(nil) // NOTE: server must be implemented `openapi.server`. The functions are defined in the controllers
+var _ oapi.ServerInterface = (*App)(nil) // NOTE: server must be implemented `openapi.server`. The functions are defined in the controllers
 var _ = di.Provide(Health)
 
 var (
@@ -54,8 +54,11 @@ func Start(app App) error {
 	log.Logger = app.Logger.ZeroLogger
 	e.Logger = app.Logger.LechoLogger
 
+	e.Pre(
+		middleware.RequestID(),
+	)
+
 	e.Use(
-		middleware.RequestID(), // NOTE: should be prior lecho middleware to append log field `request_id`
 		lecho.Middleware(app.Logger.LechoConfig),
 		middleware.CORS(),
 		middleware.Recover(),
@@ -63,7 +66,7 @@ func Start(app App) error {
 	)
 
 	group := e.Group("api", app.Oauth.ValidateToken)
-	openapi.RegisterHandlers(group, app) // NOTE: register open-api endpoints
+	oapi.RegisterHandlers(group, app) // NOTE: register open-api endpoints
 
 	e.Any("/oauth/authorize", app.Oauth.HandleAuthorizeRequest)
 	e.Any("/oauth/token", app.Oauth.HandleTokenRequest)
