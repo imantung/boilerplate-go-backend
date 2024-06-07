@@ -10,6 +10,6 @@ var {{$table.StructName}}Columns = struct { {{ range $col := $table.Columns }}
 }
 
 type {{$table.StructName}} struct { {{ range $col := $table.Columns }}
-	{{$col.FieldName}} int `column:"{{$col.ColumnName}}"`{{ end }}
+	{{$col.FieldName}} {{$col.FieldType}} `column:"{{$col.ColumnName}}"`{{ end }}
 }
 {{ end }}

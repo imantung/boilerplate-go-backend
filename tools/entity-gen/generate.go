@@ -73,7 +73,9 @@ func generate(db *sql.DB) error {
 
 	file.Close()
 
-	return exec.Command("gofmt", "-w", TargetPath).Run()
+	return exec.
+		Command("go", "run", "golang.org/x/tools/cmd/goimports@latest", "-w", TargetPath).
+		Run()
 }
 
 func getDefinition(db *sql.DB) (*Definition, error) {
