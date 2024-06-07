@@ -124,7 +124,7 @@ func getTableNames(db *sql.DB) ([]string, error) {
 }
 
 func getColumns(db *sql.DB, table string) ([]Column, error) {
-	rows, err := db.Query("select column_name, data_type, is_nullable from INFORMATION_SCHEMA.COLUMNS where table_name = '" + table + "'")
+	rows, err := db.Query("SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "' ORDER BY ordinal_position")
 	if err != nil {
 		return nil, err
 	}
@@ -136,8 +136,8 @@ func getColumns(db *sql.DB, table string) ([]Column, error) {
 			return nil, err
 		}
 
-		column.FieldName = convertToFieldName(column.ColumnName) // inject field name
-		column.FieldType = convertToFieldType(column.DataType)   // inject field type
+		column.FieldName = convertToFieldName(column.ColumnName)                  // inject field name
+		column.FieldType = convertToFieldType(column.DataType, column.IsNullable) // inject field type
 
 		columns = append(columns, column)
 	}
@@ -156,16 +156,22 @@ func convertToFieldName(colName string) string {
 	return colName
 }
 
-func convertToFieldType(dataType string) string {
+func convertToFieldType(dataType string, isNullable string) string {
+	fieldType := "UnknownType"
+
 	if dataType == "integer" {
-		return "int"
+		fieldType = "int"
 	}
 	if dataType == "text" {
-		return "string"
+		fieldType = "string"
 	}
 	if strings.HasPrefix(dataType, "timestamp") {
-		return "time.Time"
+		fieldType = "time.Time"
 	}
-	// add additional data type here
-	return "UnknownType"
+
+	if strings.EqualFold(isNullable, "YES") {
+		fieldType = "*" + fieldType
+	}
+
+	return fieldType
 }
