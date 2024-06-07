@@ -290,9 +290,6 @@ components:
   schemas:
     Employee:
       type: object
-      required:
-        - id
-        - name
       properties:
         id:
           type: integer
@@ -313,9 +310,6 @@ components:
         $ref: "#/components/schemas/Employee"
     EmployeeClockHistory:
       type: object
-      required:
-        - id
-        - name
       properties:
         id:
           type: integer

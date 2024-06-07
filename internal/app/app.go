@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/imantung/boilerplate-go-backend/internal/app/controller"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/auth"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/logger"
+	"github.com/imantung/boilerplate-go-backend/internal/app/service"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -35,12 +35,11 @@ type (
 		Oauth *auth.OAuthHandler
 		Basic *auth.BasicAuthHandler
 
-		// NOTE: add controller without variable name belows
-		controller.EmployeeCntrl
+		service.EmployeeSvc
 	}
 )
 
-var _ oapi.ServerInterface = (*App)(nil) // NOTE: server must be implemented `openapi.server`. The functions are defined in the controllers
+var _ oapi.StrictServerInterface = (*App)(nil)
 var _ = di.Provide(Health)
 
 var (
@@ -66,7 +65,8 @@ func Start(app App) error {
 	)
 
 	group := e.Group("api", app.Oauth.ValidateToken)
-	oapi.RegisterHandlers(group, app) // NOTE: register open-api endpoints
+	server := oapi.NewStrictHandler(app, nil)
+	oapi.RegisterHandlers(group, server) // NOTE: register open-api endpoints
 
 	e.Any("/oauth/authorize", app.Oauth.HandleAuthorizeRequest)
 	e.Any("/oauth/token", app.Oauth.HandleTokenRequest)
