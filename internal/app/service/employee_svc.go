@@ -17,9 +17,6 @@ type (
 		GetEmployee(ctx context.Context, request oapi.GetEmployeeRequestObject) (oapi.GetEmployeeResponseObject, error)
 		PatchEmployee(ctx context.Context, request oapi.PatchEmployeeRequestObject) (oapi.PatchEmployeeResponseObject, error)
 		UpdateEmployee(ctx context.Context, request oapi.UpdateEmployeeRequestObject) (oapi.UpdateEmployeeResponseObject, error)
-		ClockIn(ctx context.Context, request oapi.ClockInRequestObject) (oapi.ClockInResponseObject, error)
-		ClockOut(ctx context.Context, request oapi.ClockOutRequestObject) (oapi.ClockOutResponseObject, error)
-		ListEmployeeClockHistory(ctx context.Context, request oapi.ListEmployeeClockHistoryRequestObject) (oapi.ListEmployeeClockHistoryResponseObject, error)
 	}
 	EmployeeSvcImpl struct{}
 )
@@ -52,16 +49,4 @@ func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, request oapi.PatchE
 
 func (e *EmployeeSvcImpl) UpdateEmployee(ctx context.Context, request oapi.UpdateEmployeeRequestObject) (oapi.UpdateEmployeeResponseObject, error) {
 	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
-}
-
-func (e *EmployeeSvcImpl) ClockIn(ctx context.Context, request oapi.ClockInRequestObject) (oapi.ClockInResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
-}
-
-func (e *EmployeeSvcImpl) ClockOut(ctx context.Context, request oapi.ClockOutRequestObject) (oapi.ClockOutResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
-}
-
-func (e *EmployeeSvcImpl) ListEmployeeClockHistory(ctx context.Context, request oapi.ListEmployeeClockHistoryRequestObject) (oapi.ListEmployeeClockHistoryResponseObject, error) {
-	return nil, nil
 }

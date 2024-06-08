@@ -21,11 +21,11 @@ const (
 
 // Employee defines model for Employee.
 type Employee struct {
-	Id             int        `json:"id"`
+	Id             *int       `json:"id,omitempty"`
 	JobTitle       *string    `json:"job_title,omitempty"`
 	LastClockInAt  *time.Time `json:"last_clock_in_at,omitempty"`
 	LastClockOutAt *time.Time `json:"last_clock_out_at,omitempty"`
-	Name           string     `json:"name"`
+	Name           *string    `json:"name,omitempty"`
 }
 
 // EmployeeClockHistories defines model for EmployeeClockHistories.
@@ -36,7 +36,7 @@ type EmployeeClockHistory struct {
 	ClockInAt           *time.Time `json:"clock_in_at,omitempty"`
 	ClockOutAt          *time.Time `json:"clock_out_at,omitempty"`
 	EmployeeId          *int       `json:"employee_id,omitempty"`
-	Id                  int        `json:"id"`
+	Id                  *int       `json:"id,omitempty"`
 	WorkDuration        *string    `json:"work_duration,omitempty"`
 	WorkDurationMinutes *int       `json:"work_duration_minutes,omitempty"`
 }
@@ -58,11 +58,27 @@ type Unauthorized = Error
 // UnexpectedError defines model for UnexpectedError.
 type UnexpectedError = Error
 
+// ClockInJSONBody defines parameters for ClockIn.
+type ClockInJSONBody struct {
+	EmployeeId *int `json:"employee_id,omitempty"`
+}
+
+// ClockOutJSONBody defines parameters for ClockOut.
+type ClockOutJSONBody struct {
+	EmployeeId *int `json:"employee_id,omitempty"`
+}
+
 // CreateEmployeeJSONBody defines parameters for CreateEmployee.
 type CreateEmployeeJSONBody struct {
 	JobTitle *string `json:"job_title,omitempty"`
 	Name     string  `json:"name"`
 }
+
+// ClockInJSONRequestBody defines body for ClockIn for application/json ContentType.
+type ClockInJSONRequestBody ClockInJSONBody
+
+// ClockOutJSONRequestBody defines body for ClockOut for application/json ContentType.
+type ClockOutJSONRequestBody ClockOutJSONBody
 
 // CreateEmployeeJSONRequestBody defines body for CreateEmployee for application/json ContentType.
 type CreateEmployeeJSONRequestBody CreateEmployeeJSONBody
@@ -72,6 +88,15 @@ type UpdateEmployeeJSONRequestBody = Employee
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Employee start to work
+	// (POST /clock-in)
+	ClockIn(ctx echo.Context) error
+	// Employee stop to work
+	// (POST /clock-out)
+	ClockOut(ctx echo.Context) error
+	// Get employee clock history
+	// (GET /clocks)
+	ListClock(ctx echo.Context) error
 	// Returns a list of employee.
 	// (GET /employees)
 	ListEmployee(ctx echo.Context) error
@@ -90,20 +115,44 @@ type ServerInterface interface {
 	// Update employee
 	// (PUT /employees/{id})
 	UpdateEmployee(ctx echo.Context, id int64) error
-	// Employee start to work
-	// (POST /employees/{id}/clock-in)
-	ClockIn(ctx echo.Context, id int64) error
-	// Employee stop to work
-	// (POST /employees/{id}/clock-out)
-	ClockOut(ctx echo.Context, id int64) error
-	// Get employee clock history
-	// (GET /employees/{id}/clocks)
-	ListEmployeeClockHistory(ctx echo.Context, id int64) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// ClockIn converts echo context to params.
+func (w *ServerInterfaceWrapper) ClockIn(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(OAuth2Scopes, []string{"client"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.ClockIn(ctx)
+	return err
+}
+
+// ClockOut converts echo context to params.
+func (w *ServerInterfaceWrapper) ClockOut(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(OAuth2Scopes, []string{"client"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.ClockOut(ctx)
+	return err
+}
+
+// ListClock converts echo context to params.
+func (w *ServerInterfaceWrapper) ListClock(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(OAuth2Scopes, []string{"backoffice", "client"})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.ListClock(ctx)
+	return err
 }
 
 // ListEmployee converts echo context to params.
@@ -200,60 +249,6 @@ func (w *ServerInterfaceWrapper) UpdateEmployee(ctx echo.Context) error {
 	return err
 }
 
-// ClockIn converts echo context to params.
-func (w *ServerInterfaceWrapper) ClockIn(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "id" -------------
-	var id int64
-
-	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
-	ctx.Set(OAuth2Scopes, []string{"client"})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.ClockIn(ctx, id)
-	return err
-}
-
-// ClockOut converts echo context to params.
-func (w *ServerInterfaceWrapper) ClockOut(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "id" -------------
-	var id int64
-
-	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
-	ctx.Set(OAuth2Scopes, []string{"client"})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.ClockOut(ctx, id)
-	return err
-}
-
-// ListEmployeeClockHistory converts echo context to params.
-func (w *ServerInterfaceWrapper) ListEmployeeClockHistory(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "id" -------------
-	var id int64
-
-	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
-
-	ctx.Set(OAuth2Scopes, []string{"backoffice", "client"})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.ListEmployeeClockHistory(ctx, id)
-	return err
-}
-
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -282,15 +277,15 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.POST(baseURL+"/clock-in", wrapper.ClockIn)
+	router.POST(baseURL+"/clock-out", wrapper.ClockOut)
+	router.GET(baseURL+"/clocks", wrapper.ListClock)
 	router.GET(baseURL+"/employees", wrapper.ListEmployee)
 	router.POST(baseURL+"/employees", wrapper.CreateEmployee)
 	router.DELETE(baseURL+"/employees/:id", wrapper.DeleteEmployee)
 	router.GET(baseURL+"/employees/:id", wrapper.GetEmployee)
 	router.PATCH(baseURL+"/employees/:id", wrapper.PatchEmployee)
 	router.PUT(baseURL+"/employees/:id", wrapper.UpdateEmployee)
-	router.POST(baseURL+"/employees/:id/clock-in", wrapper.ClockIn)
-	router.POST(baseURL+"/employees/:id/clock-out", wrapper.ClockOut)
-	router.GET(baseURL+"/employees/:id/clocks", wrapper.ListEmployeeClockHistory)
 
 }
 
@@ -299,6 +294,119 @@ type NotFoundJSONResponse Error
 type UnauthorizedJSONResponse Error
 
 type UnexpectedErrorJSONResponse Error
+
+type ClockInRequestObject struct {
+	Body *ClockInJSONRequestBody
+}
+
+type ClockInResponseObject interface {
+	VisitClockInResponse(w http.ResponseWriter) error
+}
+
+type ClockIn200JSONResponse EmployeeClockHistory
+
+func (response ClockIn200JSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ClockIn401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ClockIn401JSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ClockIndefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ClockIndefaultJSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
+type ClockOutRequestObject struct {
+	Body *ClockOutJSONRequestBody
+}
+
+type ClockOutResponseObject interface {
+	VisitClockOutResponse(w http.ResponseWriter) error
+}
+
+type ClockOut200JSONResponse EmployeeClockHistory
+
+func (response ClockOut200JSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ClockOut401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ClockOut401JSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ClockOutdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ClockOutdefaultJSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
+type ListClockRequestObject struct {
+}
+
+type ListClockResponseObject interface {
+	VisitListClockResponse(w http.ResponseWriter) error
+}
+
+type ListClock200JSONResponse EmployeeClockHistories
+
+func (response ListClock200JSONResponse) VisitListClockResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ListClock401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response ListClock401JSONResponse) VisitListClockResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ListClockdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListClockdefaultJSONResponse) VisitListClockResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
 
 type ListEmployeeRequestObject struct {
 }
@@ -566,149 +674,17 @@ func (response UpdateEmployeedefaultJSONResponse) VisitUpdateEmployeeResponse(w 
 	return json.NewEncoder(w).Encode(response.Body)
 }
 
-type ClockInRequestObject struct {
-	Id int64 `json:"id"`
-}
-
-type ClockInResponseObject interface {
-	VisitClockInResponse(w http.ResponseWriter) error
-}
-
-type ClockIn200JSONResponse EmployeeClockHistory
-
-func (response ClockIn200JSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ClockIn401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response ClockIn401JSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ClockIn404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response ClockIn404JSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ClockIndefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response ClockIndefaultJSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(response.StatusCode)
-
-	return json.NewEncoder(w).Encode(response.Body)
-}
-
-type ClockOutRequestObject struct {
-	Id int64 `json:"id"`
-}
-
-type ClockOutResponseObject interface {
-	VisitClockOutResponse(w http.ResponseWriter) error
-}
-
-type ClockOut200JSONResponse EmployeeClockHistory
-
-func (response ClockOut200JSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ClockOut401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response ClockOut401JSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ClockOut404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response ClockOut404JSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ClockOutdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response ClockOutdefaultJSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(response.StatusCode)
-
-	return json.NewEncoder(w).Encode(response.Body)
-}
-
-type ListEmployeeClockHistoryRequestObject struct {
-	Id int64 `json:"id"`
-}
-
-type ListEmployeeClockHistoryResponseObject interface {
-	VisitListEmployeeClockHistoryResponse(w http.ResponseWriter) error
-}
-
-type ListEmployeeClockHistory200JSONResponse EmployeeClockHistories
-
-func (response ListEmployeeClockHistory200JSONResponse) VisitListEmployeeClockHistoryResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ListEmployeeClockHistory401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response ListEmployeeClockHistory401JSONResponse) VisitListEmployeeClockHistoryResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ListEmployeeClockHistory404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response ListEmployeeClockHistory404JSONResponse) VisitListEmployeeClockHistoryResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type ListEmployeeClockHistorydefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response ListEmployeeClockHistorydefaultJSONResponse) VisitListEmployeeClockHistoryResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(response.StatusCode)
-
-	return json.NewEncoder(w).Encode(response.Body)
-}
-
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// Employee start to work
+	// (POST /clock-in)
+	ClockIn(ctx context.Context, request ClockInRequestObject) (ClockInResponseObject, error)
+	// Employee stop to work
+	// (POST /clock-out)
+	ClockOut(ctx context.Context, request ClockOutRequestObject) (ClockOutResponseObject, error)
+	// Get employee clock history
+	// (GET /clocks)
+	ListClock(ctx context.Context, request ListClockRequestObject) (ListClockResponseObject, error)
 	// Returns a list of employee.
 	// (GET /employees)
 	ListEmployee(ctx context.Context, request ListEmployeeRequestObject) (ListEmployeeResponseObject, error)
@@ -727,15 +703,6 @@ type StrictServerInterface interface {
 	// Update employee
 	// (PUT /employees/{id})
 	UpdateEmployee(ctx context.Context, request UpdateEmployeeRequestObject) (UpdateEmployeeResponseObject, error)
-	// Employee start to work
-	// (POST /employees/{id}/clock-in)
-	ClockIn(ctx context.Context, request ClockInRequestObject) (ClockInResponseObject, error)
-	// Employee stop to work
-	// (POST /employees/{id}/clock-out)
-	ClockOut(ctx context.Context, request ClockOutRequestObject) (ClockOutResponseObject, error)
-	// Get employee clock history
-	// (GET /employees/{id}/clocks)
-	ListEmployeeClockHistory(ctx context.Context, request ListEmployeeClockHistoryRequestObject) (ListEmployeeClockHistoryResponseObject, error)
 }
 
 type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
@@ -748,6 +715,87 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
+}
+
+// ClockIn operation middleware
+func (sh *strictHandler) ClockIn(ctx echo.Context) error {
+	var request ClockInRequestObject
+
+	var body ClockInJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ClockIn(ctx.Request().Context(), request.(ClockInRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ClockIn")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(ClockInResponseObject); ok {
+		return validResponse.VisitClockInResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ClockOut operation middleware
+func (sh *strictHandler) ClockOut(ctx echo.Context) error {
+	var request ClockOutRequestObject
+
+	var body ClockOutJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ClockOut(ctx.Request().Context(), request.(ClockOutRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ClockOut")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(ClockOutResponseObject); ok {
+		return validResponse.VisitClockOutResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ListClock operation middleware
+func (sh *strictHandler) ListClock(ctx echo.Context) error {
+	var request ListClockRequestObject
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ListClock(ctx.Request().Context(), request.(ListClockRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListClock")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(ListClockResponseObject); ok {
+		return validResponse.VisitListClockResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }
 
 // ListEmployee operation middleware
@@ -902,81 +950,6 @@ func (sh *strictHandler) UpdateEmployee(ctx echo.Context, id int64) error {
 		return err
 	} else if validResponse, ok := response.(UpdateEmployeeResponseObject); ok {
 		return validResponse.VisitUpdateEmployeeResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// ClockIn operation middleware
-func (sh *strictHandler) ClockIn(ctx echo.Context, id int64) error {
-	var request ClockInRequestObject
-
-	request.Id = id
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.ClockIn(ctx.Request().Context(), request.(ClockInRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ClockIn")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(ClockInResponseObject); ok {
-		return validResponse.VisitClockInResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// ClockOut operation middleware
-func (sh *strictHandler) ClockOut(ctx echo.Context, id int64) error {
-	var request ClockOutRequestObject
-
-	request.Id = id
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.ClockOut(ctx.Request().Context(), request.(ClockOutRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ClockOut")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(ClockOutResponseObject); ok {
-		return validResponse.VisitClockOutResponse(ctx.Response())
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// ListEmployeeClockHistory operation middleware
-func (sh *strictHandler) ListEmployeeClockHistory(ctx echo.Context, id int64) error {
-	var request ListEmployeeClockHistoryRequestObject
-
-	request.Id = id
-
-	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.ListEmployeeClockHistory(ctx.Request().Context(), request.(ListEmployeeClockHistoryRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ListEmployeeClockHistory")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return err
-	} else if validResponse, ok := response.(ListEmployeeClockHistoryResponseObject); ok {
-		return validResponse.VisitListEmployeeClockHistoryResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}

@@ -168,18 +168,10 @@ paths:
             $ref: '#/components/responses/UnexpectedError'
       security:
         - OAuth2: [backoffice]
-  /employees/{id}/clocks:
+  /clocks:
     get:
       summary: Get employee clock history
-      operationId: listEmployeeClockHistory
-      parameters:
-        - name: id
-          in: path
-          description: User ID
-          required: true
-          schema:
-            type: integer
-            format: int64
+      operationId: listClock
       tags:
         - "Backoffice Dashboard"
         - "Client Application"
@@ -192,27 +184,24 @@ paths:
                   $ref: "#/components/schemas/EmployeeClockHistories"
           "401":
             $ref: '#/components/responses/Unauthorized'
-          "404":
-            $ref: '#/components/responses/NotFound'
           default:
             $ref: '#/components/responses/UnexpectedError'
       security:
         - OAuth2: [backoffice, client]
-  /employees/{id}/clock-in:
+  /clock-in:
     post:
       summary: Employee start to work
       operationId: clockIn
-      parameters:
-        - name: id
-          in: path
-          description: User ID
-          required: true
-          schema:
-            type: integer
-            format: int64
       tags:
-        - "Backoffice Dashboard"
         - "Client Application"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id:
+                  type: integer
       responses:
         "200":
           description: success
@@ -222,26 +211,24 @@ paths:
                 $ref: "#/components/schemas/EmployeeClockHistory"
         "401":
           $ref: '#/components/responses/Unauthorized'
-        "404":
-          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
       security:
         - OAuth2: [client]
-  /employees/{id}/clock-out:
+  /clock-out:
     post:
       summary: Employee stop to work
       operationId: clockOut
-      parameters:
-        - name: id
-          in: path
-          description: User ID
-          required: true
-          schema:
-            type: integer
-            format: int64
       tags:
         - "Client Application"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_id:
+                  type: integer
       responses:
         "200":
           description: success
@@ -251,8 +238,6 @@ paths:
                 $ref: "#/components/schemas/EmployeeClockHistory"
         "401":
           $ref: '#/components/responses/Unauthorized'
-        "404":
-          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/UnexpectedError'
       security:

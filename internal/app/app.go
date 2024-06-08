@@ -36,6 +36,7 @@ type (
 		Basic *auth.BasicAuthHandler
 
 		service.EmployeeSvc
+		service.ClockSvc
 	}
 )
 
