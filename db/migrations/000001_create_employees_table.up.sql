@@ -4,6 +4,7 @@ CREATE TABLE employees (
   job_title TEXT NOT NULL, 
   last_check_in_at TIMESTAMP, 
   last_check_out_at TIMESTAMP, 
-  update_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

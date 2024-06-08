@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -27,8 +28,10 @@ type (
 		DataType   string
 		IsNullable string
 
-		FieldName string
-		FieldType string
+		FieldName     string
+		FieldType     string
+		IsPrimaryKey  bool
+		IsAuditColumn bool
 	}
 )
 
@@ -36,9 +39,10 @@ var (
 	PackageName  = "entity"
 	TemplatePath = "tools/entity-gen/entity.go.tmpl"
 	TargetDir    = "internal/generated/entity"
-	SkipTables   = map[string]any{
-		"schema_migrations": nil,
-	}
+
+	SkipTables   = []string{"schema_migrations"}
+	PrimaryKeys  = []string{"id"}
+	AuditColumns = []string{"deleted_at", "created_at", "updated_at"}
 )
 
 var pluralizer = pluralize.NewClient()
@@ -90,7 +94,7 @@ func getTables(db *sql.DB) ([]Table, error) {
 
 	var tables []Table
 	for _, tableName := range tableNames {
-		if _, ok := SkipTables[tableName]; ok {
+		if slices.Contains(SkipTables, tableName) {
 			continue
 		}
 		columns, err := getColumns(db, tableName)
@@ -141,6 +145,8 @@ func getColumns(db *sql.DB, table string) ([]Column, error) {
 
 		column.FieldName = convertToFieldName(column.ColumnName)                  // inject field name
 		column.FieldType = convertToFieldType(column.DataType, column.IsNullable) // inject field type
+		column.IsPrimaryKey = slices.Contains(PrimaryKeys, column.ColumnName)
+		column.IsAuditColumn = slices.Contains(AuditColumns, column.ColumnName)
 
 		columns = append(columns, column)
 	}

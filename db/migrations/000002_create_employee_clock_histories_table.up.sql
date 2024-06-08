@@ -5,7 +5,8 @@ CREATE TABLE employee_clock_histories (
   check_out_at TIMESTAMP, 
   work_duration TEXT, 
   work_duration_minutes INTEGER,
-  update_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
