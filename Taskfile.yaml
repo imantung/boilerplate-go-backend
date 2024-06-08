@@ -31,8 +31,8 @@ tasks:
   gen-dotenv:
     desc: "generate .env file"
     cmds:
-      - go run ./tools/dotenv-gen/main.go > .env
-      - go run ./tools/dotenv-gen/main.go > .env_sample
+      - go run ./tools/dotenv-gen > .env
+      - go run ./tools/dotenv-gen > .env_sample
   gen-openapi:
     desc: "generate open api source code form api-spec.yaml"
     cmds:
