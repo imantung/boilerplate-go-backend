@@ -24,28 +24,26 @@ import (
 	_ "net/http/pprof" // enable `/debug/pprof` endpoint
 )
 
-type (
-	App struct {
-		dig.In
+type App struct {
+	dig.In
 
-		Config *config.Config
-		Health HealthMap
-		Logger *logger.Handler
+	Config *config.Config
+	Health HealthMap
+	Logger *logger.Handler
 
-		Oauth *auth.OAuthHandler
-		Basic *auth.BasicAuthHandler
+	Oauth *auth.OAuthHandler
+	Basic *auth.BasicAuthHandler
 
-		service.EmployeeSvc
-		service.ClockSvc
-	}
-)
+	service.EmployeeSvc
+	service.ClockSvc
+}
+
+type HealthMap map[string]error
 
 var _ oapi.StrictServerInterface = (*App)(nil)
 var _ = di.Provide(Health)
 
-var (
-	e = echo.New()
-)
+var e = echo.New()
 
 func Start(app App) error {
 	e.HideBanner = true
@@ -100,6 +98,24 @@ func Health(db *sql.DB) HealthMap {
 	return HealthMap{
 		"postgres": db.PingContext(ctx),
 	}
+}
 
-	// NOTE: Learn more about health check api at https://testfully.io/blog/api-health-check-monitoring/
+func (h HealthMap) Handle(ec echo.Context) error {
+	// NOTE: disable cache
+	ec.Response().Header().Set("Expires", "0")
+	ec.Response().Header().Set("Pragma", "no-cache")
+	ec.Response().Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+
+	code := http.StatusOK
+	msg := map[string]string{}
+	for k, v := range h {
+		if v != nil {
+			msg[k] = v.Error()
+			code = http.StatusServiceUnavailable
+		} else {
+			msg[k] = "ok"
+		}
+	}
+
+	return ec.JSON(code, msg)
 }
