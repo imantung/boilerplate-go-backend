@@ -34,7 +34,8 @@ task create-migration NAME=create_some_table   # Create new migration file
   - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)
   - [x] [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) with [Uber Dig](https://github.com/uber-go/dig) -- Check the code at [internal/app/infra/di/di.go](internal/app/infra/di/di.go)
   - [x] Centralized config (env variable) -- Check the code at [internal/app/infra/config/config.go](internal/app/infra/config/config.go)
-  - [x] Graceful Shutdown -- Check the code at [cmd/boilerplate-go-backend/main.go](cmd/boilerplate-go-backend/main.go)
+  - [x] Graceful Shutdown -- Check the code at [internal/app/stop.go](internal/app/stop.go)
+  - [x] Health check -- Check the code at [internal/app/health.go](internal/app/health.go)
 - API Server
   - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
     - [x] Enable [swagger-ui](https://github.com/swagger-api/swagger-ui) (`/swagger/ui`)
@@ -79,7 +80,6 @@ task create-migration NAME=create_some_table   # Create new migration file
     - [x] Handle token request
     - [x] Validate bearer token
     - [ ] Validate scope access
-  - [x] Health check -- Check the code at [internal/app/app.go#73](internal/app/app.go#73)
   - [x] Enable [expvar](https://pkg.go.dev/expvar) endpoint (`/debug/vars`) 
   - [x] Enable [pprof](https://pkg.go.dev/net/http/pprof) endpoint (`/debug/pprof`)
   - [x] Structured Log with [ZeroLog](https://github.com/rs/zerolog) -- Check the code at [/internal/app/infra/logger/logger.go](/internal/app/infra/logger/logger.go)
