@@ -95,7 +95,7 @@ task create-migration NAME=create_some_table   # Create new migration file
   - [x] Generate Server Interface and Controller Layer with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 
   - [x] Generate Dotenv file from Config struct -- Check the tool at [tools/dotenv-gen](tools/dotenv-gen)
   - [x] Generate Entity Model and Repository Layer from Database schema -- Check the tool at [tools/entity-gen](tools/entity-gen)
-  - [ ] Object Mocking with [gomock](https://github.com/uber-go/mock)
+  - [x] Object Mocking with [gomock](https://github.com/uber-go/mock)
 - Testing
   - [ ] Table Driven Test
   - [ ] Test Automation

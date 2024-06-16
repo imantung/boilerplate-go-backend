@@ -39,6 +39,7 @@ var (
 	PackageName  = "entity"
 	TemplatePath = "tools/entity-gen/entity.go.tmpl"
 	TargetDir    = "internal/generated/entity"
+	MockDir      = "internal/generated/mock_entity"
 
 	SkipTables   = []string{"schema_migrations"}
 	PrimaryKeys  = []string{"id"}
@@ -82,8 +83,19 @@ func generate(db *sql.DB) error {
 	cmd := exec.Command("go", "run", "golang.org/x/tools/cmd/goimports@latest", "-w", TargetDir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Run()
 
-	return cmd.Run()
+	for _, table := range tables {
+		cmd := exec.Command("go", "run", "github.com/golang/mock/mockgen@v1.6.0",
+			"-destination", MockDir+"/mock_"+table.TableName+".go",
+			"-source", TargetDir+"/"+table.TableName+".go",
+		)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Run()
+	}
+
+	return nil
 }
 
 func getTables(db *sql.DB) ([]Table, error) {
