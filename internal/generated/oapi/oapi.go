@@ -21,11 +21,11 @@ const (
 
 // Employee defines model for Employee.
 type Employee struct {
-	Id             *int       `json:"id,omitempty"`
-	JobTitle       *string    `json:"job_title,omitempty"`
+	EmployeeName   string     `json:"employee_name"`
+	Id             int        `json:"id"`
+	JobTitle       string     `json:"job_title"`
 	LastClockInAt  *time.Time `json:"last_clock_in_at,omitempty"`
 	LastClockOutAt *time.Time `json:"last_clock_out_at,omitempty"`
-	Name           *string    `json:"name,omitempty"`
 }
 
 // EmployeeClockHistories defines model for EmployeeClockHistories.

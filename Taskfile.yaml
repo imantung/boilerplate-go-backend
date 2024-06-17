@@ -44,6 +44,7 @@ tasks:
     desc: "generate entity source code from database table"
     cmds:
       - rm -rf internal/generated/entity
+      - rm -rf internal/generated/mock_entity
       - go run ./tools/entity-gen   
   create-migration:
     desc: "create new migration file at db/migration folder"

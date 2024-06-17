@@ -33,13 +33,22 @@ func NewEmployeeSvc(employeeRepo entity.EmployeeRepo) EmployeeSvc {
 	}
 }
 
-func (e *EmployeeSvcImpl) ListEmployee(ctx context.Context, request oapi.ListEmployeeRequestObject) (oapi.ListEmployeeResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
+func (e *EmployeeSvcImpl) ListEmployee(ctx context.Context, req oapi.ListEmployeeRequestObject) (oapi.ListEmployeeResponseObject, error) {
+	employees, err := e.EmployeeRepo.Select(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := oapi.ListEmployee200JSONResponse{}
+	for _, emp := range employees {
+		resp = append(resp, convertEmployee(emp))
+	}
+	return resp, nil
 }
 
 func (e *EmployeeSvcImpl) CreateEmployee(ctx context.Context, req oapi.CreateEmployeeRequestObject) (oapi.CreateEmployeeResponseObject, error) {
-	if validationMsg := e.validateCreateEmployee(req); validationMsg != "" {
-		return nil, echo.NewHTTPError(http.StatusUnprocessableEntity, validationMsg)
+	if errMsg := e.validateCreateEmployee(req); errMsg != "" {
+		return nil, validationError(errMsg)
 	}
 
 	id, err := e.EmployeeRepo.Insert(ctx, &entity.Employee{
@@ -49,18 +58,20 @@ func (e *EmployeeSvcImpl) CreateEmployee(ctx context.Context, req oapi.CreateEmp
 	if err != nil {
 		return nil, err
 	}
-	return oapi.CreateEmployee201Response{
+
+	resp := oapi.CreateEmployee201Response{
 		Headers: oapi.CreateEmployee201ResponseHeaders{
 			Location: fmt.Sprintf("/employees/%d", id),
 		},
-	}, nil
+	}
+	return resp, nil
 }
 
 func (e *EmployeeSvcImpl) validateCreateEmployee(req oapi.CreateEmployeeRequestObject) string {
-	if len(req.Body.EmployeeName) <= 0 {
+	if isEmpty(req.Body.EmployeeName) {
 		return "Employee Name can't be empty"
 	}
-	if len(req.Body.JobTitle) <= 0 {
+	if isEmpty(req.Body.JobTitle) {
 		return "Job Title can't be empty"
 	}
 	return ""
@@ -70,7 +81,7 @@ func (e *EmployeeSvcImpl) DeleteEmployee(ctx context.Context, request oapi.Delet
 	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
 }
 
-func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, request oapi.GetEmployeeRequestObject) (oapi.GetEmployeeResponseObject, error) {
+func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, req oapi.GetEmployeeRequestObject) (oapi.GetEmployeeResponseObject, error) {
 	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
 }
 

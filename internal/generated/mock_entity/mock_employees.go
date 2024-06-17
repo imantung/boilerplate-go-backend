@@ -56,26 +56,6 @@ func (mr *MockEmployeeRepoMockRecorder) Count(arg0 interface{}, arg1 ...interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockEmployeeRepo)(nil).Count), varargs...)
 }
 
-// Find mocks base method.
-func (m *MockEmployeeRepo) Find(arg0 context.Context, arg1 ...sqkit.SelectOption) ([]*entity.Employee, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
-	for _, a := range arg1 {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Find", varargs...)
-	ret0, _ := ret[0].([]*entity.Employee)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Find indicates an expected call of Find.
-func (mr *MockEmployeeRepoMockRecorder) Find(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockEmployeeRepo)(nil).Find), varargs...)
-}
-
 // Insert mocks base method.
 func (m *MockEmployeeRepo) Insert(arg0 context.Context, arg1 *entity.Employee) (int, error) {
 	m.ctrl.T.Helper()
@@ -109,6 +89,26 @@ func (mr *MockEmployeeRepoMockRecorder) Patch(arg0, arg1 interface{}, arg2 ...in
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Patch", reflect.TypeOf((*MockEmployeeRepo)(nil).Patch), varargs...)
+}
+
+// Select mocks base method.
+func (m *MockEmployeeRepo) Select(arg0 context.Context, arg1 ...sqkit.SelectOption) ([]*entity.Employee, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Select", varargs...)
+	ret0, _ := ret[0].([]*entity.Employee)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Select indicates an expected call of Select.
+func (mr *MockEmployeeRepoMockRecorder) Select(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Select", reflect.TypeOf((*MockEmployeeRepo)(nil).Select), varargs...)
 }
 
 // SoftDelete mocks base method.

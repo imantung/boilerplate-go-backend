@@ -21,8 +21,8 @@ var (
 		ID             string
 		EmployeeName   string
 		JobTitle       string
-		LastCheckInAt  string
-		LastCheckOutAt string
+		LastClockInAt  string
+		LastClockOutAt string
 		DeletedAt      string
 		UpdatedAt      string
 		CreatedAt      string
@@ -30,8 +30,8 @@ var (
 		ID:             "id",
 		EmployeeName:   "employee_name",
 		JobTitle:       "job_title",
-		LastCheckInAt:  "last_check_in_at",
-		LastCheckOutAt: "last_check_out_at",
+		LastClockInAt:  "last_clock_in_at",
+		LastClockOutAt: "last_clock_out_at",
 		DeletedAt:      "deleted_at",
 		UpdatedAt:      "updated_at",
 		CreatedAt:      "created_at",
@@ -43,15 +43,15 @@ type (
 		ID             int        `column:"id"`
 		EmployeeName   string     `column:"employee_name"`
 		JobTitle       string     `column:"job_title"`
-		LastCheckInAt  *time.Time `column:"last_check_in_at"`
-		LastCheckOutAt *time.Time `column:"last_check_out_at"`
+		LastClockInAt  *time.Time `column:"last_clock_in_at"`
+		LastClockOutAt *time.Time `column:"last_clock_out_at"`
 		DeletedAt      *time.Time `column:"deleted_at"`
 		UpdatedAt      time.Time  `column:"updated_at"`
 		CreatedAt      time.Time  `column:"created_at"`
 	}
 	EmployeeRepo interface {
 		Count(context.Context, ...sqkit.SelectOption) (int64, error)
-		Find(context.Context, ...sqkit.SelectOption) ([]*Employee, error)
+		Select(context.Context, ...sqkit.SelectOption) ([]*Employee, error)
 		Insert(context.Context, *Employee) (int, error)
 		SoftDelete(context.Context, int) error
 		Update(context.Context, *Employee, ...sqkit.UpdateOption) (int64, error)
@@ -78,7 +78,7 @@ func (r *EmployeeRepoImpl) Count(ctx context.Context, opts ...sqkit.SelectOption
 	builder := sq.
 		Select("count(1)").
 		From("employees").
-		Where(sq.NotEq{"is_deleted": nil}).
+		Where(sq.Eq{"deleted_at": nil}).
 		RunWith(txn)
 
 	for _, opt := range opts {
@@ -94,7 +94,7 @@ func (r *EmployeeRepoImpl) Count(ctx context.Context, opts ...sqkit.SelectOption
 	return cnt, nil
 }
 
-func (r *EmployeeRepoImpl) Find(ctx context.Context, opts ...sqkit.SelectOption) ([]*Employee, error) {
+func (r *EmployeeRepoImpl) Select(ctx context.Context, opts ...sqkit.SelectOption) ([]*Employee, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return nil, err
@@ -104,14 +104,14 @@ func (r *EmployeeRepoImpl) Find(ctx context.Context, opts ...sqkit.SelectOption)
 			"id",
 			"employee_name",
 			"job_title",
-			"last_check_in_at",
-			"last_check_out_at",
+			"last_clock_in_at",
+			"last_clock_out_at",
 			"deleted_at",
 			"updated_at",
 			"created_at",
 		).
 		From("employees").
-		Where(sq.NotEq{"is_deleted": nil}).
+		Where(sq.Eq{"deleted_at": nil}).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
@@ -131,8 +131,8 @@ func (r *EmployeeRepoImpl) Find(ctx context.Context, opts ...sqkit.SelectOption)
 			&ent.ID,
 			&ent.EmployeeName,
 			&ent.JobTitle,
-			&ent.LastCheckInAt,
-			&ent.LastCheckOutAt,
+			&ent.LastClockInAt,
+			&ent.LastClockOutAt,
 			&ent.DeletedAt,
 			&ent.UpdatedAt,
 			&ent.CreatedAt,
@@ -156,8 +156,8 @@ func (r *EmployeeRepoImpl) Insert(ctx context.Context, ent *Employee) (int, erro
 		Columns(
 			"employee_name",
 			"job_title",
-			"last_check_in_at",
-			"last_check_out_at",
+			"last_clock_in_at",
+			"last_clock_out_at",
 		).
 		Suffix(
 			fmt.Sprintf("RETURNING \"%s\"", "id"),
@@ -166,8 +166,8 @@ func (r *EmployeeRepoImpl) Insert(ctx context.Context, ent *Employee) (int, erro
 		Values(
 			ent.EmployeeName,
 			ent.JobTitle,
-			ent.LastCheckInAt,
-			ent.LastCheckOutAt,
+			ent.LastClockInAt,
+			ent.LastClockOutAt,
 		)
 
 	scanner := builder.RunWith(txn).QueryRowContext(ctx)
@@ -190,8 +190,8 @@ func (r *EmployeeRepoImpl) Update(ctx context.Context, ent *Employee, opts ...sq
 		Update("employees").
 		Set("employee_name", ent.EmployeeName).
 		Set("job_title", ent.JobTitle).
-		Set("last_check_in_at", ent.LastCheckInAt).
-		Set("last_check_out_at", ent.LastCheckOutAt).
+		Set("last_clock_in_at", ent.LastClockInAt).
+		Set("last_clock_out_at", ent.LastClockOutAt).
 		Set("updated_at", "default").
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
@@ -227,11 +227,11 @@ func (r *EmployeeRepoImpl) Patch(ctx context.Context, ent *Employee, opts ...sqk
 	if !reflect.ValueOf(ent.JobTitle).IsZero() {
 		builder = builder.Set("job_title", ent.JobTitle)
 	}
-	if !reflect.ValueOf(ent.LastCheckInAt).IsZero() {
-		builder = builder.Set("last_check_in_at", ent.LastCheckInAt)
+	if !reflect.ValueOf(ent.LastClockInAt).IsZero() {
+		builder = builder.Set("last_clock_in_at", ent.LastClockInAt)
 	}
-	if !reflect.ValueOf(ent.LastCheckOutAt).IsZero() {
-		builder = builder.Set("last_check_out_at", ent.LastCheckOutAt)
+	if !reflect.ValueOf(ent.LastClockOutAt).IsZero() {
+		builder = builder.Set("last_clock_out_at", ent.LastClockOutAt)
 	}
 
 	builder = builder.Set("updated_at", "default")

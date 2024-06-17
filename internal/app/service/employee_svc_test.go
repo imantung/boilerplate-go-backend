@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/imantung/boilerplate-go-backend/internal/app/service"
@@ -12,6 +13,69 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestListEmployee(t *testing.T) {
+	testcases := []struct {
+		TestName         string
+		Request          oapi.ListEmployeeRequestObject
+		OnMockRepo       func(*mock_entity.MockEmployeeRepo)
+		ExpectedResponse oapi.ListEmployeeResponseObject
+		ExpectedErr      string
+	}{
+		{
+			TestName: "repo error",
+			Request:  oapi.ListEmployeeRequestObject{},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().Select(gomock.Any()).Return(nil, errors.New("some-error"))
+			},
+			ExpectedErr: "some-error",
+		},
+		{
+			TestName: "success",
+			Request:  oapi.ListEmployeeRequestObject{},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().Select(gomock.Any()).
+					Return([]*entity.Employee{
+						{
+							ID:             99,
+							EmployeeName:   "some-name",
+							JobTitle:       "some-title",
+							LastClockInAt:  &time.Time{},
+							LastClockOutAt: &time.Time{},
+						},
+					}, nil)
+			},
+			ExpectedResponse: oapi.ListEmployee200JSONResponse{
+				{
+					Id:             99,
+					EmployeeName:   "some-name",
+					JobTitle:       "some-title",
+					LastClockInAt:  &time.Time{},
+					LastClockOutAt: &time.Time{},
+				},
+			},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			repo := mock_entity.NewMockEmployeeRepo(ctrl)
+			if tt.OnMockRepo != nil {
+				tt.OnMockRepo(repo)
+			}
+
+			svc := service.NewEmployeeSvc(repo)
+			resp, err := svc.ListEmployee(context.Background(), tt.Request)
+			if err != nil {
+				assert.EqualError(t, err, tt.ExpectedErr)
+			} else {
+				assert.EqualValues(t, tt.ExpectedResponse, resp)
+			}
+		})
+	}
+}
 
 func TestCreateEmployee(t *testing.T) {
 	testcases := []struct {

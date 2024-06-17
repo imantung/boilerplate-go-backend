@@ -29,7 +29,7 @@ type (
 	}
 	{{.StructName}}Repo interface {
 		Count(context.Context, ...sqkit.SelectOption) (int64, error)
-		Find(context.Context, ...sqkit.SelectOption) ([]*{{.StructName}}, error)
+		Select(context.Context, ...sqkit.SelectOption) ([]*{{.StructName}}, error)
 		Insert(context.Context, *{{.StructName}}) (int, error)
 		SoftDelete(context.Context, int) (error)
 		Update(context.Context, *{{.StructName}}, ...sqkit.UpdateOption) (int64, error)
@@ -56,7 +56,7 @@ func (r *{{.StructName}}RepoImpl) Count(ctx context.Context, opts ...sqkit.Selec
 	builder := sq.
 		Select("count(1)").
 		From("{{.TableName}}").
-		Where(sq.NotEq{"is_deleted": nil}).
+		Where(sq.Eq{"deleted_at": nil}).
 		RunWith(txn)
 
 	for _, opt := range opts {
@@ -72,7 +72,7 @@ func (r *{{.StructName}}RepoImpl) Count(ctx context.Context, opts ...sqkit.Selec
 	return cnt, nil
 }
 
-func (r *{{.StructName}}RepoImpl) Find(ctx context.Context, opts ...sqkit.SelectOption) ([]*{{.StructName}}, error) {
+func (r *{{.StructName}}RepoImpl) Select(ctx context.Context, opts ...sqkit.SelectOption) ([]*{{.StructName}}, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func (r *{{.StructName}}RepoImpl) Find(ctx context.Context, opts ...sqkit.Select
 			"{{ $col.ColumnName }}",{{ end }}
 		).
 		From("{{.TableName}}").
-		Where(sq.NotEq{"is_deleted": nil}).
+		Where(sq.Eq{"deleted_at": nil}).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 

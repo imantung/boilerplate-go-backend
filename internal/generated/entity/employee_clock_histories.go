@@ -20,8 +20,8 @@ var (
 	EmployeeClockHistoryColumns   = struct {
 		ID                  string
 		EmployeeID          string
-		CheckInAt           string
-		CheckOutAt          string
+		ClockInAt           string
+		ClockOutAt          string
 		WorkDuration        string
 		WorkDurationMinutes string
 		DeletedAt           string
@@ -30,8 +30,8 @@ var (
 	}{
 		ID:                  "id",
 		EmployeeID:          "employee_id",
-		CheckInAt:           "check_in_at",
-		CheckOutAt:          "check_out_at",
+		ClockInAt:           "clock_in_at",
+		ClockOutAt:          "clock_out_at",
 		WorkDuration:        "work_duration",
 		WorkDurationMinutes: "work_duration_minutes",
 		DeletedAt:           "deleted_at",
@@ -44,8 +44,8 @@ type (
 	EmployeeClockHistory struct {
 		ID                  int        `column:"id"`
 		EmployeeID          string     `column:"employee_id"`
-		CheckInAt           *time.Time `column:"check_in_at"`
-		CheckOutAt          *time.Time `column:"check_out_at"`
+		ClockInAt           *time.Time `column:"clock_in_at"`
+		ClockOutAt          *time.Time `column:"clock_out_at"`
 		WorkDuration        *string    `column:"work_duration"`
 		WorkDurationMinutes *int       `column:"work_duration_minutes"`
 		DeletedAt           *time.Time `column:"deleted_at"`
@@ -54,7 +54,7 @@ type (
 	}
 	EmployeeClockHistoryRepo interface {
 		Count(context.Context, ...sqkit.SelectOption) (int64, error)
-		Find(context.Context, ...sqkit.SelectOption) ([]*EmployeeClockHistory, error)
+		Select(context.Context, ...sqkit.SelectOption) ([]*EmployeeClockHistory, error)
 		Insert(context.Context, *EmployeeClockHistory) (int, error)
 		SoftDelete(context.Context, int) error
 		Update(context.Context, *EmployeeClockHistory, ...sqkit.UpdateOption) (int64, error)
@@ -81,7 +81,7 @@ func (r *EmployeeClockHistoryRepoImpl) Count(ctx context.Context, opts ...sqkit.
 	builder := sq.
 		Select("count(1)").
 		From("employee_clock_histories").
-		Where(sq.NotEq{"is_deleted": nil}).
+		Where(sq.Eq{"deleted_at": nil}).
 		RunWith(txn)
 
 	for _, opt := range opts {
@@ -97,7 +97,7 @@ func (r *EmployeeClockHistoryRepoImpl) Count(ctx context.Context, opts ...sqkit.
 	return cnt, nil
 }
 
-func (r *EmployeeClockHistoryRepoImpl) Find(ctx context.Context, opts ...sqkit.SelectOption) ([]*EmployeeClockHistory, error) {
+func (r *EmployeeClockHistoryRepoImpl) Select(ctx context.Context, opts ...sqkit.SelectOption) ([]*EmployeeClockHistory, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return nil, err
@@ -106,8 +106,8 @@ func (r *EmployeeClockHistoryRepoImpl) Find(ctx context.Context, opts ...sqkit.S
 		Select(
 			"id",
 			"employee_id",
-			"check_in_at",
-			"check_out_at",
+			"clock_in_at",
+			"clock_out_at",
 			"work_duration",
 			"work_duration_minutes",
 			"deleted_at",
@@ -115,7 +115,7 @@ func (r *EmployeeClockHistoryRepoImpl) Find(ctx context.Context, opts ...sqkit.S
 			"created_at",
 		).
 		From("employee_clock_histories").
-		Where(sq.NotEq{"is_deleted": nil}).
+		Where(sq.Eq{"deleted_at": nil}).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
@@ -134,8 +134,8 @@ func (r *EmployeeClockHistoryRepoImpl) Find(ctx context.Context, opts ...sqkit.S
 		err := rows.Scan(
 			&ent.ID,
 			&ent.EmployeeID,
-			&ent.CheckInAt,
-			&ent.CheckOutAt,
+			&ent.ClockInAt,
+			&ent.ClockOutAt,
 			&ent.WorkDuration,
 			&ent.WorkDurationMinutes,
 			&ent.DeletedAt,
@@ -160,8 +160,8 @@ func (r *EmployeeClockHistoryRepoImpl) Insert(ctx context.Context, ent *Employee
 		Insert("employee_clock_histories").
 		Columns(
 			"employee_id",
-			"check_in_at",
-			"check_out_at",
+			"clock_in_at",
+			"clock_out_at",
 			"work_duration",
 			"work_duration_minutes",
 		).
@@ -171,8 +171,8 @@ func (r *EmployeeClockHistoryRepoImpl) Insert(ctx context.Context, ent *Employee
 		PlaceholderFormat(sq.Dollar).
 		Values(
 			ent.EmployeeID,
-			ent.CheckInAt,
-			ent.CheckOutAt,
+			ent.ClockInAt,
+			ent.ClockOutAt,
 			ent.WorkDuration,
 			ent.WorkDurationMinutes,
 		)
@@ -196,8 +196,8 @@ func (r *EmployeeClockHistoryRepoImpl) Update(ctx context.Context, ent *Employee
 	builder := sq.
 		Update("employee_clock_histories").
 		Set("employee_id", ent.EmployeeID).
-		Set("check_in_at", ent.CheckInAt).
-		Set("check_out_at", ent.CheckOutAt).
+		Set("clock_in_at", ent.ClockInAt).
+		Set("clock_out_at", ent.ClockOutAt).
 		Set("work_duration", ent.WorkDuration).
 		Set("work_duration_minutes", ent.WorkDurationMinutes).
 		Set("updated_at", "default").
@@ -232,11 +232,11 @@ func (r *EmployeeClockHistoryRepoImpl) Patch(ctx context.Context, ent *EmployeeC
 	if !reflect.ValueOf(ent.EmployeeID).IsZero() {
 		builder = builder.Set("employee_id", ent.EmployeeID)
 	}
-	if !reflect.ValueOf(ent.CheckInAt).IsZero() {
-		builder = builder.Set("check_in_at", ent.CheckInAt)
+	if !reflect.ValueOf(ent.ClockInAt).IsZero() {
+		builder = builder.Set("clock_in_at", ent.ClockInAt)
 	}
-	if !reflect.ValueOf(ent.CheckOutAt).IsZero() {
-		builder = builder.Set("check_out_at", ent.CheckOutAt)
+	if !reflect.ValueOf(ent.ClockOutAt).IsZero() {
+		builder = builder.Set("clock_out_at", ent.ClockOutAt)
 	}
 	if !reflect.ValueOf(ent.WorkDuration).IsZero() {
 		builder = builder.Set("work_duration", ent.WorkDuration)

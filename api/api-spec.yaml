@@ -293,10 +293,14 @@ components:
   schemas:
     Employee:
       type: object
+      required:
+        - id
+        - employee_name
+        - job_title
       properties:
         id:
           type: integer
-        name:
+        employee_name:
           type: string
         job_title:
           type: string

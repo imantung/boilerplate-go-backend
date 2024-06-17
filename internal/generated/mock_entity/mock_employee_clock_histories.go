@@ -56,26 +56,6 @@ func (mr *MockEmployeeClockHistoryRepoMockRecorder) Count(arg0 interface{}, arg1
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockEmployeeClockHistoryRepo)(nil).Count), varargs...)
 }
 
-// Find mocks base method.
-func (m *MockEmployeeClockHistoryRepo) Find(arg0 context.Context, arg1 ...sqkit.SelectOption) ([]*entity.EmployeeClockHistory, error) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{arg0}
-	for _, a := range arg1 {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Find", varargs...)
-	ret0, _ := ret[0].([]*entity.EmployeeClockHistory)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Find indicates an expected call of Find.
-func (mr *MockEmployeeClockHistoryRepoMockRecorder) Find(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{arg0}, arg1...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockEmployeeClockHistoryRepo)(nil).Find), varargs...)
-}
-
 // Insert mocks base method.
 func (m *MockEmployeeClockHistoryRepo) Insert(arg0 context.Context, arg1 *entity.EmployeeClockHistory) (int, error) {
 	m.ctrl.T.Helper()
@@ -109,6 +89,26 @@ func (mr *MockEmployeeClockHistoryRepoMockRecorder) Patch(arg0, arg1 interface{}
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Patch", reflect.TypeOf((*MockEmployeeClockHistoryRepo)(nil).Patch), varargs...)
+}
+
+// Select mocks base method.
+func (m *MockEmployeeClockHistoryRepo) Select(arg0 context.Context, arg1 ...sqkit.SelectOption) ([]*entity.EmployeeClockHistory, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Select", varargs...)
+	ret0, _ := ret[0].([]*entity.EmployeeClockHistory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Select indicates an expected call of Select.
+func (mr *MockEmployeeClockHistoryRepoMockRecorder) Select(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Select", reflect.TypeOf((*MockEmployeeClockHistoryRepo)(nil).Select), varargs...)
 }
 
 // SoftDelete mocks base method.
