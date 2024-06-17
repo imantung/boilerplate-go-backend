@@ -48,9 +48,9 @@ task create-migration NAME=create_some_table   # Create new migration file
     - [ ] Rate Limiter (Redis)
 - [RESTful API](https://en.wikipedia.org/wiki/REST)
   - [x] `POST` Create operation 
-  - [ ] `GET` Read operation 
-    - [ ] Single entity
-    - [ ] Entity List
+  - [x] `GET` Read operation 
+    - [x] Single entity
+    - [x] Entity List
     - [ ] Pagination
     - [ ] Search / Filtering
     - [ ] Sorting

@@ -11,6 +11,7 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/mock_entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
+	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -148,6 +149,75 @@ func TestCreateEmployee(t *testing.T) {
 
 			svc := service.NewEmployeeSvc(repo)
 			resp, err := svc.CreateEmployee(context.Background(), tt.Request)
+			if err != nil {
+				assert.EqualError(t, err, tt.ExpectedErr)
+			} else {
+				assert.EqualValues(t, tt.ExpectedResponse, resp)
+			}
+		})
+	}
+}
+
+func TestGetEmployee(t *testing.T) {
+	testcases := []struct {
+		TestName         string
+		Request          oapi.GetEmployeeRequestObject
+		OnMockRepo       func(*mock_entity.MockEmployeeRepo)
+		ExpectedResponse oapi.GetEmployeeResponseObject
+		ExpectedErr      string
+	}{
+		{
+			TestName: "repo error",
+			Request:  oapi.GetEmployeeRequestObject{Id: 99},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": int64(99)}).Return(nil, errors.New("some-error"))
+			},
+			ExpectedErr: "some-error",
+		},
+		{
+			TestName: "not found",
+			Request:  oapi.GetEmployeeRequestObject{Id: 99},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": int64(99)}).Return([]*entity.Employee{}, nil)
+			},
+			ExpectedErr: "code=404, message=99 not found",
+		},
+		{
+			TestName: "success",
+			Request:  oapi.GetEmployeeRequestObject{Id: 99},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": int64(99)}).
+					Return([]*entity.Employee{
+						{
+							ID:             99,
+							EmployeeName:   "some-name",
+							JobTitle:       "some-title",
+							LastClockInAt:  &time.Time{},
+							LastClockOutAt: &time.Time{},
+						},
+					}, nil)
+			},
+			ExpectedResponse: oapi.GetEmployee200JSONResponse{
+				Id:             99,
+				EmployeeName:   "some-name",
+				JobTitle:       "some-title",
+				LastClockInAt:  &time.Time{},
+				LastClockOutAt: &time.Time{},
+			},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			repo := mock_entity.NewMockEmployeeRepo(ctrl)
+			if tt.OnMockRepo != nil {
+				tt.OnMockRepo(repo)
+			}
+
+			svc := service.NewEmployeeSvc(repo)
+			resp, err := svc.GetEmployee(context.Background(), tt.Request)
 			if err != nil {
 				assert.EqualError(t, err, tt.ExpectedErr)
 			} else {

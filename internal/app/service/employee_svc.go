@@ -8,6 +8,7 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
+	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
 	"github.com/labstack/echo/v4"
 )
 
@@ -82,7 +83,18 @@ func (e *EmployeeSvcImpl) DeleteEmployee(ctx context.Context, request oapi.Delet
 }
 
 func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, req oapi.GetEmployeeRequestObject) (oapi.GetEmployeeResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
+	id := req.Id
+	employees, err := e.EmployeeRepo.Select(ctx, sqkit.Eq{"id": id})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(employees) < 1 {
+		return nil, notFoundError(id)
+	}
+
+	resp := oapi.GetEmployee200JSONResponse(convertEmployee(employees[0]))
+	return resp, nil
 }
 
 func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, request oapi.PatchEmployeeRequestObject) (oapi.PatchEmployeeResponseObject, error) {
