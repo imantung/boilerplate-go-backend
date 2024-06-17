@@ -58,6 +58,9 @@ type Unauthorized = Error
 // UnexpectedError defines model for UnexpectedError.
 type UnexpectedError = Error
 
+// ValidationError defines model for ValidationError.
+type ValidationError = Error
+
 // ClockInJSONBody defines parameters for ClockIn.
 type ClockInJSONBody struct {
 	EmployeeId *int `json:"employee_id,omitempty"`
@@ -70,8 +73,8 @@ type ClockOutJSONBody struct {
 
 // CreateEmployeeJSONBody defines parameters for CreateEmployee.
 type CreateEmployeeJSONBody struct {
-	JobTitle *string `json:"job_title,omitempty"`
-	Name     string  `json:"name"`
+	EmployeeName string `json:"employee_name"`
+	JobTitle     string `json:"job_title"`
 }
 
 // ClockInJSONRequestBody defines body for ClockIn for application/json ContentType.
@@ -295,6 +298,8 @@ type UnauthorizedJSONResponse Error
 
 type UnexpectedErrorJSONResponse Error
 
+type ValidationErrorJSONResponse Error
+
 type ClockInRequestObject struct {
 	Body *ClockInJSONRequestBody
 }
@@ -317,6 +322,15 @@ type ClockIn401JSONResponse struct{ UnauthorizedJSONResponse }
 func (response ClockIn401JSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ClockIn422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response ClockIn422JSONResponse) VisitClockInResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
 
 	return json.NewEncoder(w).Encode(response)
 }
@@ -355,6 +369,15 @@ type ClockOut401JSONResponse struct{ UnauthorizedJSONResponse }
 func (response ClockOut401JSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ClockOut422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response ClockOut422JSONResponse) VisitClockOutResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
 
 	return json.NewEncoder(w).Encode(response)
 }
@@ -476,6 +499,15 @@ func (response CreateEmployee401JSONResponse) VisitCreateEmployeeResponse(w http
 	return json.NewEncoder(w).Encode(response)
 }
 
+type CreateEmployee422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response CreateEmployee422JSONResponse) VisitCreateEmployeeResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type CreateEmployeedefaultJSONResponse struct {
 	Body       Error
 	StatusCode int
@@ -518,6 +550,15 @@ type DeleteEmployee404JSONResponse struct{ NotFoundJSONResponse }
 func (response DeleteEmployee404JSONResponse) VisitDeleteEmployeeResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type DeleteEmployee422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response DeleteEmployee422JSONResponse) VisitDeleteEmployeeResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
 
 	return json.NewEncoder(w).Encode(response)
 }
@@ -615,6 +656,15 @@ func (response PatchEmployee404JSONResponse) VisitPatchEmployeeResponse(w http.R
 	return json.NewEncoder(w).Encode(response)
 }
 
+type PatchEmployee422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response PatchEmployee422JSONResponse) VisitPatchEmployeeResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 type PatchEmployeedefaultJSONResponse struct {
 	Body       Error
 	StatusCode int
@@ -658,6 +708,15 @@ type UpdateEmployee404JSONResponse struct{ NotFoundJSONResponse }
 func (response UpdateEmployee404JSONResponse) VisitUpdateEmployeeResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type UpdateEmployee422JSONResponse struct{ ValidationErrorJSONResponse }
+
+func (response UpdateEmployee422JSONResponse) VisitUpdateEmployeeResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
 
 	return json.NewEncoder(w).Encode(response)
 }

@@ -41,10 +41,10 @@ paths:
             schema:
               type: object
               required:
-                - id
-                - name
+                - employee_name
+                - job_title
               properties:
-                name:
+                employee_name:
                   type: string
                 job_title:
                   type: string
@@ -58,6 +58,8 @@ paths:
                   type: string
           "401":
             $ref: '#/components/responses/Unauthorized'
+          "422":
+            $ref: '#/components/responses/ValidationError'
           default:
             $ref: '#/components/responses/UnexpectedError'
       security:
@@ -116,6 +118,8 @@ paths:
             $ref: '#/components/responses/Unauthorized'
           "404":
             $ref: '#/components/responses/NotFound'
+          "422":
+            $ref: '#/components/responses/ValidationError'
           default:
             $ref: '#/components/responses/UnexpectedError'
       security:
@@ -140,6 +144,8 @@ paths:
             $ref: '#/components/responses/Unauthorized'
           "404":
             $ref: '#/components/responses/NotFound'
+          "422":
+            $ref: '#/components/responses/ValidationError'
           default:
             $ref: '#/components/responses/UnexpectedError'
       security:
@@ -164,6 +170,8 @@ paths:
             $ref: '#/components/responses/Unauthorized'
           "404":
             $ref: '#/components/responses/NotFound'
+          "422":
+            $ref: '#/components/responses/ValidationError'
           default:
             $ref: '#/components/responses/UnexpectedError'
       security:
@@ -211,6 +219,8 @@ paths:
                 $ref: "#/components/schemas/EmployeeClockHistory"
         "401":
           $ref: '#/components/responses/Unauthorized'
+        "422":
+          $ref: '#/components/responses/ValidationError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       security:
@@ -238,6 +248,8 @@ paths:
                 $ref: "#/components/schemas/EmployeeClockHistory"
         "401":
           $ref: '#/components/responses/Unauthorized'
+        "422":
+            $ref: '#/components/responses/ValidationError'
         default:
           $ref: '#/components/responses/UnexpectedError'
       security:
@@ -268,6 +280,12 @@ components:
             $ref: '#/components/schemas/Error'
     UnexpectedError:
         description: Unexpected error
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Error"
+    ValidationError:
+        description: Validation error
         content:
           application/json:
             schema:
