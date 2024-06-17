@@ -43,7 +43,7 @@ task create-migration NAME=create_some_table   # Create new migration file
     - [x] [Recovery from panic](https://echo.labstack.com/docs/middleware/recover)
     - [x] [Generate Request ID](https://echo.labstack.com/docs/middleware/request-id)
     - [x] [Protection against XSS attack and other common security threats](https://echo.labstack.com/docs/middleware/secure)
-    - [ ] Custom error handler
+    - [x] Custom error handler
     - [ ] Server-Side Cache (Redis)
     - [ ] Rate Limiter (Redis)
 - [RESTful API](https://en.wikipedia.org/wiki/REST)

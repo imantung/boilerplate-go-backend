@@ -9,20 +9,11 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/rs/zerolog"
-	"github.com/ziflex/lecho/v3"
 )
 
-type (
-	Handler struct {
-		ZeroLogger  zerolog.Logger
-		LechoLogger *lecho.Logger
-		LechoConfig lecho.Config
-	}
-)
+var _ = di.Provide(NewZeroLogger)
 
-var _ = di.Provide(NewHandler)
-
-func NewHandler(cfg *config.Config) *Handler {
+func NewZeroLogger(cfg *config.Config) zerolog.Logger {
 	buildInfo, _ := debug.ReadBuildInfo()
 
 	var w io.Writer
@@ -36,23 +27,10 @@ func NewHandler(cfg *config.Config) *Handler {
 		w = os.Stderr
 	}
 
-	zeroLogger := zerolog.New(w).With().
+	return zerolog.New(w).With().
 		// Caller(). // NOTE: uncomment to append caller to the log
 		Timestamp().
 		Int("pid", os.Getpid()).
 		Str("go_version", buildInfo.GoVersion).
 		Logger()
-
-	lechoLogger := lecho.From(zeroLogger)
-	lechoConfig := lecho.Config{
-		Logger:              lechoLogger,
-		RequestIDKey:        "request_id",
-		RequestLatencyLevel: zerolog.WarnLevel,
-		RequestLatencyLimit: 500 * time.Millisecond,
-	}
-	return &Handler{
-		ZeroLogger:  zeroLogger,
-		LechoLogger: lechoLogger,
-		LechoConfig: lechoConfig,
-	}
 }
