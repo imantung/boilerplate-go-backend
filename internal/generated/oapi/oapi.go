@@ -86,6 +86,9 @@ type ClockOutJSONRequestBody ClockOutJSONBody
 // CreateEmployeeJSONRequestBody defines body for CreateEmployee for application/json ContentType.
 type CreateEmployeeJSONRequestBody CreateEmployeeJSONBody
 
+// PatchEmployeeJSONRequestBody defines body for PatchEmployee for application/json ContentType.
+type PatchEmployeeJSONRequestBody = Employee
+
 // UpdateEmployeeJSONRequestBody defines body for UpdateEmployee for application/json ContentType.
 type UpdateEmployeeJSONRequestBody = Employee
 
@@ -623,7 +626,8 @@ func (response GetEmployeedefaultJSONResponse) VisitGetEmployeeResponse(w http.R
 }
 
 type PatchEmployeeRequestObject struct {
-	Id int64 `json:"id"`
+	Id   int64 `json:"id"`
+	Body *PatchEmployeeJSONRequestBody
 }
 
 type PatchEmployeeResponseObject interface {
@@ -964,6 +968,12 @@ func (sh *strictHandler) PatchEmployee(ctx echo.Context, id int64) error {
 	var request PatchEmployeeRequestObject
 
 	request.Id = id
+
+	var body PatchEmployeeJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.PatchEmployee(ctx.Request().Context(), request.(PatchEmployeeRequestObject))

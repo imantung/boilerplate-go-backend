@@ -104,13 +104,13 @@ paths:
           schema:
             type: integer
             format: int64
-      tags:
-        - "Backoffice Dashboard"
       requestBody:
         content:
           application/json:
             schema: 
               $ref: "#/components/schemas/Employee"
+      tags:
+        - "Backoffice Dashboard"
       responses:
           "204":
             description: success
@@ -135,6 +135,11 @@ paths:
           schema:
             type: integer
             format: int64
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/schemas/Employee"
       tags:
         - "Backoffice Dashboard"
       responses:

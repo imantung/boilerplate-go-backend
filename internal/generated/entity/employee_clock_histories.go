@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"reflect"
 	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
@@ -200,7 +199,7 @@ func (r *EmployeeClockHistoryRepoImpl) Update(ctx context.Context, ent *Employee
 		Set("clock_out_at", ent.ClockOutAt).
 		Set("work_duration", ent.WorkDuration).
 		Set("work_duration_minutes", ent.WorkDurationMinutes).
-		Set("updated_at", "default").
+		Set("updated_at", "now()").
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
@@ -229,23 +228,23 @@ func (r *EmployeeClockHistoryRepoImpl) Patch(ctx context.Context, ent *EmployeeC
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
-	if !reflect.ValueOf(ent.EmployeeID).IsZero() {
+	if !sqkit.IsZero(ent.EmployeeID) {
 		builder = builder.Set("employee_id", ent.EmployeeID)
 	}
-	if !reflect.ValueOf(ent.ClockInAt).IsZero() {
+	if !sqkit.IsZero(ent.ClockInAt) {
 		builder = builder.Set("clock_in_at", ent.ClockInAt)
 	}
-	if !reflect.ValueOf(ent.ClockOutAt).IsZero() {
+	if !sqkit.IsZero(ent.ClockOutAt) {
 		builder = builder.Set("clock_out_at", ent.ClockOutAt)
 	}
-	if !reflect.ValueOf(ent.WorkDuration).IsZero() {
+	if !sqkit.IsZero(ent.WorkDuration) {
 		builder = builder.Set("work_duration", ent.WorkDuration)
 	}
-	if !reflect.ValueOf(ent.WorkDurationMinutes).IsZero() {
+	if !sqkit.IsZero(ent.WorkDurationMinutes) {
 		builder = builder.Set("work_duration_minutes", ent.WorkDurationMinutes)
 	}
 
-	builder = builder.Set("updated_at", "default")
+	builder = builder.Set("updated_at", "now()")
 
 	for _, opt := range opts {
 		builder = opt.CompileUpdate(builder)

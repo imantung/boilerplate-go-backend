@@ -3,13 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
-	"github.com/labstack/echo/v4"
 )
 
 type (
@@ -98,8 +96,18 @@ func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, req oapi.GetEmployeeR
 	return resp, nil
 }
 
-func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, request oapi.PatchEmployeeRequestObject) (oapi.PatchEmployeeResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
+func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, req oapi.PatchEmployeeRequestObject) (oapi.PatchEmployeeResponseObject, error) {
+	id := int(req.Id)
+	employee := convertToEmployeeEntity(req.Body)
+
+	affectedRow, err := e.EmployeeRepo.Patch(ctx, &employee, sqkit.Eq{"id": id})
+	if err != nil {
+		return nil, err
+	}
+	if affectedRow < 1 {
+		return nil, notFoundError(id)
+	}
+	return oapi.PatchEmployee204Response{}, nil
 }
 
 func (e *EmployeeSvcImpl) UpdateEmployee(ctx context.Context, req oapi.UpdateEmployeeRequestObject) (oapi.UpdateEmployeeResponseObject, error) {

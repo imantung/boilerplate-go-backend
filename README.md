@@ -54,8 +54,8 @@ task create-migration NAME=create_some_table   # Create new migration file
     - [ ] Pagination
     - [ ] Search / Filtering
     - [ ] Sorting
-  - [ ] `UPDATE` Update operation
-  - [ ] `PATCH` Partially update operation
+  - [x] `UPDATE` Update operation
+  - [x] `PATCH` Partially update operation
   - [x] `DELETE` Delete operation
     - [x] Soft-Delete
     - [x] Idempotent

@@ -147,7 +147,7 @@ func (r *{{.StructName}}RepoImpl) Update(ctx context.Context, ent *{{.StructName
 	builder := sq.
 		Update("{{.TableName}}").{{ range $col := .Columns }}{{if and (not $col.IsPrimaryKey) (not $col.IsAuditColumn) }}
 		Set("{{$col.ColumnName}}", ent.{{$col.FieldName}}).{{end}}{{end}}
-		Set("updated_at", "default").
+		Set("updated_at", "now()").
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
@@ -176,11 +176,11 @@ func (r *{{.StructName}}RepoImpl) Patch(ctx context.Context, ent *{{.StructName}
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 	{{ range $col := .Columns }}{{if and (not $col.IsPrimaryKey) (not $col.IsAuditColumn) }}
-	if !reflect.ValueOf(ent.{{$col.FieldName}}).IsZero() {
+	if !sqkit.IsZero(ent.{{$col.FieldName}}) {
 		builder = builder.Set("{{$col.ColumnName}}", ent.{{$col.FieldName}})
 	}{{end}}{{end}}
 	
-	builder = builder.Set("updated_at", "default")
+	builder = builder.Set("updated_at", "now()")
 
 	for _, opt := range opts {
 		builder = opt.CompileUpdate(builder)
