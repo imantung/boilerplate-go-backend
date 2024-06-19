@@ -7,7 +7,7 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
-	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 )
 
 type (
@@ -83,7 +83,7 @@ func (e *EmployeeSvcImpl) DeleteEmployee(ctx context.Context, req oapi.DeleteEmp
 
 func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, req oapi.GetEmployeeRequestObject) (oapi.GetEmployeeResponseObject, error) {
 	id := int(req.Id)
-	employees, err := e.EmployeeRepo.Select(ctx, sqkit.Eq{"id": id})
+	employees, err := e.EmployeeRepo.Select(ctx, repokit.Eq{"id": id})
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, req oapi.PatchEmplo
 	id := int(req.Id)
 	employee := convertToEmployeeEntity(req.Body)
 
-	affectedRow, err := e.EmployeeRepo.Patch(ctx, &employee, sqkit.Eq{"id": id})
+	affectedRow, err := e.EmployeeRepo.Patch(ctx, &employee, repokit.Eq{"id": id})
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (e *EmployeeSvcImpl) UpdateEmployee(ctx context.Context, req oapi.UpdateEmp
 	if errMsg := validateEmployee(&employee); errMsg != "" {
 		return nil, validationError(errMsg)
 	}
-	affectedRow, err := e.EmployeeRepo.Update(ctx, &employee, sqkit.Eq{"id": id})
+	affectedRow, err := e.EmployeeRepo.Update(ctx, &employee, repokit.Eq{"id": id})
 	if err != nil {
 		return nil, err
 	}

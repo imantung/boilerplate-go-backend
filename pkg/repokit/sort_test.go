@@ -1,28 +1,28 @@
-package sqkit_test
+package repokit_test
 
 import (
 	"testing"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 	"github.com/stretchr/testify/require"
 )
 
 func TestSort(t *testing.T) {
 	testcases := []struct {
 		testName      string
-		sorts         sqkit.Sorts
+		sorts         repokit.Sorts
 		builder       sq.SelectBuilder
 		expectedQuery string
 		expectedArgs  []interface{}
 	}{
 		{
-			sorts:         sqkit.Sorts{},
+			sorts:         repokit.Sorts{},
 			builder:       sq.Select("col1", "col2", "col3").From("sometables"),
 			expectedQuery: "SELECT col1, col2, col3 FROM sometables",
 		},
 		{
-			sorts:         sqkit.Sorts{"col1", "+col2", "-col3"},
+			sorts:         repokit.Sorts{"col1", "+col2", "-col3"},
 			builder:       sq.Select("col1", "col2", "col3").From("sometables"),
 			expectedQuery: "SELECT col1, col2, col3 FROM sometables ORDER BY col1 ASC, col2 ASC, col3 DESC",
 		},

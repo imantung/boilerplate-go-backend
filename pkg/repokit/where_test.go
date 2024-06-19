@@ -1,17 +1,17 @@
-package sqkit_test
+package repokit_test
 
 import (
 	"testing"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 	"github.com/stretchr/testify/require"
 )
 
-func TestEq_CompileSelect(t *testing.T) {
+func TestWhere_CompileSelect(t *testing.T) {
 	testcases := []struct {
 		testName string
-		sqkit.Eq
+		repokit.Where
 		base          sq.SelectBuilder
 		expectedQuery string
 		expectedArgs  []interface{}
@@ -21,10 +21,13 @@ func TestEq_CompileSelect(t *testing.T) {
 			expectedQuery: "SELECT name, version FROM some-table",
 		},
 		{
-			Eq:            sqkit.Eq{"name": "dummy-name"},
+			Where: repokit.Where{
+				sq.Eq{"name": "dummy-name"},
+				sq.GtOrEq{"version": 1},
+			},
 			base:          sq.Select("name", "version").From("some-table"),
-			expectedQuery: "SELECT name, version FROM some-table WHERE name = ?",
-			expectedArgs:  []interface{}{"dummy-name"},
+			expectedQuery: "SELECT name, version FROM some-table WHERE name = ? AND version >= ?",
+			expectedArgs:  []interface{}{"dummy-name", 1},
 		},
 	}
 
@@ -38,19 +41,22 @@ func TestEq_CompileSelect(t *testing.T) {
 	}
 }
 
-func TestEq_CompileUpdate(t *testing.T) {
+func TestWhere_CompileUpdate(t *testing.T) {
 	testcases := []struct {
 		testName string
-		sqkit.Eq
+		repokit.Where
 		base          sq.UpdateBuilder
 		expectedQuery string
 		expectedArgs  []interface{}
 	}{
 		{
-			Eq:            sqkit.Eq{"name": "dummy-name"},
+			Where: repokit.Where{
+				sq.Eq{"name": "dummy-name"},
+				sq.LtOrEq{"version": 2},
+			},
 			base:          sq.Update("some-table").Set("column", "column-value"),
-			expectedQuery: "UPDATE some-table SET column = ? WHERE name = ?",
-			expectedArgs:  []interface{}{"column-value", "dummy-name"},
+			expectedQuery: "UPDATE some-table SET column = ? WHERE name = ? AND version <= ?",
+			expectedArgs:  []interface{}{"column-value", "dummy-name", 2},
 		},
 	}
 

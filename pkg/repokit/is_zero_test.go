@@ -1,9 +1,9 @@
-package sqkit_test
+package repokit_test
 
 import (
 	"testing"
 
-	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 )
 
 func TestIsZero(t *testing.T) {
@@ -22,7 +22,7 @@ func TestIsZero(t *testing.T) {
 	}
 	for _, tt := range testcases {
 		t.Run(tt.TestName, func(t *testing.T) {
-			sqkit.IsZero(tt.V)
+			repokit.IsZero(tt.V)
 		})
 	}
 

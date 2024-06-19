@@ -10,7 +10,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	entity "github.com/imantung/boilerplate-go-backend/internal/generated/entity"
-	sqkit "github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	repokit "github.com/imantung/boilerplate-go-backend/pkg/repokit"
 )
 
 // MockEmployeeRepo is a mock of EmployeeRepo interface.
@@ -37,7 +37,7 @@ func (m *MockEmployeeRepo) EXPECT() *MockEmployeeRepoMockRecorder {
 }
 
 // Count mocks base method.
-func (m *MockEmployeeRepo) Count(arg0 context.Context, arg1 ...sqkit.SelectOption) (int64, error) {
+func (m *MockEmployeeRepo) Count(arg0 context.Context, arg1 ...repokit.SelectOption) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -72,7 +72,7 @@ func (mr *MockEmployeeRepoMockRecorder) Insert(arg0, arg1 interface{}) *gomock.C
 }
 
 // Patch mocks base method.
-func (m *MockEmployeeRepo) Patch(arg0 context.Context, arg1 *entity.Employee, arg2 ...sqkit.UpdateOption) (int64, error) {
+func (m *MockEmployeeRepo) Patch(arg0 context.Context, arg1 *entity.Employee, arg2 ...repokit.UpdateOption) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
@@ -92,7 +92,7 @@ func (mr *MockEmployeeRepoMockRecorder) Patch(arg0, arg1 interface{}, arg2 ...in
 }
 
 // Select mocks base method.
-func (m *MockEmployeeRepo) Select(arg0 context.Context, arg1 ...sqkit.SelectOption) ([]*entity.Employee, error) {
+func (m *MockEmployeeRepo) Select(arg0 context.Context, arg1 ...repokit.SelectOption) ([]*entity.Employee, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -127,7 +127,7 @@ func (mr *MockEmployeeRepoMockRecorder) SoftDelete(arg0, arg1 interface{}) *gomo
 }
 
 // Update mocks base method.
-func (m *MockEmployeeRepo) Update(arg0 context.Context, arg1 *entity.Employee, arg2 ...sqkit.UpdateOption) (int64, error) {
+func (m *MockEmployeeRepo) Update(arg0 context.Context, arg1 *entity.Employee, arg2 ...repokit.UpdateOption) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {

@@ -6,7 +6,7 @@ import (
 	"database/sql"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
-	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 	"github.com/imantung/dbtxn"
 
 	sq "github.com/Masterminds/squirrel"
@@ -28,12 +28,12 @@ type (
 		{{$col.FieldName}} {{$col.FieldType}} `column:"{{$col.ColumnName}}"`{{ end }}
 	}
 	{{.StructName}}Repo interface {
-		Count(context.Context, ...sqkit.SelectOption) (int64, error)
-		Select(context.Context, ...sqkit.SelectOption) ([]*{{.StructName}}, error)
+		Count(context.Context, ...repokit.SelectOption) (int64, error)
+		Select(context.Context, ...repokit.SelectOption) ([]*{{.StructName}}, error)
 		Insert(context.Context, *{{.StructName}}) (int, error)
 		SoftDelete(context.Context, int) (int64, error)
-		Update(context.Context, *{{.StructName}}, ...sqkit.UpdateOption) (int64, error)
-		Patch(context.Context, *{{.StructName}}, ...sqkit.UpdateOption) (int64, error)
+		Update(context.Context, *{{.StructName}}, ...repokit.UpdateOption) (int64, error)
+		Patch(context.Context, *{{.StructName}}, ...repokit.UpdateOption) (int64, error)
 	}
 	{{.StructName}}RepoImpl struct {
 		*sql.DB
@@ -48,7 +48,7 @@ func New{{.StructName}}Repo(db *sql.DB) {{.StructName}}Repo {
 	}
 }
 
-func (r *{{.StructName}}RepoImpl) Count(ctx context.Context, opts ...sqkit.SelectOption) (int64, error) {
+func (r *{{.StructName}}RepoImpl) Count(ctx context.Context, opts ...repokit.SelectOption) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err
@@ -72,7 +72,7 @@ func (r *{{.StructName}}RepoImpl) Count(ctx context.Context, opts ...sqkit.Selec
 	return cnt, nil
 }
 
-func (r *{{.StructName}}RepoImpl) Select(ctx context.Context, opts ...sqkit.SelectOption) ([]*{{.StructName}}, error) {
+func (r *{{.StructName}}RepoImpl) Select(ctx context.Context, opts ...repokit.SelectOption) ([]*{{.StructName}}, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return nil, err
@@ -138,7 +138,7 @@ func (r *{{.StructName}}RepoImpl) Insert(ctx context.Context, ent *{{.StructName
 	return id, nil
 }
 
-func (r *{{.StructName}}RepoImpl) Update(ctx context.Context, ent *{{.StructName}}, opts ...sqkit.UpdateOption) (int64, error) {
+func (r *{{.StructName}}RepoImpl) Update(ctx context.Context, ent *{{.StructName}}, opts ...repokit.UpdateOption) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err
@@ -165,7 +165,7 @@ func (r *{{.StructName}}RepoImpl) Update(ctx context.Context, ent *{{.StructName
 	return affectedRow, err
 }
 
-func (r *{{.StructName}}RepoImpl) Patch(ctx context.Context, ent *{{.StructName}}, opts ...sqkit.UpdateOption) (int64, error) {
+func (r *{{.StructName}}RepoImpl) Patch(ctx context.Context, ent *{{.StructName}}, opts ...repokit.UpdateOption) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err
@@ -176,7 +176,7 @@ func (r *{{.StructName}}RepoImpl) Patch(ctx context.Context, ent *{{.StructName}
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 	{{ range $col := .Columns }}{{if and (not $col.IsPrimaryKey) (not $col.IsAuditColumn) }}
-	if !sqkit.IsZero(ent.{{$col.FieldName}}) {
+	if !repokit.IsZero(ent.{{$col.FieldName}}) {
 		builder = builder.Set("{{$col.ColumnName}}", ent.{{$col.FieldName}})
 	}{{end}}{{end}}
 	

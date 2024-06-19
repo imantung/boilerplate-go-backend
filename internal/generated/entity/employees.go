@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
-	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 	"github.com/imantung/dbtxn"
 
 	sq "github.com/Masterminds/squirrel"
@@ -49,12 +49,12 @@ type (
 		CreatedAt      time.Time  `column:"created_at"`
 	}
 	EmployeeRepo interface {
-		Count(context.Context, ...sqkit.SelectOption) (int64, error)
-		Select(context.Context, ...sqkit.SelectOption) ([]*Employee, error)
+		Count(context.Context, ...repokit.SelectOption) (int64, error)
+		Select(context.Context, ...repokit.SelectOption) ([]*Employee, error)
 		Insert(context.Context, *Employee) (int, error)
 		SoftDelete(context.Context, int) (int64, error)
-		Update(context.Context, *Employee, ...sqkit.UpdateOption) (int64, error)
-		Patch(context.Context, *Employee, ...sqkit.UpdateOption) (int64, error)
+		Update(context.Context, *Employee, ...repokit.UpdateOption) (int64, error)
+		Patch(context.Context, *Employee, ...repokit.UpdateOption) (int64, error)
 	}
 	EmployeeRepoImpl struct {
 		*sql.DB
@@ -69,7 +69,7 @@ func NewEmployeeRepo(db *sql.DB) EmployeeRepo {
 	}
 }
 
-func (r *EmployeeRepoImpl) Count(ctx context.Context, opts ...sqkit.SelectOption) (int64, error) {
+func (r *EmployeeRepoImpl) Count(ctx context.Context, opts ...repokit.SelectOption) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err
@@ -93,7 +93,7 @@ func (r *EmployeeRepoImpl) Count(ctx context.Context, opts ...sqkit.SelectOption
 	return cnt, nil
 }
 
-func (r *EmployeeRepoImpl) Select(ctx context.Context, opts ...sqkit.SelectOption) ([]*Employee, error) {
+func (r *EmployeeRepoImpl) Select(ctx context.Context, opts ...repokit.SelectOption) ([]*Employee, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return nil, err
@@ -179,7 +179,7 @@ func (r *EmployeeRepoImpl) Insert(ctx context.Context, ent *Employee) (int, erro
 	return id, nil
 }
 
-func (r *EmployeeRepoImpl) Update(ctx context.Context, ent *Employee, opts ...sqkit.UpdateOption) (int64, error) {
+func (r *EmployeeRepoImpl) Update(ctx context.Context, ent *Employee, opts ...repokit.UpdateOption) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err
@@ -209,7 +209,7 @@ func (r *EmployeeRepoImpl) Update(ctx context.Context, ent *Employee, opts ...sq
 	return affectedRow, err
 }
 
-func (r *EmployeeRepoImpl) Patch(ctx context.Context, ent *Employee, opts ...sqkit.UpdateOption) (int64, error) {
+func (r *EmployeeRepoImpl) Patch(ctx context.Context, ent *Employee, opts ...repokit.UpdateOption) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err
@@ -220,16 +220,16 @@ func (r *EmployeeRepoImpl) Patch(ctx context.Context, ent *Employee, opts ...sqk
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
-	if !sqkit.IsZero(ent.EmployeeName) {
+	if !repokit.IsZero(ent.EmployeeName) {
 		builder = builder.Set("employee_name", ent.EmployeeName)
 	}
-	if !sqkit.IsZero(ent.JobTitle) {
+	if !repokit.IsZero(ent.JobTitle) {
 		builder = builder.Set("job_title", ent.JobTitle)
 	}
-	if !sqkit.IsZero(ent.LastClockInAt) {
+	if !repokit.IsZero(ent.LastClockInAt) {
 		builder = builder.Set("last_clock_in_at", ent.LastClockInAt)
 	}
-	if !sqkit.IsZero(ent.LastClockOutAt) {
+	if !repokit.IsZero(ent.LastClockOutAt) {
 		builder = builder.Set("last_clock_out_at", ent.LastClockOutAt)
 	}
 

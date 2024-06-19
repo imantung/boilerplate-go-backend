@@ -1,4 +1,4 @@
-package sqkit
+package repokit
 
 import "reflect"
 

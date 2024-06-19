@@ -1,4 +1,4 @@
-package sqkit
+package repokit
 
 import (
 	sq "github.com/Masterminds/squirrel"

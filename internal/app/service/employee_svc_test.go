@@ -11,7 +11,7 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/mock_entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
-	"github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -224,7 +224,7 @@ func TestGetEmployee(t *testing.T) {
 			TestName: "repo error",
 			Request:  oapi.GetEmployeeRequestObject{Id: 99},
 			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
-				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": 99}).Return(nil, errors.New("some-error"))
+				mer.EXPECT().Select(gomock.Any(), repokit.Eq{"id": 99}).Return(nil, errors.New("some-error"))
 			},
 			ExpectedErr: "some-error",
 		},
@@ -232,7 +232,7 @@ func TestGetEmployee(t *testing.T) {
 			TestName: "not found",
 			Request:  oapi.GetEmployeeRequestObject{Id: 99},
 			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
-				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": 99}).Return([]*entity.Employee{}, nil)
+				mer.EXPECT().Select(gomock.Any(), repokit.Eq{"id": 99}).Return([]*entity.Employee{}, nil)
 			},
 			ExpectedErr: "code=404, message=ID #99 not found",
 		},
@@ -240,7 +240,7 @@ func TestGetEmployee(t *testing.T) {
 			TestName: "success",
 			Request:  oapi.GetEmployeeRequestObject{Id: 99},
 			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
-				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": 99}).
+				mer.EXPECT().Select(gomock.Any(), repokit.Eq{"id": 99}).
 					Return([]*entity.Employee{
 						{
 							ID:             99,
@@ -317,7 +317,7 @@ func TestUpdateEmployee(t *testing.T) {
 					EmployeeName: "some-name",
 					JobTitle:     "some-job-title",
 				}
-				mer.EXPECT().Update(gomock.Any(), emp, sqkit.Eq{"id": 99}).Return(int64(-1), errors.New("some-error"))
+				mer.EXPECT().Update(gomock.Any(), emp, repokit.Eq{"id": 99}).Return(int64(-1), errors.New("some-error"))
 			},
 			ExpectedErr: "some-error",
 		},
@@ -335,7 +335,7 @@ func TestUpdateEmployee(t *testing.T) {
 					EmployeeName: "some-name",
 					JobTitle:     "some-job-title",
 				}
-				mer.EXPECT().Update(gomock.Any(), emp, sqkit.Eq{"id": 99}).Return(int64(0), nil)
+				mer.EXPECT().Update(gomock.Any(), emp, repokit.Eq{"id": 99}).Return(int64(0), nil)
 			},
 			ExpectedErr: "code=404, message=ID #99 not found",
 		},
@@ -353,7 +353,7 @@ func TestUpdateEmployee(t *testing.T) {
 					EmployeeName: "some-name",
 					JobTitle:     "some-job-title",
 				}
-				mer.EXPECT().Update(gomock.Any(), emp, sqkit.Eq{"id": 99}).Return(int64(1), nil)
+				mer.EXPECT().Update(gomock.Any(), emp, repokit.Eq{"id": 99}).Return(int64(1), nil)
 			},
 			ExpectedResponse: oapi.UpdateEmployee204Response{},
 		},

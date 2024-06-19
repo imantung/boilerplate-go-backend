@@ -10,7 +10,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	entity "github.com/imantung/boilerplate-go-backend/internal/generated/entity"
-	sqkit "github.com/imantung/boilerplate-go-backend/pkg/sqkit"
+	repokit "github.com/imantung/boilerplate-go-backend/pkg/repokit"
 )
 
 // MockEmployeeClockHistoryRepo is a mock of EmployeeClockHistoryRepo interface.
@@ -37,7 +37,7 @@ func (m *MockEmployeeClockHistoryRepo) EXPECT() *MockEmployeeClockHistoryRepoMoc
 }
 
 // Count mocks base method.
-func (m *MockEmployeeClockHistoryRepo) Count(arg0 context.Context, arg1 ...sqkit.SelectOption) (int64, error) {
+func (m *MockEmployeeClockHistoryRepo) Count(arg0 context.Context, arg1 ...repokit.SelectOption) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -72,7 +72,7 @@ func (mr *MockEmployeeClockHistoryRepoMockRecorder) Insert(arg0, arg1 interface{
 }
 
 // Patch mocks base method.
-func (m *MockEmployeeClockHistoryRepo) Patch(arg0 context.Context, arg1 *entity.EmployeeClockHistory, arg2 ...sqkit.UpdateOption) (int64, error) {
+func (m *MockEmployeeClockHistoryRepo) Patch(arg0 context.Context, arg1 *entity.EmployeeClockHistory, arg2 ...repokit.UpdateOption) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
@@ -92,7 +92,7 @@ func (mr *MockEmployeeClockHistoryRepoMockRecorder) Patch(arg0, arg1 interface{}
 }
 
 // Select mocks base method.
-func (m *MockEmployeeClockHistoryRepo) Select(arg0 context.Context, arg1 ...sqkit.SelectOption) ([]*entity.EmployeeClockHistory, error) {
+func (m *MockEmployeeClockHistoryRepo) Select(arg0 context.Context, arg1 ...repokit.SelectOption) ([]*entity.EmployeeClockHistory, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0}
 	for _, a := range arg1 {
@@ -127,7 +127,7 @@ func (mr *MockEmployeeClockHistoryRepoMockRecorder) SoftDelete(arg0, arg1 interf
 }
 
 // Update mocks base method.
-func (m *MockEmployeeClockHistoryRepo) Update(arg0 context.Context, arg1 *entity.EmployeeClockHistory, arg2 ...sqkit.UpdateOption) (int64, error) {
+func (m *MockEmployeeClockHistoryRepo) Update(arg0 context.Context, arg1 *entity.EmployeeClockHistory, arg2 ...repokit.UpdateOption) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
