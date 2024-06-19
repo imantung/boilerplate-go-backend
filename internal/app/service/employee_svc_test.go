@@ -158,6 +158,60 @@ func TestCreateEmployee(t *testing.T) {
 	}
 }
 
+func TestDeleteEmployee(t *testing.T) {
+	testcases := []struct {
+		TestName         string
+		Request          oapi.DeleteEmployeeRequestObject
+		OnMockRepo       func(*mock_entity.MockEmployeeRepo)
+		ExpectedResponse oapi.DeleteEmployeeResponseObject
+		ExpectedErr      string
+	}{
+		{
+			TestName: "repo error",
+			Request:  oapi.DeleteEmployeeRequestObject{Id: 99},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().SoftDelete(gomock.Any(), 99).Return(int64(-1), errors.New("some-error"))
+			},
+			ExpectedErr: "some-error",
+		},
+		{
+			TestName: "not found",
+			Request:  oapi.DeleteEmployeeRequestObject{Id: 99},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().SoftDelete(gomock.Any(), 99).Return(int64(0), nil)
+			},
+			ExpectedErr: "code=404, message=ID #99 not found",
+		},
+		{
+			TestName: "success",
+			Request:  oapi.DeleteEmployeeRequestObject{Id: 99},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				mer.EXPECT().SoftDelete(gomock.Any(), 99).Return(int64(1), nil)
+			},
+			ExpectedResponse: oapi.DeleteEmployee204Response{},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			repo := mock_entity.NewMockEmployeeRepo(ctrl)
+			if tt.OnMockRepo != nil {
+				tt.OnMockRepo(repo)
+			}
+
+			svc := service.NewEmployeeSvc(repo)
+			resp, err := svc.DeleteEmployee(context.Background(), tt.Request)
+			if err != nil {
+				assert.EqualError(t, err, tt.ExpectedErr)
+			} else {
+				assert.EqualValues(t, tt.ExpectedResponse, resp)
+			}
+		})
+	}
+}
+
 func TestGetEmployee(t *testing.T) {
 	testcases := []struct {
 		TestName         string
@@ -170,7 +224,7 @@ func TestGetEmployee(t *testing.T) {
 			TestName: "repo error",
 			Request:  oapi.GetEmployeeRequestObject{Id: 99},
 			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
-				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": int64(99)}).Return(nil, errors.New("some-error"))
+				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": 99}).Return(nil, errors.New("some-error"))
 			},
 			ExpectedErr: "some-error",
 		},
@@ -178,15 +232,15 @@ func TestGetEmployee(t *testing.T) {
 			TestName: "not found",
 			Request:  oapi.GetEmployeeRequestObject{Id: 99},
 			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
-				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": int64(99)}).Return([]*entity.Employee{}, nil)
+				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": 99}).Return([]*entity.Employee{}, nil)
 			},
-			ExpectedErr: "code=404, message=99 not found",
+			ExpectedErr: "code=404, message=ID #99 not found",
 		},
 		{
 			TestName: "success",
 			Request:  oapi.GetEmployeeRequestObject{Id: 99},
 			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
-				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": int64(99)}).
+				mer.EXPECT().Select(gomock.Any(), sqkit.Eq{"id": 99}).
 					Return([]*entity.Employee{
 						{
 							ID:             99,

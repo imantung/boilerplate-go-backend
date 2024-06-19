@@ -11,6 +11,6 @@ func validationError(errMsg string) *echo.HTTPError {
 	return echo.NewHTTPError(http.StatusUnprocessableEntity, errMsg)
 }
 
-func notFoundError(id int64) *echo.HTTPError {
-	return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("%d not found", id))
+func notFoundError(id int) *echo.HTTPError {
+	return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("ID #%d not found", id))
 }

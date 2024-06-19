@@ -53,7 +53,7 @@ type (
 		Count(context.Context, ...sqkit.SelectOption) (int64, error)
 		Select(context.Context, ...sqkit.SelectOption) ([]*Employee, error)
 		Insert(context.Context, *Employee) (int, error)
-		SoftDelete(context.Context, int) error
+		SoftDelete(context.Context, int) (int64, error)
 		Update(context.Context, *Employee, ...sqkit.UpdateOption) (int64, error)
 		Patch(context.Context, *Employee, ...sqkit.UpdateOption) (int64, error)
 	}
@@ -251,29 +251,26 @@ func (r *EmployeeRepoImpl) Patch(ctx context.Context, ent *Employee, opts ...sqk
 	return affectedRow, err
 }
 
-func (r *EmployeeRepoImpl) SoftDelete(ctx context.Context, id int) error {
+func (r *EmployeeRepoImpl) SoftDelete(ctx context.Context, id int) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	builder := sq.
 		Update("employees").
-		Set("updated_at", "now()").
+		Set("deleted_at", "now()").
+		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
 	res, err := builder.ExecContext(ctx)
 	if err != nil {
 		txn.AppendError(err)
-		return err
+		return -1, err
 	}
 	affectedRow, err := res.RowsAffected()
 	txn.AppendError(err)
 
-	if affectedRow < 1 {
-		return sql.ErrNoRows
-	}
-
-	return nil
+	return affectedRow, nil
 }

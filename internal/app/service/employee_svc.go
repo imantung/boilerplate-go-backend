@@ -78,12 +78,22 @@ func (e *EmployeeSvcImpl) validateCreateEmployee(req oapi.CreateEmployeeRequestO
 	return ""
 }
 
-func (e *EmployeeSvcImpl) DeleteEmployee(ctx context.Context, request oapi.DeleteEmployeeRequestObject) (oapi.DeleteEmployeeResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
+func (e *EmployeeSvcImpl) DeleteEmployee(ctx context.Context, req oapi.DeleteEmployeeRequestObject) (oapi.DeleteEmployeeResponseObject, error) {
+	id := int(req.Id)
+	affectedRow, err := e.EmployeeRepo.SoftDelete(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if affectedRow < 1 {
+		return nil, notFoundError(id)
+	}
+
+	return oapi.DeleteEmployee204Response{}, nil
 }
 
 func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, req oapi.GetEmployeeRequestObject) (oapi.GetEmployeeResponseObject, error) {
-	id := req.Id
+	id := int(req.Id)
 	employees, err := e.EmployeeRepo.Select(ctx, sqkit.Eq{"id": id})
 	if err != nil {
 		return nil, err

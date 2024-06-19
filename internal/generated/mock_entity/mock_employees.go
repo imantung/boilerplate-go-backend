@@ -112,11 +112,12 @@ func (mr *MockEmployeeRepoMockRecorder) Select(arg0 interface{}, arg1 ...interfa
 }
 
 // SoftDelete mocks base method.
-func (m *MockEmployeeRepo) SoftDelete(arg0 context.Context, arg1 int) error {
+func (m *MockEmployeeRepo) SoftDelete(arg0 context.Context, arg1 int) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SoftDelete", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // SoftDelete indicates an expected call of SoftDelete.

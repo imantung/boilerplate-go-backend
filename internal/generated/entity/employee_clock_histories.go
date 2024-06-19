@@ -56,7 +56,7 @@ type (
 		Count(context.Context, ...sqkit.SelectOption) (int64, error)
 		Select(context.Context, ...sqkit.SelectOption) ([]*EmployeeClockHistory, error)
 		Insert(context.Context, *EmployeeClockHistory) (int, error)
-		SoftDelete(context.Context, int) error
+		SoftDelete(context.Context, int) (int64, error)
 		Update(context.Context, *EmployeeClockHistory, ...sqkit.UpdateOption) (int64, error)
 		Patch(context.Context, *EmployeeClockHistory, ...sqkit.UpdateOption) (int64, error)
 	}
@@ -262,29 +262,26 @@ func (r *EmployeeClockHistoryRepoImpl) Patch(ctx context.Context, ent *EmployeeC
 	return affectedRow, err
 }
 
-func (r *EmployeeClockHistoryRepoImpl) SoftDelete(ctx context.Context, id int) error {
+func (r *EmployeeClockHistoryRepoImpl) SoftDelete(ctx context.Context, id int) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
-		return err
+		return -1, err
 	}
 
 	builder := sq.
 		Update("employee_clock_histories").
-		Set("updated_at", "now()").
+		Set("deleted_at", "now()").
+		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
 	res, err := builder.ExecContext(ctx)
 	if err != nil {
 		txn.AppendError(err)
-		return err
+		return -1, err
 	}
 	affectedRow, err := res.RowsAffected()
 	txn.AppendError(err)
 
-	if affectedRow < 1 {
-		return sql.ErrNoRows
-	}
-
-	return nil
+	return affectedRow, nil
 }
