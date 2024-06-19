@@ -42,20 +42,21 @@ func (e *EmployeeSvcImpl) ListEmployee(ctx context.Context, req oapi.ListEmploye
 
 	resp := oapi.ListEmployee200JSONResponse{}
 	for _, emp := range employees {
-		resp = append(resp, convertEmployee(emp))
+		resp = append(resp, convertToEmployeeOApi(emp))
 	}
 	return resp, nil
 }
 
 func (e *EmployeeSvcImpl) CreateEmployee(ctx context.Context, req oapi.CreateEmployeeRequestObject) (oapi.CreateEmployeeResponseObject, error) {
-	if errMsg := e.validateCreateEmployee(req); errMsg != "" {
+	employee := &entity.Employee{
+		EmployeeName: req.Body.EmployeeName,
+		JobTitle:     req.Body.JobTitle,
+	}
+	if errMsg := validateEmployee(employee); errMsg != "" {
 		return nil, validationError(errMsg)
 	}
 
-	id, err := e.EmployeeRepo.Insert(ctx, &entity.Employee{
-		EmployeeName: req.Body.EmployeeName,
-		JobTitle:     req.Body.JobTitle,
-	})
+	id, err := e.EmployeeRepo.Insert(ctx, employee)
 	if err != nil {
 		return nil, err
 	}
@@ -66,16 +67,6 @@ func (e *EmployeeSvcImpl) CreateEmployee(ctx context.Context, req oapi.CreateEmp
 		},
 	}
 	return resp, nil
-}
-
-func (e *EmployeeSvcImpl) validateCreateEmployee(req oapi.CreateEmployeeRequestObject) string {
-	if isEmpty(req.Body.EmployeeName) {
-		return "Employee Name can't be empty"
-	}
-	if isEmpty(req.Body.JobTitle) {
-		return "Job Title can't be empty"
-	}
-	return ""
 }
 
 func (e *EmployeeSvcImpl) DeleteEmployee(ctx context.Context, req oapi.DeleteEmployeeRequestObject) (oapi.DeleteEmployeeResponseObject, error) {
@@ -103,7 +94,7 @@ func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, req oapi.GetEmployeeR
 		return nil, notFoundError(id)
 	}
 
-	resp := oapi.GetEmployee200JSONResponse(convertEmployee(employees[0]))
+	resp := oapi.GetEmployee200JSONResponse(convertToEmployeeOApi(employees[0]))
 	return resp, nil
 }
 
@@ -111,6 +102,18 @@ func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, request oapi.PatchE
 	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
 }
 
-func (e *EmployeeSvcImpl) UpdateEmployee(ctx context.Context, request oapi.UpdateEmployeeRequestObject) (oapi.UpdateEmployeeResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
+func (e *EmployeeSvcImpl) UpdateEmployee(ctx context.Context, req oapi.UpdateEmployeeRequestObject) (oapi.UpdateEmployeeResponseObject, error) {
+	id := int(req.Id)
+	employee := convertToEmployeeEntity(req.Body)
+	if errMsg := validateEmployee(&employee); errMsg != "" {
+		return nil, validationError(errMsg)
+	}
+	affectedRow, err := e.EmployeeRepo.Update(ctx, &employee, sqkit.Eq{"id": id})
+	if err != nil {
+		return nil, err
+	}
+	if affectedRow < 1 {
+		return nil, notFoundError(id)
+	}
+	return oapi.UpdateEmployee204Response{}, nil
 }

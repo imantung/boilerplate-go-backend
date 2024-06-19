@@ -280,3 +280,101 @@ func TestGetEmployee(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateEmployee(t *testing.T) {
+	testcases := []struct {
+		TestName         string
+		Request          oapi.UpdateEmployeeRequestObject
+		OnMockRepo       func(*mock_entity.MockEmployeeRepo)
+		ExpectedResponse oapi.UpdateEmployeeResponseObject
+		ExpectedErr      string
+	}{
+		{
+			TestName:    "empty employee name",
+			Request:     oapi.UpdateEmployeeRequestObject{Body: &oapi.UpdateEmployeeJSONRequestBody{}},
+			ExpectedErr: "code=422, message=Employee Name can't be empty",
+		},
+		{
+			TestName: "empty job title",
+			Request: oapi.UpdateEmployeeRequestObject{
+				Body: &oapi.UpdateEmployeeJSONRequestBody{
+					EmployeeName: "some-name",
+				},
+			},
+			ExpectedErr: "code=422, message=Job Title can't be empty",
+		},
+		{
+			TestName: "repo error",
+			Request: oapi.UpdateEmployeeRequestObject{
+				Id: 99,
+				Body: &oapi.UpdateEmployeeJSONRequestBody{
+					EmployeeName: "some-name",
+					JobTitle:     "some-job-title",
+				},
+			},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				emp := &entity.Employee{
+					EmployeeName: "some-name",
+					JobTitle:     "some-job-title",
+				}
+				mer.EXPECT().Update(gomock.Any(), emp, sqkit.Eq{"id": 99}).Return(int64(-1), errors.New("some-error"))
+			},
+			ExpectedErr: "some-error",
+		},
+		{
+			TestName: "not found",
+			Request: oapi.UpdateEmployeeRequestObject{
+				Id: 99,
+				Body: &oapi.UpdateEmployeeJSONRequestBody{
+					EmployeeName: "some-name",
+					JobTitle:     "some-job-title",
+				},
+			},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				emp := &entity.Employee{
+					EmployeeName: "some-name",
+					JobTitle:     "some-job-title",
+				}
+				mer.EXPECT().Update(gomock.Any(), emp, sqkit.Eq{"id": 99}).Return(int64(0), nil)
+			},
+			ExpectedErr: "code=404, message=ID #99 not found",
+		},
+		{
+			TestName: "success",
+			Request: oapi.UpdateEmployeeRequestObject{
+				Id: 99,
+				Body: &oapi.UpdateEmployeeJSONRequestBody{
+					EmployeeName: "some-name",
+					JobTitle:     "some-job-title",
+				},
+			},
+			OnMockRepo: func(mer *mock_entity.MockEmployeeRepo) {
+				emp := &entity.Employee{
+					EmployeeName: "some-name",
+					JobTitle:     "some-job-title",
+				}
+				mer.EXPECT().Update(gomock.Any(), emp, sqkit.Eq{"id": 99}).Return(int64(1), nil)
+			},
+			ExpectedResponse: oapi.UpdateEmployee204Response{},
+		},
+	}
+	for _, tt := range testcases {
+		t.Run(tt.TestName, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			repo := mock_entity.NewMockEmployeeRepo(ctrl)
+			if tt.OnMockRepo != nil {
+				tt.OnMockRepo(repo)
+			}
+
+			svc := service.NewEmployeeSvc(repo)
+			resp, err := svc.UpdateEmployee(context.Background(), tt.Request)
+			if err != nil {
+				assert.EqualError(t, err, tt.ExpectedErr)
+			} else {
+				assert.EqualValues(t, tt.ExpectedResponse, resp)
+			}
+		})
+	}
+}
