@@ -39,7 +39,7 @@ task create-migration NAME=create_some_table   # Create new migration file
 - API Server
   - [x] [OpenAPI Specification 3.0](https://swagger.io/resources/open-api/) -- Check the specification at [api/api-spec.yml](api/api-spec.yml)
     - [x] Enable [swagger-ui](https://github.com/swagger-api/swagger-ui) (`/swagger/ui`)
-  - [x] [Echo Framework](https://echo.labstack.com/)  -- Check the code at [internal/app/app.go](internal/app/app.go)
+  - [x] [Echo Framework](https://echo.labstack.com/)  -- Check the router at [internal/app/router.go](internal/app/router.go)
     - [x] [Recovery from panic](https://echo.labstack.com/docs/middleware/recover)
     - [x] [Generate Request ID](https://echo.labstack.com/docs/middleware/request-id)
     - [x] [Protection against XSS attack and other common security threats](https://echo.labstack.com/docs/middleware/secure)
@@ -70,7 +70,7 @@ task create-migration NAME=create_some_table   # Create new migration file
 - Database
   - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
     - [x] Connection pool 
-  - [ ] Audit Columns (`created_at`, `modified_at`, etc)
+  - [x] Audit Columns (`created_at`, `modified_at`, etc)
   - [ ] User AuditTrail (Transaction Logs)
   - [x] Migration tool with [golang-migrate](https://github.com/golang-migrate/migrate)
 - Security and Observability
@@ -97,8 +97,8 @@ task create-migration NAME=create_some_table   # Create new migration file
   - [x] Generate Entity Model and Repository Layer from Database schema -- Check the tool at [tools/entity-gen](tools/entity-gen)
   - [x] Object Mocking with [gomock](https://github.com/uber-go/mock)
 - Testing
-  - [ ] Table Driven Test
-  - [ ] Test Automation
+  - [x] Table Driven Test -- Check the code at [internal/app/service/employee_svc_test.go](internal/app/service/employee_svc_test.go)
+  - [ ] API Test Automation
 - Others
   - [x] Build tool with [TaskFile](https://taskfile.dev/) (a better alternative from [GNU Make](https://www.gnu.org/software/make/))
   - [x] Dockerfile 
