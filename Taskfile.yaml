@@ -33,7 +33,7 @@ tasks:
     cmds:
       - go run ./tools/dotenv-gen > .env
       - go run ./tools/dotenv-gen > .env_sample
-  gen-openapi:
+  gen-oapi:
     desc: "generate open api source code form api-spec.yaml"
     cmds:
       - rm -rf internal/generated/oapi

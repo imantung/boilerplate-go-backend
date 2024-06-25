@@ -322,6 +322,11 @@ components:
         $ref: "#/components/schemas/Employee"
     EmployeeClockHistory:
       type: object
+      required:
+        - id
+        - employee_id
+        - work_duration
+        - work_duration_minutes
       properties:
         id:
           type: integer

@@ -112,8 +112,8 @@ The project use employee clocking system as the study case
   - [ ] Clock-in
   - [ ] Clock-out
 - For Backoffice Dashboard
-  - [ ] Manage Employee
-  - [ ] Employee Clock History
+  - [x] Manage Employee
+  - [x] Employee Clock History
 
 ## Notes 
 

@@ -42,11 +42,11 @@ var (
 type (
 	EmployeeClockHistory struct {
 		ID                  int        `column:"id"`
-		EmployeeID          string     `column:"employee_id"`
+		EmployeeID          int        `column:"employee_id"`
 		ClockInAt           *time.Time `column:"clock_in_at"`
 		ClockOutAt          *time.Time `column:"clock_out_at"`
-		WorkDuration        *string    `column:"work_duration"`
-		WorkDurationMinutes *int       `column:"work_duration_minutes"`
+		WorkDuration        string     `column:"work_duration"`
+		WorkDurationMinutes int        `column:"work_duration_minutes"`
 		DeletedAt           *time.Time `column:"deleted_at"`
 		UpdatedAt           time.Time  `column:"updated_at"`
 		CreatedAt           time.Time  `column:"created_at"`

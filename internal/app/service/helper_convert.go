@@ -24,3 +24,14 @@ func convertToEmployeeEntity(emp *oapi.Employee) entity.Employee {
 		LastClockOutAt: emp.LastClockOutAt,
 	}
 }
+
+func convertToClockHistoryOApi(history *entity.EmployeeClockHistory) oapi.EmployeeClockHistory {
+	return oapi.EmployeeClockHistory{
+		ClockInAt:           history.ClockInAt,
+		ClockOutAt:          history.ClockOutAt,
+		EmployeeId:          history.EmployeeID,
+		Id:                  history.ID,
+		WorkDuration:        history.WorkDuration,
+		WorkDurationMinutes: history.WorkDurationMinutes,
+	}
+}

@@ -35,10 +35,10 @@ type EmployeeClockHistories = []EmployeeClockHistory
 type EmployeeClockHistory struct {
 	ClockInAt           *time.Time `json:"clock_in_at,omitempty"`
 	ClockOutAt          *time.Time `json:"clock_out_at,omitempty"`
-	EmployeeId          *int       `json:"employee_id,omitempty"`
-	Id                  *int       `json:"id,omitempty"`
-	WorkDuration        *string    `json:"work_duration,omitempty"`
-	WorkDurationMinutes *int       `json:"work_duration_minutes,omitempty"`
+	EmployeeId          int        `json:"employee_id"`
+	Id                  int        `json:"id"`
+	WorkDuration        string     `json:"work_duration"`
+	WorkDurationMinutes int        `json:"work_duration_minutes"`
 }
 
 // Employees defines model for Employees.
