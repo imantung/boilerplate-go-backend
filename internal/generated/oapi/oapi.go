@@ -19,6 +19,11 @@ const (
 	OAuth2Scopes = "OAuth2.Scopes"
 )
 
+// ClockRequest defines model for ClockRequest.
+type ClockRequest struct {
+	EmployeeId int `json:"employee_id"`
+}
+
 // Employee defines model for Employee.
 type Employee struct {
 	EmployeeName   string     `json:"employee_name"`
@@ -61,16 +66,6 @@ type UnexpectedError = Error
 // ValidationError defines model for ValidationError.
 type ValidationError = Error
 
-// ClockInJSONBody defines parameters for ClockIn.
-type ClockInJSONBody struct {
-	EmployeeId *int `json:"employee_id,omitempty"`
-}
-
-// ClockOutJSONBody defines parameters for ClockOut.
-type ClockOutJSONBody struct {
-	EmployeeId *int `json:"employee_id,omitempty"`
-}
-
 // CreateEmployeeJSONBody defines parameters for CreateEmployee.
 type CreateEmployeeJSONBody struct {
 	EmployeeName string `json:"employee_name"`
@@ -78,10 +73,10 @@ type CreateEmployeeJSONBody struct {
 }
 
 // ClockInJSONRequestBody defines body for ClockIn for application/json ContentType.
-type ClockInJSONRequestBody ClockInJSONBody
+type ClockInJSONRequestBody = ClockRequest
 
 // ClockOutJSONRequestBody defines body for ClockOut for application/json ContentType.
-type ClockOutJSONRequestBody ClockOutJSONBody
+type ClockOutJSONRequestBody = ClockRequest
 
 // CreateEmployeeJSONRequestBody defines body for CreateEmployee for application/json ContentType.
 type CreateEmployeeJSONRequestBody CreateEmployeeJSONBody

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
+	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 )
 
 func isEmpty(s string) bool {
@@ -16,6 +17,13 @@ func validateEmployee(emp *entity.Employee) string {
 	}
 	if isEmpty(emp.JobTitle) {
 		return "Job Title can't be empty"
+	}
+	return ""
+}
+
+func validateClockRequest(req *oapi.ClockRequest) string {
+	if req.EmployeeId <= 0 {
+		return "employee ID can't be zero"
 	}
 	return ""
 }

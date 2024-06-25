@@ -57,8 +57,8 @@ github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/ad
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/iancoleman/strcase v0.3.0 h1:nTXanmYxhfFAMjZL34Ov6gkzEsSJZ5DbhxWjvSASxEI=
 github.com/iancoleman/strcase v0.3.0/go.mod h1:iwCmte+B7n89clKwxIoIXy/HfoL7AsD47ZCWhYzw7ho=
-github.com/imantung/dbtxn v0.0.0-20230311041627-3ca19c176994 h1:arFZ1T8/4WtAaKlkrdV/jMDD3IyvDJutl2jwJj2K2Jw=
-github.com/imantung/dbtxn v0.0.0-20230311041627-3ca19c176994/go.mod h1:WUxT+tmwxMM+tcTPG9tn2kOBjb2SEJgjs7mQXSS9p7E=
+github.com/imantung/dbtxn v1.0.0 h1:+SgKRcE3eW7EdVQ/vE86j72o10VVUvW04hqVT5d4Ytw=
+github.com/imantung/dbtxn v1.0.0/go.mod h1:WUxT+tmwxMM+tcTPG9tn2kOBjb2SEJgjs7mQXSS9p7E=
 github.com/imkira/go-interpol v1.1.0 h1:KIiKr0VSG2CUW1hl1jpiyuzuJeKUUpC8iM1AIE7N1Vk=
 github.com/imkira/go-interpol v1.1.0/go.mod h1:z0h2/2T3XF8kyEPpRgJ3kmNv+C43p+I/CoI+jC3w2iA=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=

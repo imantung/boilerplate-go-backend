@@ -211,10 +211,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                employee_id:
-                  type: integer
+              $ref: "#/components/schemas/ClockRequest"
       responses:
         "200":
           description: success
@@ -240,10 +237,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                employee_id:
-                  type: integer
+              $ref: "#/components/schemas/ClockRequest"
       responses:
         "200":
           description: success
@@ -346,6 +340,13 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/EmployeeClockHistory"
+    ClockRequest:
+      type: object
+      required:
+        - employee_id
+      properties:
+        employee_id:
+          type: integer
     Error:
       type: object
       required:
