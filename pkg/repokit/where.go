@@ -7,8 +7,8 @@ type (
 	Where []interface{}
 )
 
-var _ SelectOption = (Eq)(nil)
-var _ UpdateOption = (Eq)(nil)
+var _ SelectOption = (Where)(nil)
+var _ UpdateOption = (Where)(nil)
 
 // CompileSelect to compile select query for filtering
 func (e Where) CompileSelect(base sq.SelectBuilder) sq.SelectBuilder {
