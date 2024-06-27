@@ -37,9 +37,8 @@ func Stop(db *sql.DB, e *echo.Echo) error {
 	log.Info().Msg("Gracefully stop the service")
 	ctx := context.Background()
 
-	var err error
-	err = multierr.Append(err, e.Shutdown(ctx))
-	err = multierr.Append(err, db.Close())
-
-	return err
+	return multierr.Combine(
+		e.Shutdown(ctx),
+		db.Close(),
+	)
 }

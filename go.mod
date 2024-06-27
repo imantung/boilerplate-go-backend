@@ -9,7 +9,7 @@ require (
 	github.com/go-oauth2/oauth2/v4 v4.5.2
 	github.com/golang/mock v1.6.0
 	github.com/iancoleman/strcase v0.3.0
-	github.com/imantung/dbtxn v1.0.0
+	github.com/imantung/dbtxn v1.0.1
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/labstack/echo/v4 v4.12.0
