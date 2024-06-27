@@ -3,8 +3,6 @@ package app
 import (
 	"context"
 	"database/sql"
-	_ "expvar"         // NOTE: enable `/debug/vars` endpoint
-	_ "net/http/pprof" //  NOTE: enable `/debug/pprof` endpoint
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor

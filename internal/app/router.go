@@ -12,6 +12,9 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/ziflex/lecho/v3"
 	"go.uber.org/dig"
+
+	_ "expvar"         // NOTE: enable `/debug/vars` endpoint
+	_ "net/http/pprof" //  NOTE: enable `/debug/pprof` endpoint
 )
 
 type Router struct {
