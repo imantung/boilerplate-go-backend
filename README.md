@@ -109,8 +109,8 @@ task create-migration NAME=create_some_table   # Create new migration file
 
 The project use employee clocking system as the study case
 - For Client App 
-  - [ ] Clock-in
-  - [ ] Clock-out
+  - [x] Clock-in
+  - [x] Clock-out
 - For Backoffice Dashboard
   - [x] Manage Employee
   - [x] Employee Clock History

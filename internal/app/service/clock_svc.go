@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"net/http"
+	"fmt"
 	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
@@ -10,7 +10,6 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
 	"github.com/imantung/dbtxn"
-	"github.com/labstack/echo/v4"
 )
 
 type (
@@ -44,7 +43,7 @@ func (c *ClockSvcImpl) ClockIn(ctx context.Context, req oapi.ClockInRequestObjec
 	defer txn.CommitWithError(&err)
 
 	employeeID := req.Body.EmployeeId
-	clockInAt := Now()
+	clockInAt := Now().UTC()
 	affectedRow, err := c.EmployeeRepo.Patch(ctx, &entity.Employee{LastClockInAt: &clockInAt}, repokit.Eq{"id": employeeID})
 	if err != nil {
 		return nil, err
@@ -65,8 +64,56 @@ func (c *ClockSvcImpl) ClockIn(ctx context.Context, req oapi.ClockInRequestObjec
 	return
 }
 
-func (c *ClockSvcImpl) ClockOut(ctx context.Context, req oapi.ClockOutRequestObject) (oapi.ClockOutResponseObject, error) {
-	return nil, &echo.HTTPError{Code: http.StatusNotImplemented, Message: "not implemented"}
+func (c *ClockSvcImpl) ClockOut(ctx context.Context, req oapi.ClockOutRequestObject) (resp oapi.ClockOutResponseObject, err error) {
+	if errMsg := validateClockRequest(req.Body); errMsg != "" {
+		return nil, validationError(errMsg)
+	}
+
+	txn := dbtxn.Begin(&ctx)
+	defer txn.CommitWithError(&err)
+
+	employeeID := req.Body.EmployeeId
+
+	employees, err := c.EmployeeRepo.Select(ctx, repokit.Eq{"id": employeeID})
+	if err != nil {
+		return nil, err
+	}
+	if len(employees) < 1 {
+		return nil, notFoundError(employeeID)
+	}
+
+	histories, err := c.HistoryRepo.Select(ctx, repokit.Eq{"employee_id": employeeID}, repokit.Sorts{"-id"})
+	if err != nil {
+		return nil, err
+	}
+	if len(histories) < 1 {
+		return nil, fmt.Errorf("no clock history for employee#%d", employeeID)
+	}
+
+	history := histories[0]
+	if history.ClockOutAt != nil {
+		return nil, fmt.Errorf("employee#%d already clock-out", employeeID)
+	}
+
+	clockOutAt := Now().UTC()
+	history.ClockOutAt = &clockOutAt
+
+	workDuration := clockOutAt.Sub(*history.ClockInAt)
+	history.WorkDuration = workDuration.String()
+	history.WorkDurationMinutes = int(workDuration.Minutes())
+
+	_, err = c.HistoryRepo.Update(ctx, history, repokit.Eq{"id": history.ID})
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.EmployeeRepo.Patch(ctx, &entity.Employee{LastClockOutAt: &clockOutAt}, repokit.Eq{"id": employeeID})
+	if err != nil {
+		return nil, err
+	}
+
+	resp = oapi.ClockOut200JSONResponse(convertToClockHistoryOApi(history))
+	return
 }
 
 func (c *ClockSvcImpl) ListClock(ctx context.Context, req oapi.ListClockRequestObject) (oapi.ListClockResponseObject, error) {
