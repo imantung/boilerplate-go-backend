@@ -22,8 +22,8 @@ type Router struct {
 
 	Health HealthMap
 
-	Oauth *auth.OAuthHandler
-	Basic *auth.BasicAuthHandler
+	Oauth              *auth.OAuthHandler
+	BasicAuthValidator middleware.BasicAuthValidator
 
 	service.EmployeeSvc
 	service.ClockSvc
@@ -52,7 +52,7 @@ func (r *Router) SetRoute(e *echo.Echo) {
 	oapi.RegisterHandlers(
 		e.Group("api"),
 		oapi.NewStrictHandler(r, []oapi.StrictMiddlewareFunc{
-			r.Oauth.ValidateToken,
+			r.Oauth.ValidateTokenMW,
 		}))
 
 	e.Any("/oauth/authorize", r.Oauth.HandleAuthorizeRequest)
@@ -61,7 +61,7 @@ func (r *Router) SetRoute(e *echo.Echo) {
 	e.File("/swagger/api-spec.yaml", "api/api-spec.yaml")
 	e.Static("/swagger/ui", "api/swagger-ui")
 
-	basicAuth := middleware.BasicAuth(r.Basic.Validate)
+	basicAuth := middleware.BasicAuth(r.BasicAuthValidator)
 	e.Any("/health", r.Health.Handle, basicAuth)
 	e.GET("/debug/*/*", echo.WrapHandler(http.DefaultServeMux), basicAuth)
 }

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"net/http"
 	"slices"
 	"strings"
@@ -55,8 +56,13 @@ func NewHandler() *OAuthHandler {
 	return handler
 }
 
-func (o *OAuthHandler) ValidateToken(next strict.StrictEchoHandlerFunc, operationID string) strict.StrictEchoHandlerFunc {
+func (o *OAuthHandler) UserAuthorizationHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
+	return "000000", nil
+}
+
+func (o *OAuthHandler) ValidateTokenMW(next strict.StrictEchoHandlerFunc, operationID string) strict.StrictEchoHandlerFunc {
 	return func(c echo.Context, req interface{}) (resp interface{}, err error) {
+		fmt.Println(2)
 		httpReq := c.Request()
 		token, err := o.Server.ValidationBearerToken(httpReq)
 		if err != nil {
@@ -64,7 +70,7 @@ func (o *OAuthHandler) ValidateToken(next strict.StrictEchoHandlerFunc, operatio
 		}
 
 		apiScopes, _ := c.Get(oapi.OAuth2Scopes).([]string)
-		if !o.validateScope(token, apiScopes) {
+		if !validateScope(token, apiScopes) {
 			return nil, echo.NewHTTPError(http.StatusForbidden, "user scopes not match")
 		}
 
@@ -72,7 +78,7 @@ func (o *OAuthHandler) ValidateToken(next strict.StrictEchoHandlerFunc, operatio
 	}
 }
 
-func (o *OAuthHandler) validateScope(token oauth2.TokenInfo, apiScopes []string) bool {
+func validateScope(token oauth2.TokenInfo, apiScopes []string) bool {
 	userScopes := strings.Split(token.GetScope(), " ")
 	for _, scope := range apiScopes {
 		if !slices.Contains(userScopes, scope) {
@@ -91,18 +97,10 @@ func (o *OAuthHandler) ResponseErrorHandler(re *errors.Response) {
 	log.Err(re.Error).Msg("Oauth Response Error")
 }
 
-func (o *OAuthHandler) UserAuthorizationHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
-	return "000000", nil
-}
-
 func (o *OAuthHandler) HandleAuthorizeRequest(c echo.Context) error {
-	req := c.Request()
-	w := c.Response().Writer
-	return o.Server.HandleAuthorizeRequest(w, req)
+	return o.Server.HandleAuthorizeRequest(c.Response().Writer, c.Request())
 }
 
 func (o *OAuthHandler) HandleTokenRequest(c echo.Context) error {
-	req := c.Request()
-	w := c.Response().Writer
-	return o.Server.HandleTokenRequest(w, req)
+	return o.Server.HandleTokenRequest(c.Response().Writer, c.Request())
 }

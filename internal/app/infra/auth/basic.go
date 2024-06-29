@@ -6,29 +6,18 @@ import (
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-type (
-	BasicAuthHandler struct {
-		Username string
-		Secret   string
-	}
-)
+var _ = di.Provide(NewBasicAuthValidator)
 
-var _ = di.Provide(NewBasicAuthHandler)
-
-func NewBasicAuthHandler(cfg *config.Config) *BasicAuthHandler {
-	return &BasicAuthHandler{
-		Username: cfg.BasicAuth.Username,
-		Secret:   cfg.BasicAuth.Secret,
+func NewBasicAuthValidator(cfg *config.Config) middleware.BasicAuthValidator {
+	return func(username, password string, c echo.Context) (bool, error) {
+		// Be careful to use constant time comparison to prevent timing attacks
+		if subtle.ConstantTimeCompare([]byte(username), []byte(cfg.BasicAuth.Username)) == 1 &&
+			subtle.ConstantTimeCompare([]byte(password), []byte(cfg.BasicAuth.Secret)) == 1 {
+			return true, nil
+		}
+		return false, nil
 	}
-}
-
-func (b *BasicAuthHandler) Validate(username, password string, c echo.Context) (bool, error) {
-	// Be careful to use constant time comparison to prevent timing attacks
-	if subtle.ConstantTimeCompare([]byte(username), []byte(b.Username)) == 1 &&
-		subtle.ConstantTimeCompare([]byte(password), []byte(b.Secret)) == 1 {
-		return true, nil
-	}
-	return false, nil
 }
