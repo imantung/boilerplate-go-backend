@@ -48,9 +48,12 @@ func (r *Router) SetRoute(e *echo.Echo) {
 		middleware.Secure(),
 	)
 
-	group := e.Group("api", r.Oauth.ValidateToken)
-	server := oapi.NewStrictHandler(r, nil)
-	oapi.RegisterHandlers(group, server) // NOTE: register open-api endpoints
+	// NOTE: register open-api endpoints
+	oapi.RegisterHandlers(
+		e.Group("api"),
+		oapi.NewStrictHandler(r, []oapi.StrictMiddlewareFunc{
+			r.Oauth.ValidateToken,
+		}))
 
 	e.Any("/oauth/authorize", r.Oauth.HandleAuthorizeRequest)
 	e.Any("/oauth/token", r.Oauth.HandleTokenRequest)
