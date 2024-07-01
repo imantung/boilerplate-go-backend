@@ -2,19 +2,17 @@ package app
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/auth"
+	"github.com/imantung/boilerplate-go-backend/internal/app/infra/logger"
 	"github.com/imantung/boilerplate-go-backend/internal/app/service"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/rs/zerolog"
-	"github.com/ziflex/lecho/v3"
 	"go.uber.org/dig"
 
 	_ "expvar"         // NOTE: enable `/debug/vars` endpoint
-	_ "net/http/pprof" //  NOTE: enable `/debug/pprof` endpoint
+	_ "net/http/pprof" // NOTE: enable `/debug/pprof` endpoint
 )
 
 type Router struct {
@@ -30,6 +28,7 @@ type Router struct {
 }
 
 func (r *Router) SetRoute(e *echo.Echo) {
+
 	e.HTTPErrorHandler = r.customErrorHandler
 
 	e.Pre(
@@ -37,22 +36,17 @@ func (r *Router) SetRoute(e *echo.Echo) {
 	)
 
 	e.Use(
-		lecho.Middleware(lecho.Config{
-			Logger:              e.Logger.(*lecho.Logger),
-			RequestIDKey:        "request_id",
-			RequestLatencyLevel: zerolog.WarnLevel,
-			RequestLatencyLimit: 500 * time.Millisecond,
-		}),
 		middleware.CORS(),
 		middleware.Recover(),
 		middleware.Secure(),
+		logger.HTTPRequest(),
 	)
 
 	// NOTE: register open-api endpoints
 	oapi.RegisterHandlers(
 		e.Group("api"),
 		oapi.NewStrictHandler(r, []oapi.StrictMiddlewareFunc{
-			r.Oauth.ValidateTokenMW,
+			r.Oauth.ValidateToken,
 		}))
 
 	e.Any("/oauth/authorize", r.Oauth.HandleAuthorizeRequest)

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 	"slices"
 	"strings"
@@ -27,22 +26,22 @@ type (
 
 var _ = di.Provide(NewHandler)
 
+var HeaderXUserID = "X-User-Id"
+
 func NewHandler() *OAuthHandler {
-	manager := manage.NewDefaultManager()
-	manager.MustTokenStorage(store.NewMemoryTokenStore()) // token memory store
-
-	// // NOTE: by passed validate URI due to different uri between swagger-ui address and server address
-	// manager.SetValidateURIHandler(func(baseURI, redirectURI string) error {
-	// 	return nil
-	// })
-
 	clientStore := store.NewClientStore()
 	clientStore.Set("000000", &models.Client{ // TODO: create API set client
 		ID:     "000000",
 		Secret: "999999",
 		Domain: "http://localhost:1323",
 	})
+
+	manager := manage.NewDefaultManager()
+	manager.MustTokenStorage(store.NewMemoryTokenStore()) // token memory store
 	manager.MapClientStorage(clientStore)
+
+	// NOTE: skip URI validation if swagger-ui address is defferent with server address
+	// manager.SetValidateURIHandler(func(baseURI, redirectURI string) error { return nil })
 
 	srv := server.NewDefaultServer(manager)
 	srv.SetAllowGetAccessRequest(true)
@@ -60,9 +59,8 @@ func (o *OAuthHandler) UserAuthorizationHandler(w http.ResponseWriter, r *http.R
 	return "000000", nil
 }
 
-func (o *OAuthHandler) ValidateTokenMW(next strict.StrictEchoHandlerFunc, operationID string) strict.StrictEchoHandlerFunc {
+func (o *OAuthHandler) ValidateToken(next strict.StrictEchoHandlerFunc, operationID string) strict.StrictEchoHandlerFunc {
 	return func(c echo.Context, req interface{}) (resp interface{}, err error) {
-		fmt.Println(2)
 		httpReq := c.Request()
 		token, err := o.Server.ValidationBearerToken(httpReq)
 		if err != nil {
@@ -74,6 +72,7 @@ func (o *OAuthHandler) ValidateTokenMW(next strict.StrictEchoHandlerFunc, operat
 			return nil, echo.NewHTTPError(http.StatusForbidden, "user scopes not match")
 		}
 
+		c.Request().Header.Set(HeaderXUserID, token.GetUserID()) // NOTE: inject new request header
 		return next(c, req)
 	}
 }

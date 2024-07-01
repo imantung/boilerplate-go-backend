@@ -21,9 +21,9 @@ task --list-all   # Show available tasks
 task run          # Run the project
 task clean        # Clean the dev local environment
 
-task gen-openapi  # Generate Server Interface
-task gen-dotenv   # Generate .env file
-task gen-entity   # Generate Entity Model
+task gen-oapi     # Generate controller from api-spec.yaml
+task gen-dotenv   # Generate .env file from config struct
+task gen-entity   # Generate entity/repo from database table
 
 task create-migration NAME=create_some_table   # Create new migration file
 ```
@@ -79,17 +79,18 @@ task create-migration NAME=create_some_table   # Create new migration file
     - [x] Handle authorize request
     - [x] Handle token request
     - [x] Validate bearer token
-    - [ ] Validate scope access
+    - [x] Validate scope access
   - [x] Enable [expvar](https://pkg.go.dev/expvar) endpoint (`/debug/vars`) 
   - [x] Enable [pprof](https://pkg.go.dev/net/http/pprof) endpoint (`/debug/pprof`)
   - [x] Structured Log with [ZeroLog](https://github.com/rs/zerolog) -- Check the code at [/internal/app/infra/logger/logger.go](/internal/app/infra/logger/logger.go)
-    - [x] Echo integration with [Lecho](https://github.com/ziflex/lecho) 
     - [x] Pretty format (not json) when debug enabled
+    - [x] Escalate log level for slow request
     - [x] Append log field `pid` 
     - [x] Append log field `go_version`
+    - [x] Append log field `latency` 
     - [x] Append log field `request_id`
-    - [ ] Append log field `user_id`
-    - [x] Escalate log level for slow request
+    - [x] Append log field `user_id`
+    
   - [ ] Tracing
 - Code Generator
   - [x] Generate Server Interface and Controller Layer with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 

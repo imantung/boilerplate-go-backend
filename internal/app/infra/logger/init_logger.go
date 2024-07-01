@@ -2,19 +2,19 @@ package logger
 
 import (
 	"io"
+
 	"os"
 	"runtime/debug"
 	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/config"
-	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
+	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"github.com/ziflex/lecho/v3"
 )
 
-var _ = di.Provide(NewZeroLogger)
-
-func NewZeroLogger(cfg *config.Config) zerolog.Logger {
-	buildInfo, _ := debug.ReadBuildInfo()
+func InitLogger(cfg *config.Config, e *echo.Echo) {
 
 	var w io.Writer
 
@@ -27,10 +27,16 @@ func NewZeroLogger(cfg *config.Config) zerolog.Logger {
 		w = os.Stderr
 	}
 
-	return zerolog.New(w).With().
-		// Caller(). // NOTE: uncomment to append caller to the log
+	buildInfo, _ := debug.ReadBuildInfo()
+
+	// NOTE: update zerolog global logger
+	log.Logger = zerolog.New(w).With().
 		Timestamp().
 		Int("pid", os.Getpid()).
 		Str("go_version", buildInfo.GoVersion).
 		Logger()
+
+	// NOTE: update echo server logger
+	e.Logger = lecho.From(log.Logger)
+
 }
