@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"os"
-	"os/exec"
 	"slices"
 	"strings"
 	"text/template"
@@ -13,6 +12,7 @@ import (
 	"github.com/iancoleman/strcase"
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/pkg/cmdkit"
 )
 
 type (
@@ -80,19 +80,12 @@ func generate(db *sql.DB) error {
 		}
 	}
 
-	cmd := exec.Command("go", "run", "golang.org/x/tools/cmd/goimports@latest", "-w", TargetDir)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
+	cmdkit.GoImports(TargetDir)
 
 	for _, table := range tables {
-		cmd := exec.Command("go", "run", "github.com/golang/mock/mockgen@v1.6.0",
-			"-destination", MockDir+"/mock_"+table.TableName+".go",
-			"-source", TargetDir+"/"+table.TableName+".go",
-		)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		cmd.Run()
+		dest := MockDir + "/mock_" + table.TableName + ".go"
+		src := TargetDir + "/" + table.TableName + ".go"
+		cmdkit.GoMock(dest, src)
 	}
 
 	return nil

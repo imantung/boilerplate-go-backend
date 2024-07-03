@@ -29,12 +29,12 @@ tasks:
     cmds:
       - docker build -t $IMAGE_NAME .
   gen-dotenv:
-    desc: "generate .env file"
+    desc: "generate .env file from infra.Config struct"
     cmds:
       - go run ./tools/dotenv-gen > .env
       - go run ./tools/dotenv-gen > .env_sample
   gen-oapi:
-    desc: "generate open api source code form api-spec.yaml"
+    desc: "generate open-api controller form api-spec.yaml"
     cmds:
       - rm -rf internal/generated/oapi
       - mkdir -p internal/generated/oapi
@@ -45,7 +45,12 @@ tasks:
     cmds:
       - rm -rf internal/generated/entity
       - rm -rf internal/generated/mock_entity
-      - go run ./tools/entity-gen   
+      - go run ./tools/entity-gen
+  gen-converter:
+    desc: "generate converter from DAO to Entity and vice-versa"
+    cmds:
+      - rm -rf internal/generated/converter
+      - go run ./tools/converter-gen 
   create-migration:
     desc: "create new migration file at db/migration folder"
     cmds:

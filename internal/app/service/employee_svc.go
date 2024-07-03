@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/generated/converter"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
@@ -40,7 +41,7 @@ func (e *EmployeeSvcImpl) ListEmployee(ctx context.Context, req oapi.ListEmploye
 
 	resp := oapi.ListEmployee200JSONResponse{}
 	for _, emp := range employees {
-		resp = append(resp, convertToEmployeeOApi(emp))
+		resp = append(resp, converter.ConvertToEmployeeOApi(*emp))
 	}
 	return resp, nil
 }
@@ -92,13 +93,13 @@ func (e *EmployeeSvcImpl) GetEmployee(ctx context.Context, req oapi.GetEmployeeR
 		return nil, notFoundError(id)
 	}
 
-	resp := oapi.GetEmployee200JSONResponse(convertToEmployeeOApi(employees[0]))
+	resp := oapi.GetEmployee200JSONResponse(converter.ConvertToEmployeeOApi(*employees[0]))
 	return resp, nil
 }
 
 func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, req oapi.PatchEmployeeRequestObject) (oapi.PatchEmployeeResponseObject, error) {
 	id := int(req.Id)
-	employee := convertToEmployeeEntity(req.Body)
+	employee := converter.ConvertToEmployeeEntity(*req.Body)
 
 	affectedRow, err := e.EmployeeRepo.Patch(ctx, &employee, repokit.Eq{"id": id})
 	if err != nil {
@@ -112,7 +113,7 @@ func (e *EmployeeSvcImpl) PatchEmployee(ctx context.Context, req oapi.PatchEmplo
 
 func (e *EmployeeSvcImpl) UpdateEmployee(ctx context.Context, req oapi.UpdateEmployeeRequestObject) (oapi.UpdateEmployeeResponseObject, error) {
 	id := int(req.Id)
-	employee := convertToEmployeeEntity(req.Body)
+	employee := converter.ConvertToEmployeeEntity(*req.Body)
 	if errMsg := validateEmployee(&employee); errMsg != "" {
 		return nil, validationError(errMsg)
 	}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
+	"github.com/imantung/boilerplate-go-backend/internal/generated/converter"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/entity"
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/imantung/boilerplate-go-backend/pkg/repokit"
@@ -112,7 +113,7 @@ func (c *ClockSvcImpl) ClockOut(ctx context.Context, req oapi.ClockOutRequestObj
 		return nil, err
 	}
 
-	resp = oapi.ClockOut200JSONResponse(convertToClockHistoryOApi(history))
+	resp = oapi.ClockOut200JSONResponse(converter.ConvertToClockHistoryOApi(*history))
 	return
 }
 
@@ -123,7 +124,7 @@ func (c *ClockSvcImpl) ListClock(ctx context.Context, req oapi.ListClockRequestO
 	}
 	resp := oapi.ListClock200JSONResponse{}
 	for _, history := range histories {
-		resp = append(resp, convertToClockHistoryOApi(history))
+		resp = append(resp, converter.ConvertToClockHistoryOApi(*history))
 	}
 	return resp, nil
 }
