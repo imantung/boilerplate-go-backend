@@ -18,7 +18,7 @@ import (
 type Router struct {
 	dig.In
 
-	Health HealthMap
+	Health AppHealth
 
 	Oauth              *auth.OAuthHandler
 	BasicAuthValidator middleware.BasicAuthValidator

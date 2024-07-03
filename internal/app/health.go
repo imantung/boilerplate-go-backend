@@ -10,20 +10,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type HealthMap map[string]error
+type AppHealth map[string]error
 
 var _ = di.Provide(Health)
 
-func Health(db *sql.DB) HealthMap {
+func Health(db *sql.DB) AppHealth {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	return HealthMap{
+	return AppHealth{
 		"postgres": db.PingContext(ctx),
 	}
 }
 
-func (h HealthMap) Handle(ec echo.Context) error {
+func (h AppHealth) Handle(ec echo.Context) error {
 	// NOTE: disable cache
 	ec.Response().Header().Set("Expires", "0")
 	ec.Response().Header().Set("Pragma", "no-cache")

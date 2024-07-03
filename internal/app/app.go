@@ -8,7 +8,6 @@ import (
 	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/database" // NOTE: provide database constructor
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/logger"
-	_ "github.com/imantung/boilerplate-go-backend/internal/app/infra/logger" // NOTE: provide logger constructor
 	"github.com/imantung/boilerplate-go-backend/internal/generated/oapi"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
