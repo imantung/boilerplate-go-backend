@@ -4,7 +4,6 @@ package entity
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
@@ -159,7 +158,7 @@ func (r *EmployeeRepoImpl) Insert(ctx context.Context, ent *Employee) (int, erro
 			"last_clock_out_at",
 		).
 		Suffix(
-			fmt.Sprintf("RETURNING \"%s\"", "id"),
+			"RETURNING id",
 		).
 		PlaceholderFormat(sq.Dollar).
 		Values(

@@ -9,3 +9,27 @@ task gen-entity
 rm -rf internal/generated/entity
 go run ./tools/entity-gen   
 ```
+
+## Table Convention
+
+Code generation based assumption that table follow below conventions:
+1. Tables only have a single primary key called `id` (data type doesn't matter)
+2. Audit columns (i.e. `created_at`, `updated_at` and `deleted_at`) is mandatory. Generated entities doesn't include these column
+3. Hard deleted not allowed. Select operation doesn't show soft-deleted rows. 
+
+## Supported data type
+
+The code generation only support below data type:
+ - `integer` --> `int`
+ - `bigint` --> `int64`
+ - `text` --> `string`
+ - `timestamp` --> `time.Time`
+
+Please add additional data type support at `convertToFieldType()` function. 
+
+## Database Transaction
+
+- Repo check flag to use database transcation and store the error in the `context.Context`
+- `BEGIN` should be called before called the operation via `dbtxn.Begin()`
+- Check the example at [clock_svc.go](../../internal/app/service/clock_svc.go)
+- Find the library at [dbtxn](https://github.com/imantung/dbtxn)

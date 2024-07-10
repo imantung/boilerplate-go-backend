@@ -83,7 +83,7 @@ task create-migration NAME=create_some_table   # Create new migration file
     - [x] Validate scope access
   - [x] Enable [expvar](https://pkg.go.dev/expvar) endpoint (`/debug/vars`) 
   - [x] Enable [pprof](https://pkg.go.dev/net/http/pprof) endpoint (`/debug/pprof`)
-  - [x] Structured Log with [ZeroLog](https://github.com/rs/zerolog) -- Check the code at [/internal/app/infra/logger/logger.go](/internal/app/infra/logger/logger.go)
+  - [x] Structured Log with [ZeroLog](https://github.com/rs/zerolog) -- Check the code at [/internal/app/infra/logger](/internal/app/infra/logger)
     - [x] Pretty format (not json) when debug enabled
     - [x] Escalate log level to `WARN` for slow API
     - [x] Append log field `pid` 

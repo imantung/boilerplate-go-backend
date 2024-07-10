@@ -17,9 +17,12 @@ import (
 
 type (
 	Table struct {
-		PackageName string
-		TableName   string
-		Columns     []Column
+		PackageName    string
+		TableName      string
+		IDName         string
+		IDType         string
+		IDDefaultValue string
+		Columns        []Column
 
 		StructName string
 	}
@@ -36,10 +39,11 @@ type (
 )
 
 var (
-	PackageName  = "entity"
-	TemplatePath = "tools/entity-gen/entity.go.tmpl"
-	TargetDir    = "internal/generated/entity"
-	MockDir      = "internal/generated/mock_entity"
+	PackageName   = "entity"
+	TemplatePath  = "tools/entity-gen/entity.go.tmpl"
+	TargetDir     = "internal/generated/entity"
+	MockDir       = "internal/generated/mock_entity"
+	DefaultIDName = "id"
 
 	SkipTables   = []string{"schema_migrations"}
 	PrimaryKeys  = []string{"id"}
@@ -102,16 +106,19 @@ func getTables(db *sql.DB) ([]Table, error) {
 		if slices.Contains(SkipTables, tableName) {
 			continue
 		}
-		columns, err := getColumns(db, tableName)
+		columns, idType, err := getColumns(db, tableName)
 		if err != nil {
 			return nil, err
 		}
 
 		tables = append(tables, Table{
-			PackageName: PackageName,
-			TableName:   tableName,
-			StructName:  convertToStructName(tableName),
-			Columns:     columns,
+			PackageName:    PackageName,
+			TableName:      tableName,
+			IDName:         DefaultIDName,
+			IDType:         idType,
+			IDDefaultValue: getDefaultValue(idType),
+			StructName:     convertToStructName(tableName),
+			Columns:        columns,
 		})
 	}
 
@@ -135,17 +142,18 @@ func getTableNames(db *sql.DB) ([]string, error) {
 	return tables, nil
 }
 
-func getColumns(db *sql.DB, table string) ([]Column, error) {
+func getColumns(db *sql.DB, table string) ([]Column, string, error) {
 	rows, err := db.Query("SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "' ORDER BY ordinal_position")
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	var columns []Column
+	var idType string
 	for rows.Next() {
 		var column Column
 		if err := rows.Scan(&column.ColumnName, &column.DataType, &column.IsNullable); err != nil {
-			return nil, err
+			return nil, "", err
 		}
 
 		column.FieldName = convertToFieldName(column.ColumnName)                  // inject field name
@@ -154,8 +162,22 @@ func getColumns(db *sql.DB, table string) ([]Column, error) {
 		column.IsAuditColumn = slices.Contains(AuditColumns, column.ColumnName)
 
 		columns = append(columns, column)
+		if column.ColumnName == DefaultIDName {
+			idType = column.FieldType
+		}
 	}
-	return columns, nil
+	return columns, idType, nil
+}
+
+func getDefaultValue(idType string) string {
+	defaultValue := "unknown"
+	if idType == "int" || idType == "int64" {
+		defaultValue = "-1"
+	}
+	if idType == "string" {
+		defaultValue = "\"\""
+	}
+	return defaultValue
 }
 
 func convertToStructName(tableName string) string {
@@ -179,6 +201,9 @@ func convertToFieldType(dataType string, isNullable string) string {
 
 	if dataType == "integer" {
 		fieldType = "int"
+	}
+	if dataType == "bigint" {
+		fieldType = "int64"
 	}
 	if dataType == "text" {
 		fieldType = "string"

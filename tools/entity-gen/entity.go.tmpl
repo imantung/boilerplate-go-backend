@@ -30,7 +30,7 @@ type (
 	{{.StructName}}Repo interface {
 		Count(context.Context, ...repokit.SelectOption) (int64, error)
 		Select(context.Context, ...repokit.SelectOption) ([]*{{.StructName}}, error)
-		Insert(context.Context, *{{.StructName}}) (int, error)
+		Insert(context.Context, *{{.StructName}}) ({{.IDType}}, error)
 		SoftDelete(context.Context, int) (int64, error)
 		Update(context.Context, *{{.StructName}}, ...repokit.UpdateOption) (int64, error)
 		Patch(context.Context, *{{.StructName}}, ...repokit.UpdateOption) (int64, error)
@@ -109,10 +109,10 @@ func (r *{{.StructName}}RepoImpl) Select(ctx context.Context, opts ...repokit.Se
 	return list, nil
 }
 
-func (r *{{.StructName}}RepoImpl) Insert(ctx context.Context, ent *{{.StructName}}) (int, error) {
+func (r *{{.StructName}}RepoImpl) Insert(ctx context.Context, ent *{{.StructName}}) ({{.IDType}}, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
-		return -1, err
+		return {{.IDDefaultValue}}, err
 	}
 
 	builder := sq.
@@ -121,7 +121,7 @@ func (r *{{.StructName}}RepoImpl) Insert(ctx context.Context, ent *{{.StructName
 			"{{$col.ColumnName}}",{{end}}{{end}}
 		).
 		Suffix(
-			fmt.Sprintf("RETURNING \"%s\"", "id"),
+			"RETURNING {{.IDName}}",
 		).
 		PlaceholderFormat(sq.Dollar).
 		Values({{range $col := .Columns }}{{if and (not $col.IsPrimaryKey) (not $col.IsAuditColumn)}}
@@ -130,10 +130,10 @@ func (r *{{.StructName}}RepoImpl) Insert(ctx context.Context, ent *{{.StructName
 
 	scanner := builder.RunWith(txn).QueryRowContext(ctx)
 
-	var id int
+	var id {{.IDType}}
 	if err := scanner.Scan(&id); err != nil {
 		txn.AppendError(err)
-		return -1, err
+		return {{.IDDefaultValue}}, err
 	}
 	return id, nil
 }
