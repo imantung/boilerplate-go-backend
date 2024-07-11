@@ -57,10 +57,10 @@ func (mr *MockOauth2ClientRepoMockRecorder) Count(arg0 interface{}, arg1 ...inte
 }
 
 // Insert mocks base method.
-func (m *MockOauth2ClientRepo) Insert(arg0 context.Context, arg1 *entity.Oauth2Client) (string, error) {
+func (m *MockOauth2ClientRepo) Insert(arg0 context.Context, arg1 *entity.Oauth2Client) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Insert", arg0, arg1)
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -112,7 +112,7 @@ func (mr *MockOauth2ClientRepoMockRecorder) Select(arg0 interface{}, arg1 ...int
 }
 
 // SoftDelete mocks base method.
-func (m *MockOauth2ClientRepo) SoftDelete(arg0 context.Context, arg1 string) (int64, error) {
+func (m *MockOauth2ClientRepo) SoftDelete(arg0 context.Context, arg1 int) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SoftDelete", arg0, arg1)
 	ret0, _ := ret[0].(int64)

@@ -17,6 +17,8 @@ var (
 	Oauth2ClientTableName = "oauth2_clients"
 	Oauth2ClientColumns   = struct {
 		ID        string
+		ClientID  string
+		UserID    string
 		Secret    string
 		Domain    string
 		DeletedAt string
@@ -24,6 +26,8 @@ var (
 		CreatedAt string
 	}{
 		ID:        "id",
+		ClientID:  "client_id",
+		UserID:    "user_id",
 		Secret:    "secret",
 		Domain:    "domain",
 		DeletedAt: "deleted_at",
@@ -34,7 +38,9 @@ var (
 
 type (
 	Oauth2Client struct {
-		ID        string     `column:"id"`
+		ID        int        `column:"id"`
+		ClientID  string     `column:"client_id"`
+		UserID    int        `column:"user_id"`
 		Secret    string     `column:"secret"`
 		Domain    string     `column:"domain"`
 		DeletedAt *time.Time `column:"deleted_at"`
@@ -44,8 +50,8 @@ type (
 	Oauth2ClientRepo interface {
 		Count(context.Context, ...repokit.SelectOption) (int64, error)
 		Select(context.Context, ...repokit.SelectOption) ([]*Oauth2Client, error)
-		Insert(context.Context, *Oauth2Client) (string, error)
-		SoftDelete(context.Context, string) (int64, error)
+		Insert(context.Context, *Oauth2Client) (int, error)
+		SoftDelete(context.Context, int) (int64, error)
 		Update(context.Context, *Oauth2Client, ...repokit.UpdateOption) (int64, error)
 		Patch(context.Context, *Oauth2Client, ...repokit.UpdateOption) (int64, error)
 	}
@@ -94,6 +100,8 @@ func (r *Oauth2ClientRepoImpl) Select(ctx context.Context, opts ...repokit.Selec
 	builder := sq.
 		Select(
 			"id",
+			"client_id",
+			"user_id",
 			"secret",
 			"domain",
 			"deleted_at",
@@ -119,6 +127,8 @@ func (r *Oauth2ClientRepoImpl) Select(ctx context.Context, opts ...repokit.Selec
 		ent := new(Oauth2Client)
 		err := rows.Scan(
 			&ent.ID,
+			&ent.ClientID,
+			&ent.UserID,
 			&ent.Secret,
 			&ent.Domain,
 			&ent.DeletedAt,
@@ -133,15 +143,17 @@ func (r *Oauth2ClientRepoImpl) Select(ctx context.Context, opts ...repokit.Selec
 	return list, nil
 }
 
-func (r *Oauth2ClientRepoImpl) Insert(ctx context.Context, ent *Oauth2Client) (string, error) {
+func (r *Oauth2ClientRepoImpl) Insert(ctx context.Context, ent *Oauth2Client) (int, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
-		return "", err
+		return -1, err
 	}
 
 	builder := sq.
 		Insert("oauth2_clients").
 		Columns(
+			"client_id",
+			"user_id",
 			"secret",
 			"domain",
 		).
@@ -150,16 +162,18 @@ func (r *Oauth2ClientRepoImpl) Insert(ctx context.Context, ent *Oauth2Client) (s
 		).
 		PlaceholderFormat(sq.Dollar).
 		Values(
+			ent.ClientID,
+			ent.UserID,
 			ent.Secret,
 			ent.Domain,
 		)
 
 	scanner := builder.RunWith(txn).QueryRowContext(ctx)
 
-	var id string
+	var id int
 	if err := scanner.Scan(&id); err != nil {
 		txn.AppendError(err)
-		return "", err
+		return -1, err
 	}
 	return id, nil
 }
@@ -172,6 +186,8 @@ func (r *Oauth2ClientRepoImpl) Update(ctx context.Context, ent *Oauth2Client, op
 
 	builder := sq.
 		Update("oauth2_clients").
+		Set("client_id", ent.ClientID).
+		Set("user_id", ent.UserID).
 		Set("secret", ent.Secret).
 		Set("domain", ent.Domain).
 		Set("updated_at", "now()").
@@ -203,6 +219,12 @@ func (r *Oauth2ClientRepoImpl) Patch(ctx context.Context, ent *Oauth2Client, opt
 		PlaceholderFormat(sq.Dollar).
 		RunWith(txn)
 
+	if !repokit.IsZero(ent.ClientID) {
+		builder = builder.Set("client_id", ent.ClientID)
+	}
+	if !repokit.IsZero(ent.UserID) {
+		builder = builder.Set("user_id", ent.UserID)
+	}
 	if !repokit.IsZero(ent.Secret) {
 		builder = builder.Set("secret", ent.Secret)
 	}
@@ -227,7 +249,7 @@ func (r *Oauth2ClientRepoImpl) Patch(ctx context.Context, ent *Oauth2Client, opt
 	return affectedRow, err
 }
 
-func (r *Oauth2ClientRepoImpl) SoftDelete(ctx context.Context, id string) (int64, error) {
+func (r *Oauth2ClientRepoImpl) SoftDelete(ctx context.Context, id int) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err

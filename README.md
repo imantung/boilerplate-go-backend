@@ -129,7 +129,7 @@ The project use employee clocking system as the study case
 
 1. Echo VS Fiber? 
 
-    [Fiber](https://github.com/gofiber/fiber) is a popular and [faster](https://medium.com/deno-the-complete-reference/go-gin-vs-fiber-vs-echo-how-much-performance-difference-is-really-there-for-a-real-world-use-1ed29d6a3e4d) web framework compared to [Echo](https://echo.labstack.com/). The caveat is that fiber is based on [fasthttp](https://github.com/valyala/fasthttp) and not compatible with [net/http](https://pkg.go.dev/net/http) which is cumbersome if we use other net/http based project (in our case, [go-oauth2](https://go-oauth2.github.io/)).
+    [Fiber](https://github.com/gofiber/fiber) is arguability better than [Echo](https://echo.labstack.com/) but it is not compatible with [net/http](https://pkg.go.dev/net/http) (it is based on [fasthttp](https://github.com/valyala/fasthttp)). We are [go-oauth2](https://go-oauth2.github.io/) who only support `net/http`, therefore we are using Echo instead. 
 
 2. Pgx for postgres? 
 
