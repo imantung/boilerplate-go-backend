@@ -72,15 +72,16 @@ task create-migration NAME=create_some_table   # Create new migration file
   - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
     - [x] Connection pool 
   - [x] Audit Columns (`created_at`, `modified_at`, etc)
-  - [ ] User AuditTrail (Transaction Logs)
   - [x] Migration tool with [golang-migrate](https://github.com/golang-migrate/migrate)
+  - [x] Data seeding to insert initial dummy data to database -- Check the tool at [tools/dbseed](tools/dbseed)
+  - [ ] User AuditTrail (Transaction Logs)
 - Security and Observability
   - [x] Basic Auth -- Check the code at [internal/app/infra/auth/basic.go](internal/app/infra/auth/basic.go)
-  - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) -- Check the code at [internal/app/infra/auth/oauth.go](internal/app/infra/auth/oauth.go)
-    - [x] Handle authorize request
-    - [x] Handle token request
-    - [x] Validate bearer token
-    - [x] Validate scope access
+  - [x] OAuth2 with [Go-OAuth2](https://github.com/go-oauth2/oauth2) 
+    - [x] Use Postgres to store oauth-client -- Check the code at [internal/app/infra/auth/oauth_client_store.go](internal/app/infra/auth/oauth_client_store.go)
+    - [ ] Use Redis to store oauth-token
+    - [x] Handle authorize request and token access
+    - [x] Validate bearer token and scope access -- Check the code at [internal/app/infra/auth/oauth_handler.go](internal/app/infra/auth/oauth_handler.go)
   - [x] Enable [expvar](https://pkg.go.dev/expvar) endpoint (`/debug/vars`) 
   - [x] Enable [pprof](https://pkg.go.dev/net/http/pprof) endpoint (`/debug/pprof`)
   - [x] Structured Log with [ZeroLog](https://github.com/rs/zerolog) -- Check the code at [/internal/app/infra/logger](/internal/app/infra/logger)
@@ -96,7 +97,7 @@ task create-migration NAME=create_some_table   # Create new migration file
   - [x] Generate Server Interface and Controller Layer with [oapi-codegen](https://github.com/deepmap/oapi-codegen) -- Check the config at [tools/openapi-gen](tools/openapi-gen) 
   - [x] Generate Dotenv file from Config struct -- Check the tool at [tools/dotenv-gen](tools/dotenv-gen)
   - [x] Generate Entity Model and Repository Layer from Database schema -- Check the tool at [tools/entity-gen](tools/entity-gen)
-  - [x] Generate converter from DAO to Entity and vice-versa -- Check the tool at [tools/converter-gen](tools/converter-gen)
+  - [x] Generate Converter from DAO to Entity and vice-versa -- Check the tool at [tools/converter-gen](tools/converter-gen)
 - Testing
   - [x] Table Driven Test -- Check the code at [internal/app/service/employee_svc_test.go](internal/app/service/employee_svc_test.go)
   - [x] Mocking object with [GoMock](https://github.com/golang/mock)
