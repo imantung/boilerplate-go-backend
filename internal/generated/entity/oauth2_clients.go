@@ -45,7 +45,7 @@ type (
 		Count(context.Context, ...repokit.SelectOption) (int64, error)
 		Select(context.Context, ...repokit.SelectOption) ([]*Oauth2Client, error)
 		Insert(context.Context, *Oauth2Client) (string, error)
-		SoftDelete(context.Context, int) (int64, error)
+		SoftDelete(context.Context, string) (int64, error)
 		Update(context.Context, *Oauth2Client, ...repokit.UpdateOption) (int64, error)
 		Patch(context.Context, *Oauth2Client, ...repokit.UpdateOption) (int64, error)
 	}
@@ -227,7 +227,7 @@ func (r *Oauth2ClientRepoImpl) Patch(ctx context.Context, ent *Oauth2Client, opt
 	return affectedRow, err
 }
 
-func (r *Oauth2ClientRepoImpl) SoftDelete(ctx context.Context, id int) (int64, error) {
+func (r *Oauth2ClientRepoImpl) SoftDelete(ctx context.Context, id string) (int64, error) {
 	txn, err := dbtxn.Use(ctx, r.DB)
 	if err != nil {
 		return -1, err

@@ -17,12 +17,10 @@ import (
 
 type (
 	Table struct {
-		PackageName    string
-		TableName      string
-		IDName         string
-		IDType         string
-		IDDefaultValue string
-		Columns        []Column
+		PackageName string
+		TableName   string
+		PrimaryKey  *Column
+		Columns     []*Column
 
 		StructName string
 	}
@@ -33,21 +31,21 @@ type (
 
 		FieldName     string
 		FieldType     string
+		DefaultValue  string
 		IsPrimaryKey  bool
 		IsAuditColumn bool
 	}
 )
 
 var (
-	PackageName   = "entity"
-	TemplatePath  = "tools/entity-gen/entity.go.tmpl"
-	TargetDir     = "internal/generated/entity"
-	MockDir       = "internal/generated/mock_entity"
-	DefaultIDName = "id"
+	PackageName  = "entity"
+	TemplatePath = "tools/entity-gen/entity.go.tmpl"
+	TargetDir    = "internal/generated/entity"
+	MockDir      = "internal/generated/mock_entity"
 
-	SkipTables   = []string{"schema_migrations"}
-	PrimaryKeys  = []string{"id"}
-	AuditColumns = []string{"deleted_at", "created_at", "updated_at"}
+	PrimaryKeyColumn = "id"
+	SkipTables       = []string{"schema_migrations"}
+	AuditColumns     = []string{"deleted_at", "created_at", "updated_at"}
 )
 
 var pluralizer = pluralize.NewClient()
@@ -106,19 +104,17 @@ func getTables(db *sql.DB) ([]Table, error) {
 		if slices.Contains(SkipTables, tableName) {
 			continue
 		}
-		columns, idType, err := getColumns(db, tableName)
+		columns, pk, err := getColumns(db, tableName)
 		if err != nil {
 			return nil, err
 		}
 
 		tables = append(tables, Table{
-			PackageName:    PackageName,
-			TableName:      tableName,
-			IDName:         DefaultIDName,
-			IDType:         idType,
-			IDDefaultValue: getDefaultValue(idType),
-			StructName:     convertToStructName(tableName),
-			Columns:        columns,
+			PackageName: PackageName,
+			TableName:   tableName,
+			PrimaryKey:  pk,
+			StructName:  convertToStructName(tableName),
+			Columns:     columns,
 		})
 	}
 
@@ -142,42 +138,41 @@ func getTableNames(db *sql.DB) ([]string, error) {
 	return tables, nil
 }
 
-func getColumns(db *sql.DB, table string) ([]Column, string, error) {
+func getColumns(db *sql.DB, table string) ([]*Column, *Column, error) {
 	rows, err := db.Query("SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "' ORDER BY ordinal_position")
 	if err != nil {
-		return nil, "", err
+		return nil, nil, err
 	}
 
-	var columns []Column
-	var idType string
+	var columns []*Column
+	var pk *Column
 	for rows.Next() {
-		var column Column
-		if err := rows.Scan(&column.ColumnName, &column.DataType, &column.IsNullable); err != nil {
-			return nil, "", err
+		var columnName string
+		var dataType string
+		var isNullable string
+		if err := rows.Scan(&columnName, &dataType, &isNullable); err != nil {
+			return nil, nil, err
 		}
 
-		column.FieldName = convertToFieldName(column.ColumnName)                  // inject field name
-		column.FieldType = convertToFieldType(column.DataType, column.IsNullable) // inject field type
-		column.IsPrimaryKey = slices.Contains(PrimaryKeys, column.ColumnName)
-		column.IsAuditColumn = slices.Contains(AuditColumns, column.ColumnName)
+		fieldType, defaultValue := convertToFieldType(dataType, isNullable)
 
+		column := &Column{
+			ColumnName:    columnName,
+			DataType:      dataType,
+			IsNullable:    isNullable,
+			FieldName:     convertToFieldName(columnName),
+			FieldType:     fieldType,
+			DefaultValue:  defaultValue,
+			IsPrimaryKey:  columnName == PrimaryKeyColumn,
+			IsAuditColumn: slices.Contains(AuditColumns, columnName),
+		}
 		columns = append(columns, column)
-		if column.ColumnName == DefaultIDName {
-			idType = column.FieldType
+
+		if column.IsPrimaryKey {
+			pk = column
 		}
 	}
-	return columns, idType, nil
-}
-
-func getDefaultValue(idType string) string {
-	defaultValue := "unknown"
-	if idType == "int" || idType == "int64" {
-		defaultValue = "-1"
-	}
-	if idType == "string" {
-		defaultValue = "\"\""
-	}
-	return defaultValue
+	return columns, pk, nil
 }
 
 func convertToStructName(tableName string) string {
@@ -196,25 +191,32 @@ func convertToFieldName(colName string) string {
 	return colName
 }
 
-func convertToFieldType(dataType string, isNullable string) string {
-	fieldType := "UnknownType"
+func convertToFieldType(dataType string, isNullable string) (fieldType, defaultValue string) {
+	// time.Time{}
+	fieldType = "Unknown"
+	defaultValue = "Unknown"
 
 	if dataType == "integer" {
 		fieldType = "int"
+		defaultValue = "-1"
 	}
 	if dataType == "bigint" {
 		fieldType = "int64"
+		defaultValue = "-1"
 	}
 	if dataType == "text" {
 		fieldType = "string"
+		defaultValue = "\"\""
 	}
 	if strings.HasPrefix(dataType, "timestamp") {
 		fieldType = "time.Time"
+		defaultValue = "time.Time{}"
 	}
 
 	if strings.EqualFold(isNullable, "YES") {
 		fieldType = "*" + fieldType
+		defaultValue = "nil"
 	}
 
-	return fieldType
+	return
 }
