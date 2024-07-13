@@ -121,16 +121,16 @@ The project use employee clocking system as the study case
 ## Notes 
 
 - The project is OPINIONATED based on author knowledge and experience
-- The project is PRAGMATIC, it use the other popular/proven go library as much as possible without reinvented the wheel
+- The project is PRAGMATIC, it use proven libraries/frameworks as much as possible without reinvented the wheel
 - The project is MONOLITH BACKEND, you may need to customize code for microservices needs
-- This is CONTINUOUS PROJECT, the author use this as his actual project reference and keep improve it
+- This is CONTINUOUS PROJECT, the author use it as his actual work and keep improve it
 - The project is OPEN-FOR-DISCUSSION, feel free to ping the author for any feedback/question and/or open issue ticket
 
 ## FAQ
 
 1. Echo VS Fiber? 
 
-    [Fiber](https://github.com/gofiber/fiber) is arguability better than [Echo](https://echo.labstack.com/) but it is not compatible with [net/http](https://pkg.go.dev/net/http) (it is based on [fasthttp](https://github.com/valyala/fasthttp)). We are [go-oauth2](https://go-oauth2.github.io/) who only support `net/http`, therefore we are using Echo instead. 
+    [Fiber](https://github.com/gofiber/fiber) is arguably better than [Echo](https://echo.labstack.com/) but is not compatible with [net/http](https://pkg.go.dev/net/http) (it is based on [fasthttp](https://github.com/valyala/fasthttp)). We use [go-oauth2](https://go-oauth2.github.io/) who only support `net/http`, therefore we choose to use Echo instead. 
 
 2. Pgx for postgres? 
 
