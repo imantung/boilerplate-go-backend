@@ -4,13 +4,13 @@ Boilerplate project for golang backend.
 
 ## Getting Started
 
-Prerequisite for this project:
+### Prerequisite
 - Programming Language: [Go](https://go.dev/) 
-- Task Manager / Build-Tool: [GoTask](https://taskfile.dev/)
-- DB Migration tool: [Golang-Migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
+- Task Manager/Build-Tool: [GoTask](https://taskfile.dev/)
+- Database Migration: [Golang-Migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
 - Infrastructure: [Docker](https://www.docker.com/)
 
-Command lines: 
+### Command Line
 ```bash
 # First setup for mac (for other OS, please refer to respective documentation)
 brew install go
@@ -29,7 +29,17 @@ task gen-converter   # Generate converter from DAO to Entity and vice-versa
 task create-migration NAME=create_some_table   # Create new migration file
 ```
 
-## Checklist
+## Overview
+### Framework/Library 
+
+- [Echo](https://echo.labstack.com/): High performance, minimalist Go web framework
+- [Dig](https://github.com/uber-go/dig): A reflection based dependency injection toolkit for Go.
+- [OApi-CodeGen](https://github.com/oapi-codegen/oapi-codegen): Generate Go client and server boilerplate from OpenAPI 3 specifications
+- [Go-Auth2](https://github.com/go-oauth2/oauth2): OAuth 2.0 server library for the Go programming language
+- [Go-Mock](https://github.com/uber-go/mock): a mocking framework for the Go programming language
+- [Zerolog](https://github.com/rs/zerolog): Zero Allocation JSON Logger
+
+### Checklist
 
 - General
   - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)
@@ -107,14 +117,13 @@ task create-migration NAME=create_some_table   # Create new migration file
   - [x] Dockerfile 
   - [x] Docker-compose
 
-
 ## Study Case: Employee Clocking System
 
 The project use employee clocking system as the study case
-- For Client App 
+- Client App API
   - [x] Clock-in
   - [x] Clock-out
-- For Backoffice Dashboard
+- Backoffice Dashboard API
   - [x] Manage Employee
   - [x] Employee Clock History
 
