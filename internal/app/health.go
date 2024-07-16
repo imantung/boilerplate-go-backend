@@ -8,18 +8,20 @@ import (
 
 	"github.com/imantung/boilerplate-go-backend/internal/app/infra/di"
 	"github.com/labstack/echo/v4"
+	"github.com/redis/go-redis/v9"
 )
 
 type AppHealth map[string]error
 
 var _ = di.Provide(Health)
 
-func Health(db *sql.DB) AppHealth {
+func Health(pg *sql.DB, redis *redis.Client) AppHealth {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	return AppHealth{
-		"postgres": db.PingContext(ctx),
+		"postgres": pg.PingContext(ctx),
+		"redis":    redis.Ping(ctx).Err(),
 	}
 }
 

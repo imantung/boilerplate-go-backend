@@ -1,16 +1,17 @@
 # Boilerplate Go Backend
 
-Boilerplate project for golang backend. 
+Boilerplate for golang backend project. 
 
-## Getting Started
+## Prerequisite
 
-### Prerequisite
 - Programming Language: [Go](https://go.dev/) 
 - Task Manager/Build-Tool: [GoTask](https://taskfile.dev/)
-- Database Migration: [Golang-Migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
+- DB Migration Tool: [Golang-Migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
 - Infrastructure: [Docker](https://www.docker.com/)
+- Relational Database: [Postgres](https://www.postgresql.org/) 
+- In-Memory Database: [Redis](https://redis.io/)
 
-### Command Line
+## Getting Started
 ```bash
 # First setup for mac (for other OS, please refer to respective documentation)
 brew install go
@@ -29,17 +30,17 @@ task gen-converter   # Generate converter from DAO to Entity and vice-versa
 task create-migration NAME=create_some_table   # Create new migration file
 ```
 
-## Overview
-### Framework/Library 
+## Framework/Library Overview
 
 - [Echo](https://echo.labstack.com/): High performance, minimalist Go web framework
-- [Dig](https://github.com/uber-go/dig): A reflection based dependency injection toolkit for Go.
 - [OApi-CodeGen](https://github.com/oapi-codegen/oapi-codegen): Generate Go client and server boilerplate from OpenAPI 3 specifications
 - [Go-Auth2](https://github.com/go-oauth2/oauth2): OAuth 2.0 server library for the Go programming language
 - [Go-Mock](https://github.com/uber-go/mock): a mocking framework for the Go programming language
+- [Dig](https://github.com/uber-go/dig): A reflection based dependency injection toolkit for Go.
+- [Squirrel](https://github.com/Masterminds/squirrel): Fluent SQL generation for golang
 - [Zerolog](https://github.com/rs/zerolog): Zero Allocation JSON Logger
 
-### Checklist
+## Project Checklist
 
 - General
   - [x] [Golang Standards Project Layout](https://github.com/golang-standards/project-layout)

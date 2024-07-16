@@ -20,6 +20,7 @@ tasks:
     desc: "compose system component for local environemnt"
     cmds:
       - docker compose up -d
+      - sleep 1
   clean:
     desc: "clean the dev local environment"
     cmds:
@@ -69,6 +70,10 @@ tasks:
     desc: "postgres client"
     cmds:
       - docker compose exec -u postgres pg psql
+  redis-cli:
+    desc: "redis client"
+    cmds:
+      - docker compose exec -u redis redis redis-cli -a {{.APP_REDIS_PASSWORD}}
 silent: false
 
 

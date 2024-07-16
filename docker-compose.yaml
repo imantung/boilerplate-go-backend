@@ -1,12 +1,12 @@
 services:
   pg:
     platform: linux/x86_64
-    image: postgres:14.1-alpine
+    image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: my_pg_user
+      POSTGRES_PASSWORD: my_pg_pass
+      POSTGRES_DB: my_pg_dbname
     ports:
       - 5432:5432
     expose:
@@ -20,6 +20,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    command: redis-server --save 20 1 --loglevel warning --requirepass my_redis_pass
+    volumes: 
+      - redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
 volumes:
   pg:
+    driver: local
+  redis:
     driver: local
