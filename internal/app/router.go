@@ -27,6 +27,8 @@ type Router struct {
 	service.ClockSvc
 }
 
+var _ oapi.StrictServerInterface = (*Router)(nil)
+
 func (r *Router) SetRoute(e *echo.Echo) {
 
 	e.HTTPErrorHandler = r.customErrorHandler
