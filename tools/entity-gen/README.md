@@ -14,8 +14,8 @@ go run ./tools/entity-gen
 
 Code generation based assumption that table follow below conventions:
 1. Tables only have a single primary key called `id` with data type `SERIAL` or `BIGSERIAL`
-2. Audit columns (i.e. `created_at`, `updated_at` and `deleted_at`) is mandatory. Generated entities doesn't include these columns
-3. Hard-delete is not allowed. Select operation doesn't show soft-deleted rows. 
+2. Audit columns (i.e. `created_at`, `updated_at`, and `deleted_at`) are mandatory. Generated entities don't include these columns
+3. Hard delete is not allowed. The select operation doesn't show soft-deleted rows. 
 
 ## Supported data type
 

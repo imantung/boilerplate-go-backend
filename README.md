@@ -8,8 +8,6 @@ Boilerplate for golang backend project.
 - Task Manager/Build-Tool: [GoTask](https://taskfile.dev/)
 - DB Migration Tool: [Golang-Migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
 - Infrastructure: [Docker](https://www.docker.com/)
-- Relational Database: [Postgres](https://www.postgresql.org/) 
-- In-Memory Database: [Redis](https://redis.io/)
 
 ## Getting Started
 ```bash
@@ -30,8 +28,9 @@ task gen-converter   # Generate converter from DAO to Entity and vice-versa
 task create-migration NAME=create_some_table   # Create new migration file
 ```
 
-## Framework/Library Overview
+## Tech Overview
 
+Framework/library:
 - [Echo](https://echo.labstack.com/): High performance, minimalist Go web framework
 - [OApi-CodeGen](https://github.com/oapi-codegen/oapi-codegen): Generate Go client and server boilerplate from OpenAPI 3 specifications
 - [Go-Auth2](https://github.com/go-oauth2/oauth2): OAuth 2.0 server library for the Go programming language
@@ -39,6 +38,10 @@ task create-migration NAME=create_some_table   # Create new migration file
 - [Dig](https://github.com/uber-go/dig): A reflection based dependency injection toolkit for Go.
 - [Squirrel](https://github.com/Masterminds/squirrel): Fluent SQL generation for golang
 - [Zerolog](https://github.com/rs/zerolog): Zero Allocation JSON Logger
+
+Database:
+- Relational Database: [Postgres](https://www.postgresql.org/) 
+- In-Memory Database: [Redis](https://redis.io/)
 
 ## Project Checklist
 
@@ -80,8 +83,7 @@ task create-migration NAME=create_some_table   # Create new migration file
       - [x] ORMHate Philosophy
       - [x] Query Builder (using [Squirrel](https://github.com/Masterminds/squirrel))
 - Database
-  - [x] PostgresSQL Database -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
-    - [x] Connection pool 
+  - [x] Connection pool -- Check the code at [internal/app/infra/database/postgres.go](internal/app/infra/database/postgres.go)
   - [x] Audit Columns (`created_at`, `modified_at`, etc)
   - [x] Migration tool with [golang-migrate](https://github.com/golang-migrate/migrate)
   - [x] Data seeding to insert initial dummy data to database -- Check the tool at [tools/dbseed](tools/dbseed)
